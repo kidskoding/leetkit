@@ -21,6 +21,9 @@ type Env struct {
 	Paths     config.Paths
 	Stdout    io.Writer
 	Stderr    io.Writer
+	// Interactive reports whether stdin and stdout are a terminal, which the
+	// dashboard requires.
+	Interactive bool
 }
 
 const (
@@ -74,27 +77,32 @@ func newApp(env Env) *app {
 }
 
 // Run executes the command named in args and returns the process exit code.
+// With no arguments it opens the dashboard.
 func Run(ctx context.Context, args []string, env Env) int {
-	if len(args) == 0 {
-		fmt.Fprint(env.Stdout, usage)
-		return exitOK
+	name, rest := "", args
+	if len(args) > 0 {
+		name, rest = args[0], args[1:]
 	}
-	switch args[0] {
+	switch name {
 	case "help", "-h", "--help":
 		fmt.Fprint(env.Stdout, usage)
 		return exitOK
 	}
 	a := newApp(env)
-	cmd, ok := commands[args[0]]
-	if !ok {
-		fmt.Fprintf(env.Stderr, "%s unknown command %q\n\n%s", a.th.Fail.Render("leetkit:"), args[0], usage)
-		return exitUsage
+	cmd, prefix := (*app).dashboard, "leetkit:"
+	if name != "" {
+		var ok bool
+		if cmd, ok = commands[name]; !ok {
+			fmt.Fprintf(env.Stderr, "%s unknown command %q\n\n%s", a.th.Fail.Render("leetkit:"), name, usage)
+			return exitUsage
+		}
+		prefix = "leetkit " + name + ":"
 	}
-	if err := cmd(a, ctx, args[1:]); err != nil {
+	if err := cmd(a, ctx, rest); err != nil {
 		if errors.Is(err, errSilent) {
 			return exitError
 		}
-		fmt.Fprintf(env.Stderr, "%s %v\n", a.th.Fail.Render("leetkit "+args[0]+":"), err)
+		fmt.Fprintf(env.Stderr, "%s %v\n", a.th.Fail.Render(prefix), err)
 		if errors.As(err, new(usageError)) {
 			fmt.Fprintf(env.Stderr, "\n%s", usage)
 			return exitUsage

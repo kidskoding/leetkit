@@ -8,6 +8,7 @@ import (
 	"os/signal"
 
 	"github.com/charmbracelet/colorprofile"
+	"github.com/charmbracelet/x/term"
 
 	"github.com/anirudhkonidala/leetkit/exercises"
 	"github.com/anirudhkonidala/leetkit/internal/cli"
@@ -28,6 +29,8 @@ func main() {
 		// output is not a TTY or NO_COLOR is set.
 		Stdout: colorprofile.NewWriter(os.Stdout, os.Environ()),
 		Stderr: colorprofile.NewWriter(os.Stderr, os.Environ()),
+
+		Interactive: term.IsTerminal(os.Stdin.Fd()) && term.IsTerminal(os.Stdout.Fd()),
 	})
 	stop()
 	os.Exit(code)

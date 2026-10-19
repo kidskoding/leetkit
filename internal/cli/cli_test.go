@@ -128,3 +128,10 @@ func TestForcedColorUsesThemePalette(t *testing.T) {
 		t.Errorf("want ANSI palette colors only, got %q", out.String())
 	}
 }
+
+func TestNoArgumentsWithoutTerminalPrintsUsage(t *testing.T) {
+	code, out, _ := run(t, bundled())
+	if code != exitOK || !strings.Contains(out, "Usage:") {
+		t.Errorf("exit %d, output %q", code, out)
+	}
+}

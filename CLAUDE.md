@@ -79,6 +79,8 @@ Lower packages never import `tui` or `cli`.
 - Default theme is `terminal` (ANSI colors follow the user's terminal) instead of Tokyo Night; `tokyonight`,
   `gruvbox`, `gruvbox-light` are selectable with `theme = "..."` in config.toml.
 - `leetkit check` without an id checks every started exercise.
+- Dashboard exercise list is a flat `bubbles/list` (module shown in the preview) rather than a collapsible
+  module tree; this keeps Bubbles' built-in fuzzy search.
 - Root `main.go` instead of `cmd/leetkit`; single `internal/tui` instead of `internal/app` + `internal/ui`.
 
 ## Go conventions
