@@ -1,0 +1,49 @@
+id = "two-pointers-01"
+title = "Spend the Gift Card Exactly"
+module = "patterns"
+difficulty = "intermediate"
+type = "application"
+concepts = ["two pointers", "tuple unpacking", "sorted arrays"]
+
+description = """
+Implement pair_with_sum(prices, target).
+
+prices is a list of item prices sorted in ascending order. Find two different
+items whose prices add up to exactly target and return their 0-based indices as
+a tuple (i, j) with i < j.
+
+Inputs contain at most one valid pair of indices. If no pair exists (including
+an empty or single-item list), return (-1, -1).
+
+Solve it in O(1) extra space with two pointers that move toward each other.
+"""
+
+objective = "Apply the converging two-pointer pattern with tuple assignment on a sorted list."
+
+interview = """
+Two Sum II, 3Sum, container-with-most-water, and palindrome checks all use two
+indices walking inward. Python's tuple assignment (lo, hi = 0, len(xs) - 1) and
+returning a tuple keep the loop compact, so you can spend your time explaining
+why moving a pointer never skips the answer.
+"""
+
+hints = [
+  "Because the list is sorted, the sum of the smallest and largest prices tells you which end to move.",
+  "Start with lo, hi = 0, len(prices) - 1 and loop while lo < hi.",
+  "If the sum is too small, lo += 1; if too large, hi -= 1; if equal, return (lo, hi).",
+]
+
+[[examples]]
+input = "pair_with_sum([2, 7, 11, 15], 9)"
+output = "(0, 1)"
+explanation = "2 + 15 is too big, so hi moves left until 2 + 7 = 9 at indices 0 and 1."
+
+[[examples]]
+input = "pair_with_sum([1, 3, 4, 6, 12], 10)"
+output = "(2, 3)"
+explanation = "Sums that are too big move hi left and sums that are too small move lo right, until 4 + 6 = 10 at indices 2 and 3."
+
+[[examples]]
+input = "pair_with_sum([5, 10], 4)"
+output = "(-1, -1)"
+explanation = "Even the two cheapest items cost more than 4 together, so the pointers meet without a match."

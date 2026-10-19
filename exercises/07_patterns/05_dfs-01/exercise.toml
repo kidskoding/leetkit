@@ -1,0 +1,43 @@
+id = "dfs-01"
+title = "Count Server Clusters"
+module = "patterns"
+difficulty = "intermediate"
+type = "application"
+concepts = ["DFS", "adjacency list", "defaultdict", "stack"]
+
+description = """
+Implement count_clusters(n, links).
+
+There are n servers labelled 0 to n - 1. links is a list of (a, b) pairs, each
+an undirected cable between servers a and b. Return the number of clusters
+(connected components). A server with no cables is a cluster on its own.
+
+links may contain duplicate cables and self-loops (a == b); neither changes the
+answer. Return 0 when n is 0. Build an adjacency list with defaultdict(list) and
+explore each cluster with an explicit stack (a plain list) or recursion.
+"""
+
+objective = "Build an adjacency list with defaultdict(list) and count components with an iterative DFS."
+
+interview = """
+Number of Connected Components, Number of Provinces, and Graph Valid Tree all
+start from an edge list. Turning edges into an adjacency list and running DFS
+from every unvisited node is the core move; using a list as a stack avoids
+Python's recursion limit on long chains.
+"""
+
+hints = [
+  "Every time you find a server you have not visited, you have found a new cluster; DFS from it to visit the rest.",
+  "Build graph = defaultdict(list) and append both directions for each (a, b).",
+  "For each start in range(n) not in seen: count it, push it on stack = [start], and pop/push unvisited neighbours until the stack is empty.",
+]
+
+[[examples]]
+input = "count_clusters(5, [(0, 1), (1, 2), (3, 4)])"
+output = "2"
+explanation = "Servers 0, 1, 2 are chained together and 3, 4 are linked, giving two clusters."
+
+[[examples]]
+input = "count_clusters(3, [])"
+output = "3"
+explanation = "With no cables, each of the 3 servers is a cluster on its own."

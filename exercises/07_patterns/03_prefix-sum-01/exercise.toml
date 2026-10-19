@@ -1,0 +1,48 @@
+id = "prefix-sum-01"
+title = "Count Periods with Target Net Change"
+module = "patterns"
+difficulty = "advanced"
+type = "application"
+concepts = ["prefix sums", "Counter", "hash map"]
+
+description = """
+Implement count_periods(changes, k).
+
+changes is a list of daily net balance changes (integers, possibly negative or
+zero). Return the number of contiguous, non-empty runs of days whose changes
+add up to exactly k. Runs are counted by position, so overlapping runs and runs
+with identical values at different positions all count separately.
+
+Return 0 for an empty list. Aim for one O(n) pass: keep a Counter of the prefix
+sums seen so far, starting with Counter({0: 1}).
+"""
+
+objective = "Count subarrays with a target sum using running prefix sums and a Counter."
+
+interview = """
+Subarray Sum Equals K is the gateway prefix-sum problem: a sliding window fails
+because values can be negative, so you need the "prefix minus k" lookup
+instead. The same trick counts subarrays divisible by k and balanced 0/1
+subarrays, and a Counter makes the lookup a single expression.
+"""
+
+hints = [
+  "A run (i, j] sums to k exactly when prefix[j] - prefix[i] == k, so look for earlier prefix sums equal to prefix[j] - k.",
+  "Keep seen = Counter({0: 1}) so runs starting at day 0 are counted, and a running total.",
+  "For each value: total += x, count += seen[total - k], then seen[total] += 1 (in that order).",
+]
+
+[[examples]]
+input = "count_periods([1, 1, 1], 2)"
+output = "2"
+explanation = "Days 0-1 and days 1-2 both add up to 2; the runs overlap but are counted separately."
+
+[[examples]]
+input = "count_periods([1, 2, 3], 3)"
+output = "2"
+explanation = "The run [1, 2] and the single day [3] both sum to 3."
+
+[[examples]]
+input = "count_periods([1, -1, 0], 0)"
+output = "3"
+explanation = "Negative values make [1, -1], [0], and [1, -1, 0] all sum to 0, which is why a sliding window would fail."

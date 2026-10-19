@@ -1,0 +1,43 @@
+id = "bfs-01"
+title = "Count Islands on a Survey Map"
+module = "patterns"
+difficulty = "intermediate"
+type = "application"
+concepts = ["BFS", "deque", "grid traversal", "set"]
+
+description = """
+Implement count_islands(grid).
+
+grid is a list of rows, each a list of the strings "1" (land) or "0" (water).
+An island is a group of land cells connected horizontally or vertically
+(diagonals do not connect). Return the number of islands.
+
+Return 0 for an empty grid ([] or [[]]). Do not modify grid: track visited
+cells in a set of (row, col) tuples and explore each island with a
+collections.deque queue.
+"""
+
+objective = "Flood-fill a grid with a deque-based BFS and a visited set."
+
+interview = """
+Number of Islands is the standard grid BFS/DFS question, and the same
+traversal solves rotting oranges, walls and gates, and shortest path in a
+binary matrix. deque.popleft() is O(1), unlike list.pop(0), and a visited set
+keeps the caller's grid intact, which interviewers often ask about.
+"""
+
+hints = [
+  "Scan every cell. Each unvisited land cell starts a new island; BFS from it marks the whole island visited.",
+  "Use queue = deque([(r, c)]) and loop while queue: with cr, cc = queue.popleft().",
+  "For the four neighbours, check 0 <= nr < rows, 0 <= nc < cols, grid[nr][nc] == \"1\", and (nr, nc) not in seen before adding.",
+]
+
+[[examples]]
+input = "count_islands([['1', '1', '0'], ['0', '1', '0'], ['0', '0', '1']])"
+output = "2"
+explanation = "The top-left three land cells touch side by side; the bottom-right cell only touches them diagonally, so it is a second island."
+
+[[examples]]
+input = "count_islands([['0', '0'], ['0', '0']])"
+output = "0"
+explanation = "There is no land at all, so no BFS ever starts."

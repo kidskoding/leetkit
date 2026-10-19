@@ -1,0 +1,47 @@
+id = "hash-grouping-01"
+title = "Group Shifted Codewords"
+module = "patterns"
+difficulty = "intermediate"
+type = "application"
+concepts = ["defaultdict", "grouping", "tuple keys", "zip"]
+
+description = """
+Implement group_shifted(words).
+
+words is a list of non-empty lowercase strings. Two words belong to the same
+group when one can be turned into the other by shifting every letter forward by
+the same amount, wrapping from "z" to "a" (so "abc", "bcd", and "xyz" match, and
+so do "az" and "ba"). Words of different lengths never match.
+
+Return a list of groups, each a list of words. Groups appear in the order their
+first word appears in words, and words inside a group keep their input order.
+Duplicates are kept. Return [] for an empty list.
+
+Compute a key for each word (the tuple of gaps between neighbouring letters,
+mod 26) and collect words in a defaultdict(list).
+"""
+
+objective = "Group items by a computed hashable key using defaultdict(list)."
+
+interview = """
+Group Anagrams and Group Shifted Strings are the same pattern: map every item to
+a canonical, hashable key and bucket by it. defaultdict(list) removes the
+"create the list first" branch, and since dicts keep insertion order the
+output order is deterministic for free.
+"""
+
+hints = [
+  "Shifting all letters by the same amount does not change the gaps between neighbouring letters.",
+  "Build the key with zip(w, w[1:]) and (ord(b) - ord(a)) % 26, wrapped in tuple() so it is hashable.",
+  "groups = defaultdict(list); groups[key].append(w) for each word; return list(groups.values()).",
+]
+
+[[examples]]
+input = "group_shifted(['abc', 'bcd', 'acef', 'xyz', 'az', 'ba', 'a', 'z'])"
+output = "[['abc', 'bcd', 'xyz'], ['acef'], ['az', 'ba'], ['a', 'z']]"
+explanation = "\"abc\", \"bcd\", \"xyz\" all have gaps (1, 1); \"az\" and \"ba\" both have gap 25 thanks to the wrap; single letters share the empty key."
+
+[[examples]]
+input = "group_shifted([])"
+output = "[]"
+explanation = "No words means no groups, so the result is an empty list."

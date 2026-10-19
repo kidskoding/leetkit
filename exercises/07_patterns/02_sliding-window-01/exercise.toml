@@ -1,0 +1,47 @@
+id = "sliding-window-01"
+title = "Longest Run of Unique Characters"
+module = "patterns"
+difficulty = "intermediate"
+type = "application"
+concepts = ["sliding window", "dict", "enumerate"]
+
+description = """
+Implement longest_unique_run(s).
+
+Return the length of the longest contiguous substring of s in which no
+character repeats. Every character counts, including spaces and punctuation,
+and comparison is case-sensitive. Return 0 for an empty string.
+
+Keep a dict mapping each character to the index where it was last seen, and
+slide the window start forward when a repeat falls inside the window.
+"""
+
+objective = "Drive a variable-size sliding window with enumerate() and a last-seen-index dict."
+
+interview = """
+Longest Substring Without Repeating Characters is one of the most-asked
+sliding-window problems, and the same shape solves "at most k distinct" and
+minimum window questions. A dict of last-seen positions lets the window jump
+forward in one step instead of shrinking one character at a time.
+"""
+
+hints = [
+  "Track a window [start, i]. When s[i] already appears inside the window, move start past its previous position.",
+  "Loop with for i, ch in enumerate(s) and store last_seen[ch] = i after handling the repeat.",
+  "Only jump when last_seen.get(ch, -1) >= start; then start = last_seen[ch] + 1. Update best with i - start + 1.",
+]
+
+[[examples]]
+input = "longest_unique_run('abcabcbb')"
+output = "3"
+explanation = "\"abc\" is the longest stretch with no repeats; every later window hits a repeated letter after 3 characters."
+
+[[examples]]
+input = "longest_unique_run('bbbbb')"
+output = "1"
+explanation = "Every character repeats the one before it, so each window holds a single \"b\"."
+
+[[examples]]
+input = "longest_unique_run('pwwkew')"
+output = "3"
+explanation = "The answer is \"wke\" in the middle; \"pwke\" does not count because it is not contiguous."
