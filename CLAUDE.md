@@ -28,13 +28,15 @@ go test -race ./...
 
 LeetKit needs one thing: a Python 3.10+ interpreter with pytest. It never installs anything itself.
 
-- **Nix (maintainer):** `flake.nix`, `default.nix`, `.envrc`, `gomod2nix.toml` come from
-  `nix flake init -t ~/nixos#gomod2nix` and are excluded via `.git/info/exclude` — never commit them.
-  direnv loads the devShell (Go, Python + pytest, uv).
+- **Nix:** `flake.nix` + `default.nix` (gomod2nix). `nix run` / `nix build` produce a binary with a bundled
+  Python + pytest (linked in via `-X main.defaultPython`). direnv (`.envrc`) loads the devShell (Go, Python +
+  pytest, uv). After changing Go dependencies, run `gomod2nix generate` (the devShell does it automatically)
+  and commit `gomod2nix.toml`.
 - **uv (contributors, CI):** `uv sync` creates `./.venv` from `pyproject.toml` / `uv.lock`.
 - **End users:** `leetkit doctor` prints venv setup commands for `<data>/venv`.
 
-Interpreter lookup order: `$LEETKIT_PYTHON`, config `python`, `<data>/venv`, `python3`, `python`.
+Interpreter lookup order: `$LEETKIT_PYTHON`, config `python`, `<data>/venv`, packaged default, `python3`,
+`python`.
 An explicitly set interpreter that is missing is an error, never a silent fallback.
 Go tests that need pytest prefer `./.venv/bin/python`, then `PATH`, and skip if neither has pytest.
 
