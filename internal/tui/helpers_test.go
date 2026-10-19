@@ -56,6 +56,7 @@ hints = ["First hint for %s."]
 [[examples]]
 input = "double(2)"
 output = "4"
+explanation = "Two doubled is four."
 `, id, title, module, order, id, id, id))}
 		files := map[string]string{
 			exercise.StarterFile:     starterCode,

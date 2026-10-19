@@ -2,8 +2,6 @@ package tui
 
 import (
 	tea "charm.land/bubbletea/v2"
-
-	"github.com/kidskoding/leetkit/internal/exercise"
 )
 
 // reset restores the starter code and clears the exercise's progress.
@@ -12,7 +10,7 @@ func (m *Model) reset(id string) tea.Cmd {
 	if !ok {
 		return nil
 	}
-	starter, err := m.opts.Catalog.ReadFile(ex, exercise.StarterFile)
+	starter, err := m.opts.Catalog.Starter(ex)
 	if err == nil {
 		_, err = m.opts.Workspace.Reset(id, starter)
 	}

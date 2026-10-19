@@ -33,7 +33,9 @@ hints = [
 [[examples]]
 input = "find_index([10, 20, 30], 20)"
 output = "1"
+explanation = "20 first appears at index 1."
 
 [[examples]]
 input = "find_index([10, 20, 30], 50)"
 output = "-1"
+explanation = "50 is not in the list, so the function returns -1."

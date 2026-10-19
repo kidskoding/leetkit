@@ -30,7 +30,7 @@ func TestOpensOnFirstPendingAndRunsTests(t *testing.T) {
 		t.Fatal(err)
 	}
 	m := start(t, f.opts)
-	assertContains(t, m, "zip-01 · Pair Up", "Describe zip-01.", "double(2) → 4", "── Tests", "✗ 0 passed, 1 failed",
+	assertContains(t, m, "zip-01 · Pair Up", "Describe zip-01.", "Example 1", "Input:", "double(2)", "Explanation: Two doubled is four.", "── Tests", "✗ 0 passed, 1 failed",
 		"Progress", "1/3", "Current", "zip-01/starter.py")
 	if e, _ := f.store.Entry("zip-01"); e.Attempts != 1 {
 		t.Errorf("run not recorded: %+v", e)
@@ -324,8 +324,8 @@ func TestResetFromList(t *testing.T) {
 
 	m, _ = update(t, m, press("r"), press("y"))
 	data, err := os.ReadFile(f.opts.Workspace.Path("zip-01"))
-	if err != nil || string(data) != starterCode {
-		t.Errorf("working copy = %q, %v; want starter", data, err)
+	if err != nil || !strings.HasSuffix(string(data), "\n"+starterCode) || !strings.HasPrefix(string(data), "# zip-01 · Pair Up") {
+		t.Errorf("working copy = %q, %v; want header + starter", data, err)
 	}
 	if _, ok := f.store.Entry("zip-01"); ok {
 		t.Error("progress not cleared")

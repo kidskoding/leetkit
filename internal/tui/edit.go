@@ -6,8 +6,6 @@ import (
 	"time"
 
 	tea "charm.land/bubbletea/v2"
-
-	"github.com/kidskoding/leetkit/internal/exercise"
 )
 
 type editorDoneMsg struct{ err error }
@@ -19,7 +17,7 @@ func (m *Model) edit() tea.Cmd {
 		return nil
 	}
 	ex := m.currentExercise()
-	starter, err := m.opts.Catalog.ReadFile(ex, exercise.StarterFile)
+	starter, err := m.opts.Catalog.Starter(ex)
 	if err != nil {
 		m.notice = "Could not read the starter code: " + err.Error()
 		return nil

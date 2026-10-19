@@ -36,6 +36,14 @@ func validate(fsys fs.FS, ex *Exercise, dirName, module string) error {
 	if len(ex.Hints) == 0 {
 		errs = append(errs, errors.New("needs at least one hint"))
 	}
+	if len(ex.Examples) == 0 {
+		errs = append(errs, errors.New("needs at least one example"))
+	}
+	for i, e := range ex.Examples {
+		if strings.TrimSpace(e.Input) == "" || strings.TrimSpace(e.Output) == "" || strings.TrimSpace(e.Explanation) == "" {
+			errs = append(errs, fmt.Errorf("example %d needs input, output, and explanation", i+1))
+		}
+	}
 	for _, name := range requiredFiles {
 		if _, err := fs.Stat(fsys, ex.File(name)); err != nil {
 			errs = append(errs, fmt.Errorf("missing file %s", name))

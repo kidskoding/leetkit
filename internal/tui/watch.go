@@ -162,14 +162,7 @@ func (m Model) watchContent(width int) string {
 	b.WriteString(th.Faint.Render(m.moduleTitle(ex)+" · "+ex.Difficulty+" · "+ex.TypeLabel()) + "\n\n")
 	b.WriteString(th.Text.Render(strings.TrimSpace(ex.Description)) + "\n")
 	for i, e := range ex.Examples {
-		label := "         "
-		if i == 0 {
-			label = "Example  "
-		}
-		b.WriteString("\n" + th.Faint.Render(label) + th.ID.Render(e.Input) + th.Faint.Render(" → ") + th.Text.Render(e.Output))
-	}
-	if len(ex.Examples) > 0 {
-		b.WriteString("\n")
+		b.WriteString("\n" + m.example(i+1, e, width) + "\n")
 	}
 
 	b.WriteString("\n" + m.rule("Tests", width) + "\n")
@@ -192,6 +185,23 @@ func (m Model) watchContent(width int) string {
 		b.WriteString(th.Text.Render(ex.Hints[i]) + "\n")
 	}
 	return lipgloss.NewStyle().Width(width).Render(b.String())
+}
+
+// example renders one example LeetCode-style: input, output, and why.
+func (m Model) example(n int, e exercise.Example, width int) string {
+	th := m.th
+	label := func(s string) string { return th.Faint.Render(pad(s, 15)) }
+	why := lipgloss.NewStyle().Width(max(width-15, 10)).Render(th.Text.Render(e.Explanation))
+	whyLines := strings.Split(why, "\n")
+	for i := 1; i < len(whyLines); i++ {
+		whyLines[i] = strings.Repeat(" ", 15) + whyLines[i]
+	}
+	return strings.Join([]string{
+		th.Text.Bold(true).Render(fmt.Sprintf("Example %d", n)),
+		label("  Input:") + th.ID.Render(e.Input),
+		label("  Output:") + th.ID.Render(e.Output),
+		label("  Explanation:") + strings.Join(whyLines, "\n"),
+	}, "\n")
 }
 
 func (m Model) runErrorText() string {

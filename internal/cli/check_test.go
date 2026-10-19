@@ -4,11 +4,13 @@ import (
 	"context"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"testing"
 
 	"github.com/kidskoding/leetkit/exercises"
 	"github.com/kidskoding/leetkit/internal/config"
+	"github.com/kidskoding/leetkit/internal/exercise"
 	"github.com/kidskoding/leetkit/internal/runner"
 )
 
@@ -137,14 +139,19 @@ func TestDoctorReportsProblems(t *testing.T) {
 
 func TestCheckAll(t *testing.T) {
 	usePytestPython(t)
+	cat, err := exercise.Load(exercises.FS)
+	if err != nil {
+		t.Fatal(err)
+	}
+	total := strconv.Itoa(len(cat.All()))
 	tests := []struct {
 		name  string
 		work  []byte
 		code  int
 		wants []string
 	}{
-		{"not started", nil, exitOK, []string{"○ enumerate-01", "not started", "0/1 passing"}},
-		{"solved", solution(t), exitOK, []string{"✓ enumerate-01", "6/6 passed", "1/1 passing"}},
+		{"not started", nil, exitOK, []string{"○ enumerate-01", "not started", "0/" + total + " passing"}},
+		{"solved", solution(t), exitOK, []string{"✓ enumerate-01", "6/6 passed", "1/" + total + " passing"}},
 		{"failing", []byte("def find_index(nums, target):\n    return 0\n"), exitError,
 			[]string{"✗ enumerate-01", "1 failing", "leetkit check <id>"}},
 		{"syntax error", []byte("def find_index(\n"), exitError, []string{"could not run"}},

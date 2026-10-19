@@ -41,6 +41,7 @@ hints = ["Try it."]
 [[examples]]
 input = "x"
 output = "y"
+explanation = "Because."
 `, id, id, module, order)
 }
 

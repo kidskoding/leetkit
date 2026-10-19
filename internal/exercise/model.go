@@ -32,8 +32,9 @@ var validDifficulties = map[string]bool{
 }
 
 type Example struct {
-	Input  string `toml:"input"`
-	Output string `toml:"output"`
+	Input       string `toml:"input"`
+	Output      string `toml:"output"`
+	Explanation string `toml:"explanation"`
 }
 
 type Exercise struct {

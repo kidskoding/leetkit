@@ -73,7 +73,7 @@ func (a *app) check(ctx context.Context, args []string) error {
 }
 
 func (c checker) one(ctx context.Context, w io.Writer, ex *exercise.Exercise, verbose bool) error {
-	starter, err := c.cat.ReadFile(ex, exercise.StarterFile)
+	starter, err := c.cat.Starter(ex)
 	if err != nil {
 		return fmt.Errorf("read starter: %w", err)
 	}

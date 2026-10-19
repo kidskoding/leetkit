@@ -68,7 +68,7 @@ func (m *Model) startRun() tea.Cmd {
 }
 
 func prepareJob(cat *exercise.Catalog, ws workspace.Workspace, ex *exercise.Exercise) (runner.Job, error) {
-	starter, err := cat.ReadFile(ex, exercise.StarterFile)
+	starter, err := cat.Starter(ex)
 	if err != nil {
 		return runner.Job{}, fmt.Errorf("read starter: %w", err)
 	}
