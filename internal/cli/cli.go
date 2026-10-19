@@ -43,6 +43,7 @@ Usage:
   leetkit list            list modules and exercises
   leetkit check           check every exercise you have started
   leetkit check [-v] <id> run one exercise's tests
+  leetkit progress        show completion by module
   leetkit doctor          check Python, pytest, and editor setup
   leetkit help            show this help
 `
@@ -54,9 +55,10 @@ func usagef(format string, a ...any) error {
 }
 
 var commands = map[string]func(a *app, ctx context.Context, args []string) error{
-	"list":   (*app).list,
-	"check":  (*app).check,
-	"doctor": (*app).doctor,
+	"list":     (*app).list,
+	"check":    (*app).check,
+	"doctor":   (*app).doctor,
+	"progress": (*app).progress,
 }
 
 // app is the per-invocation state shared by commands.
