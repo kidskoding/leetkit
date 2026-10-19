@@ -50,3 +50,13 @@ func TestResetRestoresStarter(t *testing.T) {
 		t.Errorf("after Reset got %q", got)
 	}
 }
+
+func TestEmptyDirIsRejected(t *testing.T) {
+	var ws Workspace
+	if _, err := ws.Ensure("x", nil); err == nil {
+		t.Error("Ensure with empty Dir wrote relative to the working directory")
+	}
+	if _, err := ws.Reset("x", nil); err == nil {
+		t.Error("Reset with empty Dir wrote relative to the working directory")
+	}
+}
