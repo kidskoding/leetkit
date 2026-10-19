@@ -257,6 +257,8 @@ func TestSaveTriggersRerun(t *testing.T) {
 	m := start(t, f.opts)
 	path := f.opts.Workspace.Path("enumerate-01")
 	base := time.Now().Add(-time.Minute)
+	// The real watch tick may have recorded a baseline during start-up.
+	m.lastMod = time.Time{}
 
 	m, cmd := update(t, m, fileCheckMsg{path: path, mod: base, ok: true})
 	if m.run.active {
@@ -281,6 +283,7 @@ func TestWatchIgnoresOtherFilesAndEditing(t *testing.T) {
 	m := start(t, f.opts)
 	path := f.opts.Workspace.Path("enumerate-01")
 	t0 := time.Now()
+	m.lastMod = time.Time{}
 	m, _ = update(t, m, fileCheckMsg{path: path, mod: t0, ok: true})
 	seq := m.run.seq
 
