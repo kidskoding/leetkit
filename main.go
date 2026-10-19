@@ -31,6 +31,7 @@ func main() {
 		Paths:     paths,
 		// colorprofile downsamples colors for the terminal and strips them when
 		// output is not a TTY or NO_COLOR is set.
+		Stdin:  os.Stdin,
 		Stdout: colorprofile.NewWriter(os.Stdout, os.Environ()),
 		Stderr: colorprofile.NewWriter(os.Stderr, os.Environ()),
 

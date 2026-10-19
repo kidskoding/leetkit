@@ -20,6 +20,7 @@ import (
 type Env struct {
 	Exercises fs.FS
 	Paths     config.Paths
+	Stdin     io.Reader
 	Stdout    io.Writer
 	Stderr    io.Writer
 	// Interactive reports whether stdin and stdout are a terminal, which the
@@ -44,6 +45,7 @@ Usage:
   leetkit check           check every exercise you have started
   leetkit check [-v] <id> run one exercise's tests
   leetkit progress        show completion by module
+  leetkit reset [-y] <id> restore the starter code and clear progress
   leetkit doctor          check Python, pytest, and editor setup
   leetkit help            show this help
 `
@@ -59,6 +61,7 @@ var commands = map[string]func(a *app, ctx context.Context, args []string) error
 	"check":    (*app).check,
 	"doctor":   (*app).doctor,
 	"progress": (*app).progress,
+	"reset":    (*app).reset,
 }
 
 // app is the per-invocation state shared by commands.
