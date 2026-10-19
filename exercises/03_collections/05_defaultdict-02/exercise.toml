@@ -1,0 +1,45 @@
+id = "defaultdict-02"
+title = "Build a Friendship Graph"
+module = "collections"
+difficulty = "intermediate"
+type = "syntax"
+concepts = ["defaultdict", "adjacency list", "graphs"]
+
+description = """
+Implement build_graph(edges).
+
+edges is a list of (a, b) pairs, each meaning users a and b are friends.
+Friendship is mutual, so each pair connects both directions.
+
+Return a dict mapping every user that appears in edges to a list of that
+user's friends, sorted in ascending order with no duplicates (the same pair
+may appear more than once, in either order). Users with no edges do not
+appear. If edges is empty, return {}.
+
+Use collections.defaultdict to build the adjacency list.
+"""
+
+objective = "Build an undirected adjacency list with defaultdict(set) or defaultdict(list)."
+
+interview = """
+Almost every graph problem (Number of Provinces, Course Schedule, Clone Graph,
+Word Ladder) starts by turning an edge list into an adjacency list. Doing it
+with defaultdict in two lines leaves time for the actual traversal, and using
+a set handles duplicate edges for free.
+"""
+
+hints = [
+  "Each edge (a, b) means b is a neighbour of a and a is a neighbour of b.",
+  "defaultdict(set) lets you write graph[a].add(b) without checking whether a is already a key.",
+  "Add both directions in the loop, then return {user: sorted(friends) for user, friends in graph.items()}.",
+]
+
+[[examples]]
+input = "build_graph([(1, 2), (2, 3)])"
+output = "{1: [2], 2: [1, 3], 3: [2]}"
+explanation = "Each friendship goes both ways: 1 is friends with 2, 2 with both 1 and 3, and 3 with 2."
+
+[[examples]]
+input = "build_graph([(1, 2), (2, 1)])"
+output = "{1: [2], 2: [1]}"
+explanation = "(2, 1) is the same friendship as (1, 2), so each user lists the other only once."

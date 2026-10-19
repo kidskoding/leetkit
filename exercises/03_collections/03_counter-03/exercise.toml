@@ -1,0 +1,42 @@
+id = "counter-03"
+title = "Ransom Note"
+module = "collections"
+difficulty = "intermediate"
+type = "application"
+concepts = ["Counter", "Counter subtraction", "multiset"]
+
+description = """
+Implement can_construct(note, magazine).
+
+Return True if note can be written by cutting characters out of magazine,
+where each character in magazine can be used at most once. Return False
+otherwise.
+
+Both strings contain only lowercase English letters. An empty note can always
+be constructed. Extra letters in magazine are fine.
+"""
+
+objective = "Use Counter subtraction to check whether one multiset fits inside another."
+
+interview = """
+Ransom Note is a common easy question, and the underlying check ("does
+supply cover demand?") shows up in inventory, scheduling, and string problems.
+Counter subtraction drops counts that fall to zero or below, so whatever is
+left over is exactly what the magazine is missing.
+"""
+
+hints = [
+  "Count the letters the note needs and the letters the magazine has.",
+  "Counter(a) - Counter(b) keeps only the positive leftovers: letters a needs that b cannot supply.",
+  "The note fits when Counter(note) - Counter(magazine) is empty, so return not (... - ...).",
+]
+
+[[examples]]
+input = "can_construct(\"aa\", \"aab\")"
+output = "True"
+explanation = "The note needs two a's and the magazine has two a's (plus a b that goes unused)."
+
+[[examples]]
+input = "can_construct(\"aa\", \"ab\")"
+output = "False"
+explanation = "The note needs two a's but the magazine only has one, and each letter can be used once."

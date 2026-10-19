@@ -1,0 +1,43 @@
+id = "counter-02"
+title = "Top K Frequent Elements"
+module = "collections"
+difficulty = "intermediate"
+type = "syntax"
+concepts = ["Counter", "most_common", "frequency counting"]
+
+description = """
+Implement top_k_frequent(nums, k).
+
+Return a list of the k most frequent values in nums, most frequent first.
+When two values have the same count, the one that first appears earlier in
+nums comes first. If k is larger than the number of distinct values, return
+all distinct values. If nums is empty or k is 0, return [].
+
+Use Counter.most_common(k) instead of sorting the counts yourself.
+"""
+
+objective = "Use Counter.most_common(k) to get the highest-frequency elements in order."
+
+interview = """
+Top K Frequent Elements is a frequent medium question, and "most common N"
+appears in log analysis and word-frequency variants. most_common(k) returns
+(value, count) pairs already sorted by count, with ties in first-seen order,
+so the counting part takes one line and you can discuss heap or bucket-sort
+follow-ups with the interviewer.
+"""
+
+hints = [
+  "Count the values first, then ask the counter for its most frequent entries.",
+  "Counter(nums).most_common(k) returns a list of (value, count) tuples, most frequent first.",
+  "You only need the values: [value for value, _ in Counter(nums).most_common(k)].",
+]
+
+[[examples]]
+input = "top_k_frequent([1, 1, 1, 2, 2, 3], 2)"
+output = "[1, 2]"
+explanation = "1 appears three times and 2 appears twice, so they are the two most frequent values."
+
+[[examples]]
+input = "top_k_frequent([4, 5, 5, 4, 6], 2)"
+output = "[4, 5]"
+explanation = "4 and 5 both appear twice, a tie; 4 shows up first in the list, so it comes first."

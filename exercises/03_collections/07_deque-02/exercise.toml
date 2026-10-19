@@ -1,0 +1,44 @@
+id = "deque-02"
+title = "Smooth Sensor Readings"
+module = "collections"
+difficulty = "intermediate"
+type = "syntax"
+concepts = ["deque", "maxlen", "sliding window"]
+
+description = """
+Implement moving_average(readings, k).
+
+For each position i in readings, compute the average of the most recent k
+readings ending at i (readings[i - k + 1] through readings[i]). Near the start,
+where fewer than k readings exist, average the readings seen so far.
+
+Return a list of floats with the same length as readings. k is always at
+least 1. If readings is empty, return [].
+
+Use deque(maxlen=k) so old readings fall out of the window automatically.
+"""
+
+objective = "Use deque(maxlen=k) as a fixed-size sliding window."
+
+interview = """
+Moving averages, "last k events", and rate limiters all need a window that
+keeps only the newest k items. A bounded deque discards the oldest item on
+each append, so the window logic is a single line. It is the core of design
+questions like Moving Average from Data Stream and Logger Rate Limiter.
+"""
+
+hints = [
+  "You need a container that holds at most k recent readings and forgets older ones.",
+  "deque(maxlen=k) drops the leftmost item automatically when you append to a full deque.",
+  "Append each reading to the window, then record sum(window) / len(window).",
+]
+
+[[examples]]
+input = "moving_average([1, 2, 3, 4], 2)"
+output = "[1.0, 1.5, 2.5, 3.5]"
+explanation = "The windows are [1], [1, 2], [2, 3] and [3, 4]; the first window is short because only one reading exists yet."
+
+[[examples]]
+input = "moving_average([10, 20, 30], 5)"
+output = "[10.0, 15.0, 20.0]"
+explanation = "k is larger than the input, so every window holds all readings so far: 10, then (10 + 20) / 2, then (10 + 20 + 30) / 3."

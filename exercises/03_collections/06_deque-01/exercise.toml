@@ -1,0 +1,43 @@
+id = "deque-01"
+title = "Fewest Flights"
+module = "collections"
+difficulty = "intermediate"
+type = "application"
+concepts = ["deque", "BFS", "graphs", "shortest path"]
+
+description = """
+Implement min_flights(n, flights, src, dst).
+
+There are n cities numbered 0 to n - 1. flights is a list of (a, b) pairs,
+each a direct route that can be flown in both directions.
+
+Return the minimum number of flights needed to travel from src to dst.
+Return 0 if src == dst, and -1 if dst cannot be reached from src.
+
+Use breadth-first search with collections.deque and popleft().
+"""
+
+objective = "Run BFS with a deque to find the shortest path length in an unweighted graph."
+
+interview = """
+BFS is the standard answer whenever every step costs the same: fewest moves,
+fewest flights, minimum knight moves, Word Ladder, shortest path in a grid.
+deque.popleft() is O(1), while list.pop(0) shifts every element and turns BFS
+quadratic, which interviewers will point out.
+"""
+
+hints = [
+  "Explore cities level by level from src; the first time you reach dst, the level is the answer.",
+  "Build an adjacency list, then keep a deque of (city, flights_so_far) and a visited set.",
+  "Start with deque([(src, 0)]); popleft(), return the count at dst, and append unvisited neighbours with count + 1.",
+]
+
+[[examples]]
+input = "min_flights(4, [(0, 1), (1, 2), (2, 3), (0, 2)], 0, 3)"
+output = "2"
+explanation = "The route 0 -> 2 -> 3 takes two flights, shorter than 0 -> 1 -> 2 -> 3."
+
+[[examples]]
+input = "min_flights(3, [(0, 1)], 0, 2)"
+output = "-1"
+explanation = "City 2 has no flights at all, so it cannot be reached from city 0."

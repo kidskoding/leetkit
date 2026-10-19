@@ -1,0 +1,41 @@
+id = "counter-01"
+title = "Valid Anagram"
+module = "collections"
+difficulty = "beginner"
+type = "application"
+concepts = ["Counter", "collections", "frequency counting"]
+
+description = """
+Implement is_anagram(s, t).
+
+Return True if t is an anagram of s: both strings contain exactly the same
+characters with the same counts, in any order. Return False otherwise.
+
+Comparison is case-sensitive and every character counts, including spaces.
+Two empty strings are anagrams of each other.
+"""
+
+objective = "Compare two multisets of characters by checking Counter equality."
+
+interview = """
+Valid Anagram is a classic warm-up, and character-frequency comparison is the
+core of many harder problems: Find All Anagrams in a String, Permutation in
+String, Minimum Window Substring. Counter turns the frequency map into one
+expression, so you can spend your time on the interesting part.
+"""
+
+hints = [
+  "Two strings are anagrams when every character appears the same number of times in both.",
+  "collections.Counter builds a character -> count mapping from any iterable, including a string.",
+  "Two Counters compare equal with == when they hold the same counts: return Counter(s) == Counter(t).",
+]
+
+[[examples]]
+input = "is_anagram(\"listen\", \"silent\")"
+output = "True"
+explanation = "Both words use one each of e, i, l, n, s and t, just in a different order."
+
+[[examples]]
+input = "is_anagram(\"rat\", \"car\")"
+output = "False"
+explanation = "\"rat\" has a t where \"car\" has a c, so the letter counts differ even though the lengths match."

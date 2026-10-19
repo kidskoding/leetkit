@@ -1,0 +1,43 @@
+id = "defaultdict-01"
+title = "Group Anagrams"
+module = "collections"
+difficulty = "intermediate"
+type = "application"
+concepts = ["defaultdict", "grouping", "hashable keys"]
+
+description = """
+Implement group_anagrams(words).
+
+Return a list of groups, where each group is a list of words that are
+anagrams of each other.
+
+Order matters: groups appear in the order their first word appears in words,
+and words inside a group keep their input order. Duplicate words stay in the
+output. An empty string is a valid word (it is only an anagram of another
+empty string). If words is empty, return [].
+"""
+
+objective = "Group items under a computed key with defaultdict(list)."
+
+interview = """
+Group Anagrams is one of the most asked hashing questions. The pattern
+"compute a canonical key, append to that key's bucket" also solves grouping
+by shifted strings, by row, or by any signature. defaultdict(list) removes
+the "if key not in groups" boilerplate from every one of them.
+"""
+
+hints = [
+  "Anagrams share the same letters once sorted, so the sorted letters make a good dictionary key.",
+  "Use defaultdict(list) so you can append to groups[key] without creating the list first.",
+  "Use \"\".join(sorted(word)) as the key, then return list(groups.values()); dicts keep insertion order.",
+]
+
+[[examples]]
+input = "group_anagrams([\"eat\", \"tea\", \"tan\", \"ate\", \"nat\", \"bat\"])"
+output = "[['eat', 'tea', 'ate'], ['tan', 'nat'], ['bat']]"
+explanation = "\"eat\", \"tea\" and \"ate\" all sort to \"aet\", \"tan\" and \"nat\" sort to \"ant\", and \"bat\" is alone. Groups follow the order of their first word."
+
+[[examples]]
+input = "group_anagrams([])"
+output = "[]"
+explanation = "With no words there are no groups, so the result is an empty list."
