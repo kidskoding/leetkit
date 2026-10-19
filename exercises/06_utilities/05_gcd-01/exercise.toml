@@ -1,0 +1,42 @@
+id = "gcd-01"
+title = "Largest Bundle Size"
+module = "utilities"
+difficulty = "beginner"
+type = "syntax"
+concepts = ["math.gcd", "functools.reduce"]
+
+description = """
+Implement bundle_size(counts).
+
+counts is a list of non-negative ints: how many units of each product a
+warehouse holds. Return the largest bundle size that divides every count
+evenly, which is the greatest common divisor of all the counts.
+Return 0 for an empty list (and for a list of all zeros).
+
+Use math.gcd, combined across the list with functools.reduce.
+"""
+
+objective = "Fold math.gcd across a list with functools.reduce."
+
+interview = """
+GCD appears in fraction simplification, Greatest Common Divisor of Strings,
+X of a Kind in a Deck of Cards, and water-jug style problems. Writing
+Euclid's algorithm by hand wastes time; math.gcd plus reduce handles a whole
+list in one line.
+"""
+
+hints = [
+  "math.gcd(a, b) gives the GCD of two numbers. You need it across the whole list.",
+  "functools.reduce(f, items, start) applies f cumulatively: f(f(start, x0), x1) ...",
+  "gcd(0, x) == x, so 0 is a safe starting value: reduce(math.gcd, counts, 0).",
+]
+
+[[examples]]
+input = "bundle_size([12, 18, 30])"
+output = "6"
+explanation = "6 divides 12, 18, and 30 evenly, and no larger number divides all three."
+
+[[examples]]
+input = "bundle_size([7, 9])"
+output = "1"
+explanation = "7 and 9 share no factor other than 1, so bundles must hold a single unit."

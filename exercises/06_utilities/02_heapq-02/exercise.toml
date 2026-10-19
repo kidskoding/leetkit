@@ -1,0 +1,42 @@
+id = "heapq-02"
+title = "Process Tasks by Priority"
+module = "utilities"
+difficulty = "intermediate"
+type = "application"
+concepts = ["heapq", "priority queue", "tuples"]
+
+description = """
+Implement process_tasks(tasks).
+
+tasks is a list of (name, priority) tuples in arrival order. A lower priority
+number is more urgent. Return a list of task names in the order they should be
+processed: most urgent first, and tasks with equal priority in arrival order.
+Return [] for an empty list.
+
+Use heapq as a priority queue of (priority, arrival_index, name) tuples.
+"""
+
+objective = "Build a stable priority queue with heapq by pushing (priority, index, item) tuples."
+
+interview = """
+Task schedulers, Dijkstra's algorithm, and merging k sorted lists all push
+tuples onto a heap. Tuples compare element by element, so adding an arrival
+index as the second field breaks ties deterministically and stops Python from
+ever comparing the payloads themselves.
+"""
+
+hints = [
+  "Heaps order tuples by their first field, then their second, and so on.",
+  "Push (priority, i, name) with heapq.heappush, where i comes from enumerate(tasks).",
+  "Pop with heapq.heappop until the heap is empty, appending the name from each tuple.",
+]
+
+[[examples]]
+input = "process_tasks([('email', 2), ('deploy', 1), ('lunch', 3)])"
+output = "['deploy', 'email', 'lunch']"
+explanation = "Lower numbers are more urgent, so deploy (1) runs first, then email (2), then lunch (3)."
+
+[[examples]]
+input = "process_tasks([('b', 1), ('a', 1)])"
+output = "['b', 'a']"
+explanation = "Both tasks have priority 1, so they keep arrival order: 'b' arrived first, even though 'a' sorts earlier alphabetically."

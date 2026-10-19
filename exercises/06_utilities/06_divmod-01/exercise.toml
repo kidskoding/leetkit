@@ -1,0 +1,41 @@
+id = "divmod-01"
+title = "Format a Duration"
+module = "utilities"
+difficulty = "beginner"
+type = "syntax"
+concepts = ["divmod", "f-strings"]
+
+description = """
+Implement format_duration(seconds).
+
+seconds is a non-negative int. Return a string "H:MM:SS": hours with no
+padding (and no upper limit), then minutes and seconds each padded to two
+digits. For example, 3725 seconds is "1:02:05" and 0 is "0:00:00".
+
+Use divmod() to split off the seconds and then the minutes.
+"""
+
+objective = "Use divmod() to get a quotient and remainder in one call."
+
+interview = """
+Time conversion, base conversion, digit extraction, and 2D grid indexing
+(row, col = divmod(i, cols)) all need a quotient and a remainder together.
+divmod returns both at once, which is shorter and less error-prone than
+separate // and % expressions.
+"""
+
+hints = [
+  "You need both how many whole minutes there are and how many seconds are left over.",
+  "minutes, secs = divmod(seconds, 60) gives both at once. Do the same again for hours.",
+  "Format with an f-string: f\"{hours}:{minutes:02d}:{secs:02d}\".",
+]
+
+[[examples]]
+input = "format_duration(3725)"
+output = "'1:02:05'"
+explanation = "3725 seconds is 62 minutes and 5 seconds, and 62 minutes is 1 hour and 2 minutes."
+
+[[examples]]
+input = "format_duration(59)"
+output = "'0:00:59'"
+explanation = "Under a minute, the hours are 0 and the minutes are padded to 00."

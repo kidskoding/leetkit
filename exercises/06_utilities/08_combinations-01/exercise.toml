@@ -1,0 +1,44 @@
+id = "combinations-01"
+title = "Pairs That Hit a Budget"
+module = "utilities"
+difficulty = "intermediate"
+type = "syntax"
+concepts = ["itertools.combinations", "pairs"]
+
+description = """
+Implement pairs_with_sum(prices, target).
+
+Return a list of (a, b) tuples for every pair of positions i < j where
+prices[i] + prices[j] == target, with a = prices[i] and b = prices[j].
+Order the pairs the way itertools.combinations(prices, 2) produces them
+(by i, then by j). Equal values at different positions are different pairs,
+so duplicates can appear. Return [] if no pair matches or there are fewer
+than two prices.
+
+Use itertools.combinations instead of nested index loops.
+"""
+
+objective = "Use itertools.combinations to generate every unordered pair without nested index loops."
+
+interview = """
+Brute-force baselines ("check every pair", "every group of k") are often the
+first thing you say in an interview before optimising. combinations(items, r)
+writes that baseline in one line, and the same tool generates subsets for
+backtracking problems like Combinations and Combination Sum checks.
+"""
+
+hints = [
+  "Every pair with i < j, taken exactly once, is what combinations(prices, 2) yields.",
+  "Each item from combinations(prices, 2) is a tuple (a, b) of values in input order.",
+  "Use a list comprehension: [(a, b) for a, b in combinations(prices, 2) if a + b == target].",
+]
+
+[[examples]]
+input = "pairs_with_sum([3, 5, 2, 6, 4], 8)"
+output = "[(3, 5), (2, 6)]"
+explanation = "Checking pairs in combinations order, (3, 5) and (2, 6) sum to 8; 4 has no partner because it cannot pair with itself."
+
+[[examples]]
+input = "pairs_with_sum([4, 4, 4], 8)"
+output = "[(4, 4), (4, 4), (4, 4)]"
+explanation = "Pairs are chosen by position, so positions (0, 1), (0, 2), and (1, 2) each give a separate (4, 4)."

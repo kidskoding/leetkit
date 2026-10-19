@@ -1,0 +1,42 @@
+id = "heapify-01"
+title = "Cheapest K Prices"
+module = "utilities"
+difficulty = "beginner"
+type = "syntax"
+concepts = ["heapq", "heapify", "copying"]
+
+description = """
+Implement k_smallest(prices, k).
+
+Return a list of the k smallest values in prices, in ascending order.
+Duplicates count separately. If k is larger than len(prices), return all
+values sorted ascending. If k is 0, return [].
+Do not modify the prices list that was passed in.
+
+Copy the list, call heapq.heapify() on the copy, then pop k times.
+"""
+
+objective = "Use heapq.heapify to build a heap in place on a copy, then pop the smallest values."
+
+interview = """
+heapify turns an existing list into a heap in O(n), faster than n pushes.
+It works in place, so calling it on the caller's list silently reorders their
+data. Interviewers notice when you copy first, and it avoids hard-to-trace
+bugs when the same list is reused later.
+"""
+
+hints = [
+  "heapq.heapify(lst) rearranges lst in place and returns None.",
+  "Make a copy first with list(prices) or prices[:], then heapify the copy.",
+  "Pop with heapq.heappop(heap) min(k, len(heap)) times, collecting the results.",
+]
+
+[[examples]]
+input = "k_smallest([40, 10, 30, 20], 2)"
+output = "[10, 20]"
+explanation = "The two smallest prices are 10 and 20, returned in ascending order."
+
+[[examples]]
+input = "k_smallest([5, 1], 5)"
+output = "[1, 5]"
+explanation = "k is larger than the list, so every price is returned, sorted ascending."

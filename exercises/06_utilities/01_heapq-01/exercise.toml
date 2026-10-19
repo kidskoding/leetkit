@@ -1,0 +1,42 @@
+id = "heapq-01"
+title = "Kth Largest Score"
+module = "utilities"
+difficulty = "intermediate"
+type = "application"
+concepts = ["heapq", "heaps", "top-k"]
+
+description = """
+Implement find_kth_largest(nums, k).
+
+Return the kth largest value in nums, counting duplicates separately
+(in [5, 5, 3], the 1st and 2nd largest are both 5).
+You may assume 1 <= k <= len(nums).
+
+Keep a min-heap of at most k elements with heapq.heappush and heapq.heappop
+instead of sorting the whole list.
+"""
+
+objective = "Use a size-k min-heap with heapq to track the k largest values seen so far."
+
+interview = """
+Kth Largest Element in an Array and "top k" variants are interview staples.
+A size-k min-heap runs in O(n log k) and works on streams, which is the
+follow-up interviewers usually ask after you offer sorted(nums)[-k].
+Python's heapq is a min-heap, so the root is the smallest of the k largest.
+"""
+
+hints = [
+  "You only need to remember the k largest values seen so far; the smallest of them is the answer.",
+  "heapq is a min-heap: heap[0] is always the smallest element. Push each number with heapq.heappush.",
+  "After each push, if len(heap) > k, heapq.heappop(heap) removes the smallest. Return heap[0] at the end.",
+]
+
+[[examples]]
+input = "find_kth_largest([3, 2, 1, 5, 6, 4], 2)"
+output = "5"
+explanation = "Sorted descending the values are 6, 5, 4, 3, 2, 1, so the 2nd largest is 5."
+
+[[examples]]
+input = "find_kth_largest([3, 2, 3, 1, 2, 4, 5, 5, 6], 4)"
+output = "4"
+explanation = "Duplicates count separately: descending order is 6, 5, 5, 4, ..., so the 4th largest is 4, not 3."

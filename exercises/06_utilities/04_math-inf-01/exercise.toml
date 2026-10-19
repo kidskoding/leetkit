@@ -1,0 +1,41 @@
+id = "math-inf-01"
+title = "Best Time to Buy Stock"
+module = "utilities"
+difficulty = "beginner"
+type = "application"
+concepts = ["math.inf", "sentinel", "running minimum"]
+
+description = """
+Implement max_profit(prices).
+
+prices[i] is a stock's price on day i. Choose one day to buy and a later day
+to sell. Return the maximum profit as an int. If no profitable trade exists,
+or there are fewer than two prices, return 0.
+
+Track the lowest price seen so far, starting from math.inf.
+"""
+
+objective = "Use math.inf as a sentinel starting value for a running minimum."
+
+interview = """
+Best Time to Buy and Sell Stock is a classic one-pass problem. Starting the
+running minimum at math.inf (or a maximum at -math.inf) means the first real
+value always replaces it, with no special case for index 0 and no magic number
+like 10**9 that might be too small.
+"""
+
+hints = [
+  "Walk through the prices once, remembering the cheapest price so far.",
+  "Start with min_price = math.inf and best = 0.",
+  "For each price: min_price = min(min_price, price), then best = max(best, price - min_price).",
+]
+
+[[examples]]
+input = "max_profit([7, 1, 5, 3, 6, 4])"
+output = "5"
+explanation = "Buy on day 1 at price 1 and sell on day 4 at price 6 for a profit of 5."
+
+[[examples]]
+input = "max_profit([7, 6, 4, 3, 1])"
+output = "0"
+explanation = "Prices only fall, so every possible trade loses money and the answer is 0."
