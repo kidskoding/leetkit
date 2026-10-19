@@ -1,0 +1,44 @@
+id = "cmp-to-key-01"
+title = "Largest Number"
+module = "sorting"
+difficulty = "advanced"
+type = "application"
+concepts = ["functools.cmp_to_key", "comparator", "sorted", "strings"]
+
+description = """
+Implement largest_number(nums).
+
+nums is a non-empty list of non-negative integers. Arrange them so that
+concatenating their decimal digits forms the largest possible number, and
+return that number as a string. If the result would start with "0" (every
+number is zero), return "0" rather than "00" or "000".
+
+Sort the numbers as strings with functools.cmp_to_key and a comparator that
+compares the two possible concatenations a + b and b + a.
+"""
+
+objective = "Turn a pairwise comparison rule into a sort key with functools.cmp_to_key."
+
+interview = """
+Largest Number is a well-known medium where no simple per-element key works:
+whether "3" goes before "30" depends on the other string. Python 3 removed the
+cmp= argument from sorted, so cmp_to_key is the standard way to plug in a
+two-argument comparator. Forgetting the all-zeros case is the classic bug
+interviewers watch for.
+"""
+
+hints = [
+  "Decide the order of two strings a and b by asking which concatenation is bigger: a + b or b + a.",
+  "Write compare(a, b) returning -1 when a + b > b + a (a goes first), 1 when it is smaller, 0 when equal, and sort with key=cmp_to_key(compare).",
+  "Sort map(str, nums), join the pieces, and return \"0\" if the first sorted piece is \"0\".",
+]
+
+[[examples]]
+input = "largest_number([3, 30, 34, 5, 9])"
+output = "'9534330'"
+explanation = "\"3\" goes before \"30\" because \"330\" > \"303\". Ordering every pair this way gives 9, 5, 34, 3, 30, which joins to \"9534330\"."
+
+[[examples]]
+input = "largest_number([0, 0])"
+output = "'0'"
+explanation = "Joining the sorted strings gives \"00\", but a number has no leading zeros, so the answer is \"0\"."

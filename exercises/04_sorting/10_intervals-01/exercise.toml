@@ -1,0 +1,45 @@
+id = "intervals-01"
+title = "Meeting Rooms"
+module = "sorting"
+difficulty = "intermediate"
+type = "application"
+concepts = ["sorted", "zip", "all", "intervals"]
+
+description = """
+Implement can_attend_all(intervals).
+
+intervals is a list of [start, end] meeting times with start < end, in any
+order. Return True if one person can attend every meeting, meaning no two
+meetings overlap, and False otherwise. A meeting that starts exactly when
+another ends does not overlap it: [1, 3] and [3, 5] are fine. Return True for
+an empty list or a single meeting. Do not modify the input.
+
+Sort the meetings by start, then compare each meeting with the next one using
+zip(meetings, meetings[1:]).
+"""
+
+objective = "Sort intervals by start and check neighbouring pairs with zip(xs, xs[1:])."
+
+interview = """
+Meeting Rooms is a common warm-up before Meeting Rooms II and Merge Intervals.
+Once meetings are sorted by start, an overlap can only happen between
+neighbours, so the whole check is one sort plus one pass. Writing that pass as
+all(...) over zip(meetings, meetings[1:]) avoids index arithmetic and reads
+exactly like the rule you are checking.
+"""
+
+hints = [
+  "After sorting by start time, which meetings could possibly overlap each other?",
+  "Only adjacent meetings can clash. zip(meetings, meetings[1:]) yields each (previous, current) pair.",
+  "Return all(prev[1] <= cur[0] for prev, cur in zip(meetings, meetings[1:])) where meetings is the sorted list.",
+]
+
+[[examples]]
+input = "can_attend_all([[0, 30], [5, 10], [15, 20]])"
+output = "False"
+explanation = "Sorted by start, [0, 30] is followed by [5, 10], which begins before 30, so the two meetings overlap."
+
+[[examples]]
+input = "can_attend_all([[7, 10], [2, 4], [4, 7]])"
+output = "True"
+explanation = "Sorted, the meetings are [2, 4], [4, 7], [7, 10]. Each starts exactly when the previous one ends, which is allowed."

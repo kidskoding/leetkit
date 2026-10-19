@@ -1,0 +1,43 @@
+id = "lis-01"
+title = "Longest Increasing Subsequence"
+module = "sorting"
+difficulty = "advanced"
+type = "application"
+concepts = ["bisect", "bisect_left", "patience sorting", "dynamic programming"]
+
+description = """
+Implement length_of_lis(nums).
+
+Return the length of the longest strictly increasing subsequence of nums. A
+subsequence keeps the original order but may skip elements. Equal values do
+not count as increasing, so [7, 7, 7] has answer 1. Return 0 for an empty list.
+
+Aim for O(n log n): keep a list tails where tails[k] is the smallest possible
+last value of an increasing subsequence of length k + 1, and update it with
+bisect.bisect_left.
+"""
+
+objective = "Use bisect_left on a sorted tails list to solve Longest Increasing Subsequence in O(n log n)."
+
+interview = """
+Longest Increasing Subsequence is a top dynamic-programming question, and the
+follow-up is almost always "can you beat O(n^2)?". The tails-list method
+answers it in a few lines when bisect_left does the binary search. It also
+powers Russian Doll Envelopes and other "longest chain" problems.
+"""
+
+hints = [
+  "For each length, only the smallest tail value matters: a smaller tail is easier to extend later.",
+  "tails stays sorted, so bisect_left(tails, x) finds the first tail that is >= x.",
+  "If that index equals len(tails), append x; otherwise overwrite tails[i] = x. The answer is len(tails).",
+]
+
+[[examples]]
+input = "length_of_lis([10, 9, 2, 5, 3, 7, 101, 18])"
+output = "4"
+explanation = "One longest increasing subsequence is [2, 3, 7, 18]; no increasing subsequence of length 5 exists."
+
+[[examples]]
+input = "length_of_lis([7, 7, 7, 7])"
+output = "1"
+explanation = "The sequence must be strictly increasing, so equal values cannot follow each other and the best is a single 7."

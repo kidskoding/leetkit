@@ -1,0 +1,44 @@
+id = "frequency-sort-01"
+title = "Rank Words by Frequency"
+module = "sorting"
+difficulty = "intermediate"
+type = "syntax"
+concepts = ["Counter", "sorted", "tuple keys"]
+
+description = """
+Implement rank_words(words).
+
+Return the distinct words of the list, ordered by how often they appear (most
+frequent first). Words with the same count are ordered alphabetically. Words
+are case-sensitive, so "Apple" and "apple" are different words. Return [] for
+an empty list.
+
+Count with collections.Counter, then sort with a single tuple key such as
+(-count, word).
+"""
+
+objective = "Combine Counter with a (-count, word) tuple key to sort by frequency with an alphabetical tie-break."
+
+interview = """
+Top K Frequent Words, Sort Characters by Frequency and many log-analysis
+questions are "count, then sort by count descending with a tie-break". Counter
+does the counting in one line, and negating the count inside a tuple key gets
+descending-by-count and ascending-by-word in one sort, which reverse=True
+cannot do.
+"""
+
+hints = [
+  "First count every word, then decide how to order the distinct words.",
+  "counts = Counter(words) gives each word's count; sorting counts iterates over the distinct words.",
+  "sorted(counts, key=lambda w: (-counts[w], w)) puts high counts first and breaks ties alphabetically.",
+]
+
+[[examples]]
+input = "rank_words(['pear', 'fig', 'pear', 'apple', 'fig', 'pear'])"
+output = "['pear', 'fig', 'apple']"
+explanation = "pear appears 3 times, fig 2 times and apple once, so they are listed in that order."
+
+[[examples]]
+input = "rank_words(['kiwi', 'banana', 'kiwi', 'banana', 'date'])"
+output = "['banana', 'kiwi', 'date']"
+explanation = "banana and kiwi tie with 2 each, so they are ordered alphabetically; date has only 1 and comes last."

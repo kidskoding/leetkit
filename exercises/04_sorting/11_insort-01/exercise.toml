@@ -1,0 +1,44 @@
+id = "insort-01"
+title = "Running Median of a Stream"
+module = "sorting"
+difficulty = "intermediate"
+type = "syntax"
+concepts = ["bisect", "insort", "median"]
+
+description = """
+Implement running_medians(stream).
+
+Values in stream arrive one at a time. After each value arrives, record the
+median of all values seen so far, and return the list of medians as floats.
+With an odd count the median is the middle value; with an even count it is
+the average of the two middle values. Return [] for an empty stream. Do not
+modify the input.
+
+Keep a sorted list and add each value with bisect.insort instead of re-sorting.
+"""
+
+objective = "Keep a list sorted as values arrive with bisect.insort."
+
+interview = """
+Find Median from Data Stream is usually solved with two heaps, but a sorted
+list maintained with insort is a quick, correct first answer and a good way to
+discuss trade-offs: O(log n) to find the spot, O(n) to shift elements. The same
+insort pattern appears in sliding-window medians and in keeping a leaderboard
+sorted as scores come in.
+"""
+
+hints = [
+  "Keep a list that is always sorted, and look at its middle after every new value.",
+  "bisect.insort(window, value) inserts value at its sorted position in one call.",
+  "With n = len(window) and mid = n // 2, the median is window[mid] when n is odd and (window[mid - 1] + window[mid]) / 2 when n is even.",
+]
+
+[[examples]]
+input = "running_medians([5, 15, 1, 3])"
+output = "[5.0, 10.0, 5.0, 4.0]"
+explanation = "The sorted windows are [5], [5, 15], [1, 5, 15] and [1, 3, 5, 15], whose medians are 5, (5 + 15) / 2, 5 and (3 + 5) / 2."
+
+[[examples]]
+input = "running_medians([2, 2, 2])"
+output = "[2.0, 2.0, 2.0]"
+explanation = "Duplicates are kept: every window holds only 2s, so the median is always 2.0."
