@@ -1,0 +1,96 @@
+# LeetKit
+
+Terminal app (Go + Charm v2) that trains Python syntax and standard-library fluency for coding interviews.
+Learners edit Python exercises in their own editor; LeetKit runs pytest and tracks progress.
+
+- **Spec (source of truth):** `SPEC.md`
+- **Plan, milestones, deviations:** `docs/PLAN.md` — update it when a decision changes.
+
+## Workflow rules
+
+- Build one milestone at a time (see `docs/PLAN.md`). At each checkpoint, stop and hand the user a
+  Conventional Commits message. **Never run `git commit` or `git push`** — the user commits.
+- Smallest working vertical slice first. No feature is done until it works end to end.
+- Write tests with the code. Business logic must be testable without a terminal.
+- Record any departure from `SPEC.md` in the deviations table in `docs/PLAN.md`.
+
+## Commands
+
+```bash
+go run .                       # launch the TUI
+go run . list|check <id>|progress|reset <id> --yes|doctor
+go fmt ./... && go vet ./... && go test ./...   # required before every checkpoint
+go test -race ./...
+```
+
+Exercise tests need Python 3 with pytest. Recommended setup (also printed by `leetkit doctor`):
+
+```bash
+python3 -m venv ~/.local/share/leetkit/venv
+~/.local/share/leetkit/venv/bin/pip install pytest
+```
+
+## Layout
+
+```text
+main.go              -> cli.Run(os.Args[1:])
+exercises/           bundled curriculum, embedded via go:embed (exercises.FS); modules.toml lists modules
+internal/config      config.toml + platform data/config dirs
+internal/exercise    types, loader from fs.FS, validation
+internal/workspace   learner working copies in <data>/workspace/<id>/
+internal/runner      Python discovery, pytest subprocess, JUnit XML -> Result
+internal/editor      $VISUAL/$EDITOR resolution -> *exec.Cmd
+internal/progress    JSON progress store
+internal/cli         subcommands (stdlib flag)
+internal/tui         Bubble Tea model, views, theme, keys
+```
+
+Dependency direction: `tui`/`cli` -> `runner`, `workspace`, `progress`, `exercise`, `editor`, `config`.
+Lower packages never import `tui` or `cli`.
+
+## Charm v2 rules (verified against v2 docs — do not use v1 patterns)
+
+- Imports: `tea "charm.land/bubbletea/v2"`, `"charm.land/lipgloss/v2"`, `"charm.land/bubbles/v2/<pkg>"`.
+  Never `github.com/charmbracelet/bubbletea` etc.
+- `View() tea.View`, built with `tea.NewView(s)`. Set `v.AltScreen = true` on the view, not a program option.
+- Keys: match `tea.KeyPressMsg` and `msg.String()` (`"ctrl+c"`, `"enter"`, `"space"`). `tea.KeyMsg` is an
+  interface that also matches key releases.
+- Bubbles components use setters: `vp.SetWidth(w)`, `vp.SetHeight(h)`, `help.SetWidth`, `textinput.SetWidth`.
+  `viewport.New()` takes options, not `(w, h)`. `list.New(items, delegate, w, h)`.
+- Styles that need light/dark use `lipgloss.LightDark(isDark)`; `AdaptiveColor` no longer exists. Tokyo Night
+  is a fixed dark theme; Bubble Tea downsamples colors for limited terminals.
+- Editor: `tea.ExecProcess(cmd, func(err error) tea.Msg { ... })`. Slow work (pytest) runs in a `tea.Cmd`
+  that returns a typed message. Never block `Update`.
+- Key handling must respect focus: when the search input is focused, letters go to the input, not shortcuts.
+
+## Go conventions
+
+- Standard library first. Current external deps: Charm v2 trio, `github.com/BurntSushi/toml`. Ask before
+  adding others.
+- Wrap errors with context (`fmt.Errorf("load %s: %w", path, err)`); never swallow them. CLI errors must say
+  how to fix the problem.
+- Subprocesses: `exec.CommandContext` with explicit argv. Never `sh -c` or string concatenation.
+- File writes that matter (progress, config) are atomic: write temp file in the same dir, then `os.Rename`.
+- No speculative interfaces. Introduce an interface only when a second implementation or a test needs it.
+
+## Exercise authoring
+
+Each exercise lives in `exercises/<module>/<id>/`:
+
+| File | Purpose |
+|---|---|
+| `exercise.toml` | `id`, `title`, `module`, `difficulty`, `type` (`syntax`/`application`), `order`, `concepts`, `description`, `objective`, `interview`, `hints`, `[[examples]]` |
+| `starter.py` | incomplete code with `TODO`; must fail its tests |
+| `test_exercise.py` | pytest tests importing from `starter` |
+| `solution.py` | reference solution; must pass the tests |
+| `explanation.md` | what the feature does and when to use it in interviews |
+
+- The packaged `starter.py` is a template. Learners edit a copy in the workspace; never write to `exercises/`.
+- Tests check correctness first. Feature-usage checks (for example, "uses `enumerate`") use `ast`, stay
+  narrow, and explain the requirement in the assertion message. No source-string grepping.
+- `go test ./...` runs every reference solution (must pass) and every starter (must fail). Keep both true.
+
+## Safety
+
+LeetKit runs Python with the user's permissions. It is not a sandbox; do not claim it is. Remote exercise
+downloads are out of scope.
