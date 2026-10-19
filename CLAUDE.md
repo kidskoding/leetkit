@@ -87,6 +87,8 @@ Lower packages never import `tui` or `cli`.
   module tree, which keeps Bubbles' built-in fuzzy search.
 - Keys use ranger/lf-style navigation: j/k move, l/→/enter open an exercise, h/←/esc go to the list. Hints are
   on `t` (SPEC: `h`) and reset is `r` in the list.
+- The curriculum targets all seven modules (~55 exercises) instead of SPEC's 15-exercise MVP, at the
+  maintainer's request. `go test ./exercises` verifies every solution passes and every starter fails.
 - Added beyond SPEC: tests rerun automatically when the working copy is saved (mtime polling, like Rustlings
   watch mode).
 - Root `main.go` instead of `cmd/leetkit`; single `internal/tui` instead of `internal/app` + `internal/ui`.
