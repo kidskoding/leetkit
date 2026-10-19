@@ -86,7 +86,8 @@ Lower packages never import `tui` or `cli`.
   secondary screen. The list is a flat `bubbles/list` (module shown in the preview) rather than a collapsible
   module tree, which keeps Bubbles' built-in fuzzy search.
 - Keys use ranger/lf-style navigation: j/k move, l/→/enter open an exercise, h/←/esc go to the list. Hints are
-  on `t` (SPEC: `h`) and reset is `r` in the list.
+  on `t` (SPEC: `h`) and reset is `r` in the list. `n`/`N` cycle forward/backward through all exercises
+  (wrapping), solved or not; Rustlings only allows `n` after solving.
 - The curriculum targets all seven modules (~55 exercises) instead of SPEC's 15-exercise MVP, at the
   maintainer's request. `go test ./exercises` verifies every solution passes and every starter fails.
 - Added beyond SPEC: tests rerun automatically when the working copy is saved (mtime polling, like Rustlings

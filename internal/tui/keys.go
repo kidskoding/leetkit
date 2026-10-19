@@ -5,10 +5,11 @@ import "charm.land/bubbles/v2/key"
 // Navigation follows ranger/lf conventions: j/k move, l enters an exercise
 // from the list, and h leaves it for the list. Arrow keys mirror them.
 type watchKeys struct {
-	// solved shows n and x in the help once the exercise passes.
+	// solved shows x in the help once the exercise passes.
 	solved bool
 
 	Next     key.Binding
+	Prev     key.Binding
 	Explain  key.Binding
 	Edit     key.Binding
 	Hint     key.Binding
@@ -22,7 +23,8 @@ type watchKeys struct {
 
 func newWatchKeys() watchKeys {
 	return watchKeys{
-		Next:     key.NewBinding(key.WithKeys("n"), key.WithHelp("n", "next")),
+		Next:     key.NewBinding(key.WithKeys("n"), key.WithHelp("n/N", "next/prev")),
+		Prev:     key.NewBinding(key.WithKeys("N")),
 		Explain:  key.NewBinding(key.WithKeys("x"), key.WithHelp("x", "explanation")),
 		Edit:     key.NewBinding(key.WithKeys("e"), key.WithHelp("e", "edit")),
 		Hint:     key.NewBinding(key.WithKeys("t"), key.WithHelp("t", "hint")),
@@ -37,18 +39,18 @@ func newWatchKeys() watchKeys {
 
 func (k watchKeys) solvedKeys() []key.Binding {
 	if k.solved {
-		return []key.Binding{k.Next, k.Explain}
+		return []key.Binding{k.Explain}
 	}
 	return nil
 }
 
 func (k watchKeys) ShortHelp() []key.Binding {
-	return append(k.solvedKeys(), k.Edit, k.Hint, k.Run, k.List, k.Help, k.Quit)
+	return append([]key.Binding{k.Next}, append(k.solvedKeys(), k.Edit, k.Hint, k.Run, k.List, k.Help, k.Quit)...)
 }
 
 func (k watchKeys) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
-		append(k.solvedKeys(), k.Edit, k.Hint, k.Run),
+		append([]key.Binding{k.Next}, append(k.solvedKeys(), k.Edit, k.Hint, k.Run)...),
 		{k.List, k.Scroll, k.Progress},
 		{k.Help, k.Quit},
 	}

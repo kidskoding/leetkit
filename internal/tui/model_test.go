@@ -55,7 +55,7 @@ func TestPassingRunCompletesExercise(t *testing.T) {
 	f := newFixture(t, nil).withPython(t)
 	f.writeWork(t, "enumerate-01", solutionCode)
 	m := start(t, f.opts)
-	assertContains(t, m, "✓ All 1 tests passed", "✓ Exercise complete!", "Objective for enumerate-01.", "n next")
+	assertContains(t, m, "✓ All 1 tests passed", "✓ Exercise complete!", "Objective for enumerate-01.", "x explanation")
 	if !f.store.Completed("enumerate-01") {
 		t.Error("completion not saved")
 	}
@@ -68,32 +68,25 @@ func TestPassingRunCompletesExercise(t *testing.T) {
 	}
 }
 
-func TestNextRequiresCompletion(t *testing.T) {
-	m := start(t, newFixture(t, runner.ErrNoPython).opts)
-	m, _ = update(t, m, press("n"))
-	assertContains(t, m, "Solve this exercise first", "enumerate-01 · Find an Index")
-}
-
-func TestNextSkipsCompletedAndReportsAllDone(t *testing.T) {
+func TestNextAndPreviousCycleThroughExercises(t *testing.T) {
 	f := newFixture(t, runner.ErrNoPython)
-	for _, id := range []string{"enumerate-01", "zip-01"} {
-		if _, err := f.store.Record(id, true); err != nil {
-			t.Fatal(err)
-		}
-	}
-	if err := f.store.SetCurrent("enumerate-01"); err != nil {
-		t.Fatal(err)
-	}
 	m := start(t, f.opts)
+	assertContains(t, m, "01/03  enumerate-01 · Find an Index", "n/N next/prev")
+
 	m, cmd := update(t, m, press("n"))
 	m = settle(t, m, cmd, idle)
-	assertContains(t, m, "sets-01 · Spot Duplicates")
-
-	if _, err := f.store.Record("sets-01", true); err != nil {
-		t.Fatal(err)
+	assertContains(t, m, "02/03  zip-01 · Pair Up")
+	if f.store.Current() != "zip-01" {
+		t.Errorf("current = %q, want zip-01", f.store.Current())
 	}
-	m, _ = update(t, m, press("n"))
-	assertContains(t, m, "Every exercise is complete")
+
+	m, cmd = update(t, m, press("n"), press("n"))
+	m = settle(t, m, cmd, idle)
+	assertContains(t, m, "01/03  enumerate-01", "Describe enumerate-01.")
+
+	m, cmd = update(t, m, press("N"))
+	m = settle(t, m, cmd, idle)
+	assertContains(t, m, "03/03  sets-01 · Spot Duplicates")
 }
 
 func TestHints(t *testing.T) {

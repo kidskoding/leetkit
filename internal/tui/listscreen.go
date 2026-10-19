@@ -1,6 +1,7 @@
 package tui
 
 import (
+	"fmt"
 	"strings"
 
 	"charm.land/bubbles/v2/key"
@@ -19,7 +20,7 @@ func newList(th theme.Theme, exercises []*exercise.Exercise) list.Model {
 	for _, ex := range exercises {
 		idWidth = max(idWidth, lipgloss.Width(ex.ID))
 	}
-	l := list.New(nil, delegate{th: th, idWidth: idWidth}, 0, 0)
+	l := list.New(nil, delegate{th: th, idWidth: idWidth, numWidth: max(len(fmt.Sprint(len(exercises))), 2)}, 0, 0)
 	l.SetShowTitle(false)
 	l.SetShowHelp(false)
 	l.SetShowPagination(false)

@@ -32,7 +32,9 @@ func (m Model) updateWatch(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case key.Matches(k, keys.Run):
 		return m, m.startRun()
 	case key.Matches(k, keys.Next):
-		return m, m.next()
+		return m, m.step(1)
+	case key.Matches(k, keys.Prev):
+		return m, m.step(-1)
 	case key.Matches(k, keys.Hint):
 		m.revealHint()
 	case key.Matches(k, keys.Explain):
@@ -57,17 +59,10 @@ func (m Model) updateWatch(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-func (m *Model) next() tea.Cmd {
-	if !m.opts.Store.Completed(m.currentExercise().ID) {
-		m.notice = "Solve this exercise first, or press h to pick another."
-		return nil
-	}
-	i := m.nextPending(m.current)
-	if i < 0 {
-		m.notice = "Every exercise is complete. Nice work!"
-		return nil
-	}
-	m.setCurrent(i)
+// step moves through the curriculum in order, wrapping at either end.
+func (m *Model) step(delta int) tea.Cmd {
+	n := len(m.exercises)
+	m.setCurrent((m.current + delta + n) % n)
 	return m.startRun()
 }
 
@@ -158,7 +153,8 @@ func (m Model) watchContent(width int) string {
 		return m.rule("Explanation · "+ex.ID, width) + "\n\n" + renderMarkdown(th, string(doc), width)
 	}
 	var b strings.Builder
-	b.WriteString(th.ID.Bold(true).Render(ex.ID) + th.Faint.Render(" · ") + th.Text.Bold(true).Render(ex.Title) + "\n")
+	b.WriteString(th.Faint.Render(m.position(m.current)+"  ") + th.ID.Bold(true).Render(ex.ID) +
+		th.Faint.Render(" · ") + th.Text.Bold(true).Render(ex.Title) + "\n")
 	b.WriteString(th.Faint.Render(m.moduleTitle(ex)+" · "+ex.Difficulty+" · "+ex.TypeLabel()) + "\n\n")
 	b.WriteString(th.Text.Render(strings.TrimSpace(ex.Description)) + "\n")
 	for i, e := range ex.Examples {
@@ -202,6 +198,13 @@ func (m Model) example(n int, e exercise.Example, width int) string {
 		label("  Output:") + th.ID.Render(e.Output),
 		label("  Explanation:") + strings.Join(whyLines, "\n"),
 	}, "\n")
+}
+
+// position renders an exercise's place in the curriculum, such as "07/55".
+func (m Model) position(i int) string {
+	width := len(fmt.Sprint(len(m.exercises)))
+	width = max(width, 2)
+	return fmt.Sprintf("%0*d/%0*d", width, i+1, width, len(m.exercises))
 }
 
 func (m Model) runErrorText() string {

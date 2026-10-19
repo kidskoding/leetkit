@@ -34,6 +34,7 @@ func statusOf(store *progress.Store, id string) status {
 }
 
 type item struct {
+	num    int
 	ex     *exercise.Exercise
 	module string
 	status status
@@ -44,8 +45,9 @@ func (i item) FilterValue() string {
 }
 
 type delegate struct {
-	th      theme.Theme
-	idWidth int
+	th       theme.Theme
+	idWidth  int
+	numWidth int
 }
 
 func (d delegate) Height() int                         { return 1 }
@@ -72,6 +74,7 @@ func (d delegate) Render(w io.Writer, m list.Model, index int, li list.Item) {
 		cursor = d.th.Heading.Render("▌ ")
 		idStyle, titleStyle = idStyle.Bold(true), d.th.Text
 	}
-	line := cursor + mark + " " + idStyle.Render(id) + "  " + titleStyle.Render(it.ex.Title)
+	num := d.th.Faint.Render(fmt.Sprintf("%0*d", d.numWidth, it.num))
+	line := cursor + num + " " + mark + " " + idStyle.Render(id) + "  " + titleStyle.Render(it.ex.Title)
 	fmt.Fprint(w, lipgloss.NewStyle().MaxWidth(m.Width()).Render(line))
 }

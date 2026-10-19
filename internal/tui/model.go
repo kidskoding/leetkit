@@ -163,7 +163,7 @@ func (m Model) currentExercise() *exercise.Exercise {
 func (m *Model) refreshItems() {
 	items := make([]list.Item, len(m.exercises))
 	for i, ex := range m.exercises {
-		items[i] = item{ex: ex, module: m.moduleTitle(ex), status: statusOf(m.opts.Store, ex.ID)}
+		items[i] = item{num: i + 1, ex: ex, module: m.moduleTitle(ex), status: statusOf(m.opts.Store, ex.ID)}
 	}
 	m.list.SetItems(items)
 }
