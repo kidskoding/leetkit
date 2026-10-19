@@ -38,11 +38,12 @@ var palettes = map[string]Palette{
 		Surface:    lipgloss.BrightBlack,
 		Foreground: lipgloss.NoColor{},
 		Muted:      lipgloss.BrightBlack,
-		Accent:     lipgloss.Magenta,
-		Link:       lipgloss.Blue,
+		Accent:     lipgloss.BrightYellow,
+		Link:       lipgloss.Cyan,
 		Success:    lipgloss.Green,
 		Failure:    lipgloss.Red,
-		Warning:    lipgloss.Yellow,
+		// The 16-color palette has no orange; 208 keeps warnings distinct from the accent.
+		Warning: lipgloss.ANSIColor(208),
 	},
 	"gruvbox": {
 		Background: lipgloss.Color("#282828"),
@@ -71,11 +72,11 @@ var palettes = map[string]Palette{
 		Surface:    lipgloss.Color("#24283b"),
 		Foreground: lipgloss.Color("#c0caf5"),
 		Muted:      lipgloss.Color("#565f89"),
-		Accent:     lipgloss.Color("#bb9af7"),
-		Link:       lipgloss.Color("#7aa2f7"),
+		Accent:     lipgloss.Color("#e0af68"),
+		Link:       lipgloss.Color("#7dcfff"),
 		Success:    lipgloss.Color("#9ece6a"),
 		Failure:    lipgloss.Color("#f7768e"),
-		Warning:    lipgloss.Color("#e0af68"),
+		Warning:    lipgloss.Color("#ff9e64"),
 	},
 }
 

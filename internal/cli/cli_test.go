@@ -124,7 +124,7 @@ func TestForcedColorUsesThemePalette(t *testing.T) {
 		t.Fatalf("exit %d", code)
 	}
 	// The terminal theme emits ANSI palette indices, never fixed RGB values.
-	if !strings.Contains(out.String(), "\x1b[34m") || strings.Contains(out.String(), "38;2;") {
+	if !strings.Contains(out.String(), "\x1b[36m") || strings.Contains(out.String(), "38;2;") {
 		t.Errorf("want ANSI palette colors only, got %q", out.String())
 	}
 }
