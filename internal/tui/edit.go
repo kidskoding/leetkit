@@ -3,6 +3,7 @@ package tui
 import (
 	"errors"
 	"os/exec"
+	"time"
 
 	tea "charm.land/bubbletea/v2"
 
@@ -29,10 +30,15 @@ func (m *Model) edit() tea.Cmd {
 		return nil
 	}
 	m.run.cancel()
+	m.editing = true
 	return tea.ExecProcess(m.opts.Editor.Command(path), func(err error) tea.Msg { return editorDoneMsg{err} })
 }
 
 func (m *Model) finishEdit(msg editorDoneMsg) tea.Cmd {
+	m.editing = false
+	// The run below covers the edit; a zero baseline keeps the file watcher
+	// from starting a second run for the same change.
+	m.lastMod = time.Time{}
 	var exitErr *exec.ExitError
 	switch {
 	case msg.err == nil:

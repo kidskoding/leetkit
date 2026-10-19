@@ -7,6 +7,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"charm.land/bubbles/v2/help"
 	"charm.land/bubbles/v2/list"
@@ -60,6 +61,9 @@ type Model struct {
 	screen  screen
 	current int
 	hints   int
+	editing bool
+	// lastMod is the working copy's last seen modification time.
+	lastMod time.Time
 
 	run runState
 
@@ -166,7 +170,11 @@ func (m Model) moduleTitle(ex *exercise.Exercise) string {
 }
 
 func (m Model) Init() tea.Cmd {
-	return m.startRunCmd()
+	cmds := []tea.Cmd{m.startRunCmd()}
+	if ex := m.currentExercise(); ex != nil {
+		cmds = append(cmds, checkFile(m.opts.Workspace.Path(ex.ID)))
+	}
+	return tea.Batch(cmds...)
 }
 
 // startRunCmd defers the first run to Update, because Init cannot change the model.
@@ -186,6 +194,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, m.finishRun(msg)
 	case editorDoneMsg:
 		return m, m.finishEdit(msg)
+	case fileCheckMsg:
+		return m, m.onFileCheck(msg)
 	case spinner.TickMsg:
 		if !m.run.active {
 			return m, nil

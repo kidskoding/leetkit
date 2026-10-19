@@ -5,6 +5,7 @@ import (
 	"os/exec"
 	"strings"
 	"testing"
+	"time"
 
 	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
@@ -249,4 +250,59 @@ func TestEditorStartFailure(t *testing.T) {
 		t.Error("a failed editor launch should not rerun tests")
 	}
 	assertContains(t, m, "Could not start missing-editor")
+}
+
+func TestSaveTriggersRerun(t *testing.T) {
+	f := newFixture(t, nil).withPython(t)
+	m := start(t, f.opts)
+	path := f.opts.Workspace.Path("enumerate-01")
+	base := time.Now().Add(-time.Minute)
+
+	m, cmd := update(t, m, fileCheckMsg{path: path, mod: base, ok: true})
+	if m.run.active {
+		t.Fatal("first observation started a run")
+	}
+	m, _ = update(t, m, fileCheckMsg{path: path, mod: base, ok: true})
+	if m.run.active {
+		t.Fatal("unchanged file started a run")
+	}
+
+	f.writeWork(t, "enumerate-01", solutionCode)
+	m, cmd = update(t, m, fileCheckMsg{path: path, mod: base.Add(time.Second), ok: true})
+	if !m.run.active {
+		t.Fatal("changed file did not start a run")
+	}
+	m = settle(t, m, cmd, idle)
+	assertContains(t, m, "✓ Exercise complete!")
+}
+
+func TestWatchIgnoresOtherFilesAndEditing(t *testing.T) {
+	f := newFixture(t, runner.ErrNoPython)
+	m := start(t, f.opts)
+	path := f.opts.Workspace.Path("enumerate-01")
+	t0 := time.Now()
+	m, _ = update(t, m, fileCheckMsg{path: path, mod: t0, ok: true})
+	seq := m.run.seq
+
+	m, _ = update(t, m, fileCheckMsg{path: "/elsewhere/starter.py", mod: t0.Add(time.Second), ok: true})
+	m.editing = true
+	m, _ = update(t, m, fileCheckMsg{path: path, mod: t0.Add(2 * time.Second), ok: true})
+	m.editing = false
+	m, _ = update(t, m, fileCheckMsg{path: path, mod: t0.Add(2 * time.Second), ok: true})
+	if m.run.seq != seq {
+		t.Errorf("runs started: %d", m.run.seq-seq)
+	}
+}
+
+func TestCheckFileReportsModTime(t *testing.T) {
+	f := newFixture(t, runner.ErrNoPython)
+	f.writeWork(t, "zip-01", starterCode)
+	path := f.opts.Workspace.Path("zip-01")
+	msg := checkFile(path)().(fileCheckMsg)
+	if !msg.ok || msg.path != path || msg.mod.IsZero() {
+		t.Errorf("got %+v", msg)
+	}
+	if missing := checkFile(path + ".missing")().(fileCheckMsg); missing.ok {
+		t.Error("missing file reported ok")
+	}
 }
