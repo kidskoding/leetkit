@@ -42,8 +42,8 @@ var palettes = map[string]Palette{
 		Muted:   lipgloss.White,
 		Accent:  lipgloss.BrightYellow,
 		Link:    lipgloss.Cyan,
-		Success: lipgloss.Green,
-		Failure: lipgloss.Red,
+		Success: lipgloss.BrightGreen,
+		Failure: lipgloss.BrightRed,
 		// The 16-color palette has no orange; 208 keeps warnings distinct from the accent.
 		Warning: lipgloss.ANSIColor(208),
 	},
