@@ -103,7 +103,7 @@ func New(opts Options) Model {
 	m.help.Styles.ShortSeparator, m.help.Styles.FullSeparator = th.Faint, th.Faint
 
 	m.bar = progress.New(progress.WithoutPercentage(), progress.WithColors(th.Palette.Success))
-	m.bar.EmptyColor = th.Palette.Surface
+	m.bar.EmptyColor = th.Palette.Muted
 
 	m.current = m.startIndex()
 	m.refreshItems()
