@@ -50,6 +50,9 @@ type Case struct {
 	Message string
 	// Details is pytest's traceback for the case.
 	Details string
+	// Collection marks an error loading the test module (often a syntax or
+	// import error in the learner's code) rather than a real test case.
+	Collection bool
 }
 
 type Result struct {
@@ -78,10 +81,11 @@ type junitDetail struct {
 }
 
 type junitCase struct {
-	Name    string       `xml:"name,attr"`
-	Failure *junitDetail `xml:"failure"`
-	Error   *junitDetail `xml:"error"`
-	Skipped *junitDetail `xml:"skipped"`
+	Name      string       `xml:"name,attr"`
+	Classname string       `xml:"classname,attr"`
+	Failure   *junitDetail `xml:"failure"`
+	Error     *junitDetail `xml:"error"`
+	Skipped   *junitDetail `xml:"skipped"`
 }
 
 type junitSuite struct {
@@ -108,6 +112,8 @@ func parseJUnit(data []byte) ([]Case, error) {
 		case jc.Error != nil:
 			c.Outcome, c.Details = OutcomeError, jc.Error.Text
 			c.Message = errorSummary(jc.Error)
+			// pytest reports collection failures as a case named after the module.
+			c.Collection = jc.Classname == ""
 		case jc.Failure != nil:
 			c.Outcome, c.Details = OutcomeFailed, jc.Failure.Text
 			c.Message = cleanMessage(jc.Failure.Message)

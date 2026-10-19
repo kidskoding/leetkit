@@ -53,3 +53,16 @@ func TestCleanMessage(t *testing.T) {
 		t.Errorf("cleanMessage = %q, want %q", got, want)
 	}
 }
+
+func TestParseJUnitMarksCollectionErrors(t *testing.T) {
+	cases, err := parseJUnit([]byte(`<testsuite>
+<testcase classname="" name="test_exercise"><error message="collection failure">E   SyntaxError: x</error></testcase>
+<testcase classname="test_exercise" name="test_a"><error message="fixture">E   boom</error></testcase>
+</testsuite>`))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !cases[0].Collection || cases[1].Collection {
+		t.Errorf("Collection flags = %v, %v; want true, false", cases[0].Collection, cases[1].Collection)
+	}
+}

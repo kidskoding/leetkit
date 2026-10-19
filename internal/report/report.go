@@ -33,11 +33,14 @@ func Result(th theme.Theme, res *runner.Result, verbose bool) string {
 		b.WriteString("\n")
 	}
 	for i, c := range res.Cases {
-		switch c.Outcome {
-		case runner.OutcomePassed:
+		switch {
+		case c.Outcome == runner.OutcomePassed:
 			fmt.Fprintf(&b, "  %s\n", th.Good.Render("✓ "+c.Name))
-		case runner.OutcomeSkipped:
+		case c.Outcome == runner.OutcomeSkipped:
 			fmt.Fprintf(&b, "  %s\n", th.Faint.Render("○ "+c.Name+" (skipped)"))
+		case c.Collection:
+			// Not a real test: show the error itself, usually a SyntaxError.
+			fmt.Fprintf(&b, "%s\n", Indent(c.Message, "  "))
 		default:
 			fmt.Fprintf(&b, "  %s\n%s\n", th.Bad.Render("✗ "+c.Name), Indent(c.Message, "      "))
 			// A blank line keeps a failure's details apart from the next test.
@@ -60,4 +63,13 @@ func Indent(s, prefix string) string {
 		}
 	}
 	return strings.Join(lines, "\n")
+}
+
+// Meter renders a fixed-width completion bar such as "████░░░░".
+func Meter(th theme.Theme, done, total, width int) string {
+	filled := 0
+	if total > 0 {
+		filled = min(done*width/total, width)
+	}
+	return th.Good.Render(strings.Repeat("█", filled)) + th.Faint.Render(strings.Repeat("░", width-filled))
 }

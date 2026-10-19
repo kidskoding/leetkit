@@ -4,12 +4,11 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"strings"
 	"time"
 
 	"charm.land/lipgloss/v2"
 
-	"github.com/kidskoding/leetkit/internal/theme"
+	"github.com/kidskoding/leetkit/internal/report"
 )
 
 const progressBarWidth = 24
@@ -40,7 +39,7 @@ func (a *app) progress(_ context.Context, args []string) error {
 		if total > 0 {
 			pct = done * 100 / total
 		}
-		return fmt.Sprintf("%s  %s  %s %s", style.Render(pad(label, labelWidth)), bar(a.th, done, total),
+		return fmt.Sprintf("%s  %s  %s %s", style.Render(pad(label, labelWidth)), report.Meter(a.th, done, total, progressBarWidth),
 			a.th.Text.Render(fmt.Sprintf("%d/%d", done, total)), a.th.Faint.Render(fmt.Sprintf("%d%%", pct)))
 	}
 
@@ -75,12 +74,4 @@ func (a *app) progress(_ context.Context, args []string) error {
 	}
 	fmt.Fprintln(a.Stdout, "\n"+a.th.Faint.Render(summary))
 	return nil
-}
-
-func bar(th theme.Theme, done, total int) string {
-	filled := 0
-	if total > 0 {
-		filled = done * progressBarWidth / total
-	}
-	return th.Good.Render(strings.Repeat("█", filled)) + th.Faint.Render(strings.Repeat("░", progressBarWidth-filled))
 }

@@ -68,3 +68,13 @@ func TestResult(t *testing.T) {
 		})
 	}
 }
+
+func TestResultCollectionError(t *testing.T) {
+	res := &runner.Result{Status: runner.StatusError, Problem: "Your code could not be tested.",
+		Cases: []runner.Case{{Name: "test_exercise", Outcome: runner.OutcomeError, Collection: true,
+			Message: "  File \"starter.py\", line 1\nSyntaxError: expected ':'"}}}
+	out := render(t, res, false)
+	if strings.Contains(out, "test_exercise") || !strings.Contains(out, "SyntaxError: expected ':'") {
+		t.Errorf("collection error rendered as a test case:\n%s", out)
+	}
+}
