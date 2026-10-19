@@ -37,11 +37,14 @@ func TestResult(t *testing.T) {
 		want    []string
 		absent  []string
 	}{
-		{"passed", &runner.Result{Status: runner.StatusPassed, Cases: []runner.Case{{Outcome: runner.OutcomePassed}}},
-			false, []string{"✓ All 1 tests passed"}, []string{"✗"}},
+		{"passed", &runner.Result{Status: runner.StatusPassed, Cases: []runner.Case{
+			{Name: "test_a", Outcome: runner.OutcomePassed},
+			{Name: "test_b", Outcome: runner.OutcomeSkipped},
+		}},
+			false, []string{"✓ All 1 tests passed", "  ✓ test_a\n  ○ test_b (skipped)"}, []string{"✗"}},
 		{"failed", failing, false,
-			[]string{"✗ 1 passed, 1 failed 230ms", "  ✗ test_bad\n    assert 1 == 2\n     +  where 1 = f()"},
-			[]string{"test_ok", "raw pytest output"}},
+			[]string{"✗ 1 passed, 1 failed 230ms", "  ✓ test_ok\n  ✗ test_bad\n      assert 1 == 2\n       +  where 1 = f()"},
+			[]string{"raw pytest output"}},
 		{"verbose", failing, true, []string{"─── pytest output ───\nraw pytest output"}, nil},
 		{"error", &runner.Result{Status: runner.StatusError, Problem: "Your code could not be tested.",
 			Cases: []runner.Case{{Name: "test_exercise", Outcome: runner.OutcomeError, Message: "SyntaxError: expected ':'"}}},

@@ -110,13 +110,27 @@ func parseJUnit(data []byte) ([]Case, error) {
 			c.Message = errorSummary(jc.Error)
 		case jc.Failure != nil:
 			c.Outcome, c.Details = OutcomeFailed, jc.Failure.Text
-			c.Message = jc.Failure.Message
+			c.Message = cleanMessage(jc.Failure.Message)
 		case jc.Skipped != nil:
 			c.Outcome, c.Message = OutcomeSkipped, jc.Skipped.Message
 		}
 		cases = append(cases, c)
 	}
 	return cases, nil
+}
+
+// cleanMessage drops pytest's command-line hints, which do not apply inside
+// LeetKit, and whitespace-only padding lines.
+func cleanMessage(msg string) string {
+	var lines []string
+	for line := range strings.SplitSeq(msg, "\n") {
+		line = strings.TrimRight(line, " \t")
+		if strings.HasPrefix(strings.TrimSpace(line), "Use -v to get") {
+			continue
+		}
+		lines = append(lines, line)
+	}
+	return strings.TrimRight(strings.Join(lines, "\n"), "\n")
 }
 
 // errorSummary prefers pytest's "E " lines, which carry the actual exception,

@@ -45,3 +45,11 @@ func TestParseJUnitInvalid(t *testing.T) {
 		t.Error("want error for malformed XML")
 	}
 }
+
+func TestCleanMessage(t *testing.T) {
+	in := "assert [1, 3] == [3, 1]\n  \n  At index 0 diff: 1 != 3\n  Use -v to get more diff\n"
+	want := "assert [1, 3] == [3, 1]\n\n  At index 0 diff: 1 != 3"
+	if got := cleanMessage(in); got != want {
+		t.Errorf("cleanMessage = %q, want %q", got, want)
+	}
+}

@@ -10,8 +10,9 @@ import (
 	"github.com/kidskoding/leetkit/internal/theme"
 )
 
-// Result renders a summary line followed by each failing or erroring test.
-// Verbose appends pytest's full output.
+// Result renders a summary line and every test in run order: passes as a
+// checklist, failures and errors with their message underneath. Verbose
+// appends pytest's full output.
 func Result(th theme.Theme, res *runner.Result, verbose bool) string {
 	var b strings.Builder
 	passed, failed := res.Count(runner.OutcomePassed), res.Count(runner.OutcomeFailed)
@@ -28,11 +29,22 @@ func Result(th theme.Theme, res *runner.Result, verbose bool) string {
 	default:
 		fmt.Fprintln(&b, th.Warn.Render("! "+res.Problem))
 	}
-	for _, c := range res.Cases {
-		if c.Outcome != runner.OutcomeFailed && c.Outcome != runner.OutcomeError {
-			continue
+	if len(res.Cases) > 0 {
+		b.WriteString("\n")
+	}
+	for i, c := range res.Cases {
+		switch c.Outcome {
+		case runner.OutcomePassed:
+			fmt.Fprintf(&b, "  %s\n", th.Good.Render("✓ "+c.Name))
+		case runner.OutcomeSkipped:
+			fmt.Fprintf(&b, "  %s\n", th.Faint.Render("○ "+c.Name+" (skipped)"))
+		default:
+			fmt.Fprintf(&b, "  %s\n%s\n", th.Bad.Render("✗ "+c.Name), Indent(c.Message, "      "))
+			// A blank line keeps a failure's details apart from the next test.
+			if i < len(res.Cases)-1 {
+				b.WriteString("\n")
+			}
 		}
-		fmt.Fprintf(&b, "\n  %s\n%s\n", th.Bad.Render("✗ "+c.Name), Indent(c.Message, "    "))
 	}
 	if verbose && res.Output != "" {
 		fmt.Fprintf(&b, "\n%s\n%s", th.Faint.Render("─── pytest output ───"), res.Output)
@@ -43,7 +55,9 @@ func Result(th theme.Theme, res *runner.Result, verbose bool) string {
 func Indent(s, prefix string) string {
 	lines := strings.Split(strings.TrimRight(s, "\n"), "\n")
 	for i, l := range lines {
-		lines[i] = prefix + l
+		if l != "" {
+			lines[i] = prefix + l
+		}
 	}
 	return strings.Join(lines, "\n")
 }
