@@ -44,6 +44,8 @@ type Options struct {
 	Theme     theme.Theme
 	// Notice is shown in the footer until the first key press.
 	Notice string
+	// Start opens this exercise id instead of the saved one.
+	Start string
 }
 
 type screen int
@@ -126,12 +128,14 @@ func New(opts Options) Model {
 	return m
 }
 
-// startIndex resumes at the saved exercise, else the first unfinished one.
+// startIndex picks Options.Start, else the saved exercise, else the first
+// unfinished one.
 func (m Model) startIndex() int {
-	saved := m.opts.Store.Current()
-	for i, ex := range m.exercises {
-		if ex.ID == saved {
-			return i
+	for _, want := range []string{m.opts.Start, m.opts.Store.Current()} {
+		for i, ex := range m.exercises {
+			if want != "" && ex.ID == want {
+				return i
+			}
 		}
 	}
 	if i := m.nextPending(-1); i >= 0 {

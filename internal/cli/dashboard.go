@@ -6,6 +6,7 @@ import (
 
 	"github.com/kidskoding/leetkit/internal/config"
 	"github.com/kidskoding/leetkit/internal/editor"
+	"github.com/kidskoding/leetkit/internal/exercise"
 	"github.com/kidskoding/leetkit/internal/progress"
 	"github.com/kidskoding/leetkit/internal/runner"
 	"github.com/kidskoding/leetkit/internal/tui"
@@ -24,6 +25,29 @@ func (a *app) dashboard(ctx context.Context, args []string) error {
 	if err != nil {
 		return err
 	}
+	return a.openDashboard(ctx, cat, "")
+}
+
+// run opens the dashboard on one exercise.
+func (a *app) run(ctx context.Context, args []string) error {
+	if len(args) != 1 {
+		return usagef("expected one exercise id")
+	}
+	cat, err := a.catalog()
+	if err != nil {
+		return err
+	}
+	ex, err := findExercise(cat, args[0])
+	if err != nil {
+		return err
+	}
+	if !a.Interactive {
+		return fmt.Errorf("the dashboard needs a terminal; use `leetkit check %s` to run its tests", ex.ID)
+	}
+	return a.openDashboard(ctx, cat, ex.ID)
+}
+
+func (a *app) openDashboard(ctx context.Context, cat *exercise.Catalog, start string) error {
 	store, err := progress.Open(a.Paths.ProgressFile())
 	if err != nil {
 		return err
@@ -51,5 +75,6 @@ func (a *app) dashboard(ctx context.Context, args []string) error {
 		EditorErr: edErr,
 		Theme:     a.th,
 		Notice:    notice,
+		Start:     start,
 	})
 }

@@ -135,3 +135,16 @@ func TestNoArgumentsWithoutTerminalPrintsUsage(t *testing.T) {
 		t.Errorf("exit %d, output %q", code, out)
 	}
 }
+
+func TestRunNeedsTerminalAndValidID(t *testing.T) {
+	for args, want := range map[string]string{
+		"run":              "expected one exercise id",
+		"run nope-01":      `no exercise "nope-01"`,
+		"run enumerate-01": "leetkit check enumerate-01",
+	} {
+		code, _, errOut := run(t, bundled(), strings.Fields(args)...)
+		if code == exitOK || !strings.Contains(errOut, want) {
+			t.Errorf("%s: exit %d, stderr %q", args, code, errOut)
+		}
+	}
+}

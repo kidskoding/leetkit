@@ -394,3 +394,13 @@ func TestGlobalKeysIgnoredWhileSearching(t *testing.T) {
 		t.Error("typing p into search opened the progress screen")
 	}
 }
+
+func TestStartOptionWins(t *testing.T) {
+	f := newFixture(t, runner.ErrNoPython)
+	if err := f.store.SetCurrent("zip-01"); err != nil {
+		t.Fatal(err)
+	}
+	f.opts.Start = "sets-01"
+	m := start(t, f.opts)
+	assertContains(t, m, "sets-01 · Spot Duplicates")
+}

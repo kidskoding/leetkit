@@ -41,6 +41,7 @@ const usage = `LeetKit - master Python's toolkit for coding interviews.
 
 Usage:
   leetkit                 open the interactive dashboard
+  leetkit run <id>        open the dashboard on one exercise
   leetkit list            list modules and exercises
   leetkit check           check every exercise you have started
   leetkit check [-v] <id> run one exercise's tests
@@ -62,6 +63,7 @@ var commands = map[string]func(a *app, ctx context.Context, args []string) error
 	"doctor":   (*app).doctor,
 	"progress": (*app).progress,
 	"reset":    (*app).reset,
+	"run":      (*app).run,
 }
 
 // app is the per-invocation state shared by commands.
