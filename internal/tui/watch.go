@@ -12,6 +12,7 @@ import (
 	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
 
+	"github.com/kidskoding/leetkit/internal/exercise"
 	"github.com/kidskoding/leetkit/internal/report"
 	"github.com/kidskoding/leetkit/internal/runner"
 )
@@ -38,6 +39,8 @@ func (m Model) updateWatch(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, m.next()
 	case key.Matches(k, keys.Hint):
 		m.revealHint()
+	case key.Matches(k, keys.Explain):
+		m.toggleExplanation()
 	case key.Matches(k, keys.List):
 		m.screen = screenList
 		if m.list.FilterState() == list.Unfiltered {
@@ -72,8 +75,18 @@ func (m *Model) next() tea.Cmd {
 	return m.startRun()
 }
 
+func (m *Model) toggleExplanation() {
+	if !m.explaining && !m.opts.Store.Completed(m.currentExercise().ID) {
+		m.notice = "Solve this exercise to unlock its explanation."
+		return
+	}
+	m.explaining = !m.explaining
+	m.refreshWatch()
+	m.vp.GotoTop()
+}
+
 func (m *Model) setCurrent(i int) {
-	m.current, m.hints = i, 0
+	m.current, m.hints, m.explaining = i, 0, false
 	if err := m.opts.Store.SetCurrent(m.exercises[i].ID); err != nil {
 		m.notice = "Could not save progress: " + err.Error()
 	}
@@ -103,7 +116,12 @@ func (m *Model) refreshWatch() {
 	if m.width == 0 || m.currentExercise() == nil {
 		return
 	}
-	m.watchKeys.showNext = m.opts.Store.Completed(m.currentExercise().ID)
+	m.watchKeys.solved = m.opts.Store.Completed(m.currentExercise().ID)
+	desc := "explanation"
+	if m.explaining {
+		desc = "back to exercise"
+	}
+	m.watchKeys.Explain.SetHelp("x", desc)
 	m.watchKeys.Hint.SetHelp("t", fmt.Sprintf("hint %d/%d", m.hints, len(m.currentExercise().Hints)))
 	m.vp.SetContent(m.watchContent(m.vp.Width()))
 }
@@ -127,6 +145,13 @@ func (m Model) watchView() string {
 func (m Model) watchContent(width int) string {
 	ex := m.currentExercise()
 	th := m.th
+	if m.explaining {
+		doc, err := m.opts.Catalog.ReadFile(ex, exercise.ExplanationFile)
+		if err != nil {
+			return th.Fail.Render("✗ Could not read the explanation: " + err.Error())
+		}
+		return m.rule("Explanation · "+ex.ID, width) + "\n\n" + renderMarkdown(th, string(doc), width)
+	}
 	var b strings.Builder
 	b.WriteString(th.ID.Bold(true).Render(ex.ID) + th.Faint.Render(" · ") + th.Text.Bold(true).Render(ex.Title) + "\n")
 	b.WriteString(th.Faint.Render(m.moduleTitle(ex)+" · "+ex.Difficulty+" · "+ex.TypeLabel()) + "\n\n")
@@ -152,7 +177,8 @@ func (m Model) watchContent(width int) string {
 		b.WriteString(report.Result(th, m.run.result, false))
 		if m.run.result.Status == runner.StatusPassed {
 			b.WriteString("\n" + th.Pass.Render("✓ Exercise complete!") + " " + th.Text.Render(ex.Objective) + "\n")
-			b.WriteString(th.Faint.Render("Press ") + th.Heading.Render("n") + th.Faint.Render(" for the next exercise.") + "\n")
+			b.WriteString(th.Faint.Render("Press ") + th.Heading.Render("n") + th.Faint.Render(" for the next exercise or ") +
+				th.Heading.Render("x") + th.Faint.Render(" to read the explanation.") + "\n")
 		}
 	}
 

@@ -332,3 +332,21 @@ func TestResetFromList(t *testing.T) {
 	}
 	assertContains(t, m, "Reset zip-01 to the starter code.", "○ zip-01")
 }
+
+func TestExplanationUnlocksWhenSolved(t *testing.T) {
+	f := newFixture(t, runner.ErrNoPython)
+	m := start(t, f.opts)
+	m, _ = update(t, m, press("x"))
+	assertContains(t, m, "Solve this exercise to unlock its explanation.")
+	if m.explaining {
+		t.Fatal("explanation opened before solving")
+	}
+
+	if _, err := f.store.Record("enumerate-01", true); err != nil {
+		t.Fatal(err)
+	}
+	m, _ = update(t, m, press("x"))
+	assertContains(t, m, "── Explanation · enumerate-01", "x back to exercise")
+	m, _ = update(t, m, press("x"))
+	assertContains(t, m, "Describe enumerate-01.", "x explanation")
+}

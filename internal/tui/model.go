@@ -62,6 +62,8 @@ type Model struct {
 	current int
 	hints   int
 	editing bool
+	// explaining shows explanation.md instead of the exercise details.
+	explaining bool
 	// confirmReset holds the exercise id awaiting a y/n reset confirmation.
 	confirmReset string
 	// lastMod is the working copy's last seen modification time.
