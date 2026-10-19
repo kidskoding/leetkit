@@ -1,0 +1,39 @@
+id = "enumerate-01"
+title = "Find an Index"
+module = "iteration"
+difficulty = "beginner"
+type = "syntax"
+order = 1
+concepts = ["enumerate", "iteration"]
+
+description = """
+Implement find_index(nums, target).
+
+Return the index of the first occurrence of target in nums.
+Return -1 if target is not present.
+
+Use enumerate() instead of range(len(nums)).
+"""
+
+objective = "Understand how enumerate() yields index and value pairs."
+
+interview = """
+Many array problems need both the position and the value of each element:
+Two Sum, "first index where...", tracking the last seen position. enumerate()
+gives both in one readable loop and avoids off-by-one mistakes with
+range(len(...)).
+"""
+
+hints = [
+  "Python can give you the index and the value in the same for loop.",
+  "Try: for i, num in enumerate(nums):",
+  "Return i as soon as num == target. After the loop, return -1.",
+]
+
+[[examples]]
+input = "find_index([10, 20, 30], 20)"
+output = "1"
+
+[[examples]]
+input = "find_index([10, 20, 30], 50)"
+output = "-1"

@@ -71,6 +71,8 @@ Lower packages never import `tui` or `cli`.
   how to fix the problem.
 - Subprocesses: `exec.CommandContext` with explicit argv. Never `sh -c` or string concatenation.
 - File writes that matter (progress, config) are atomic: write temp file in the same dir, then `os.Rename`.
+- Comments only where they add information: package docs, the why behind a non-obvious choice, or behavior
+  a caller can't infer from the signature. No doc comments that restate the identifier name.
 - No speculative interfaces. Introduce an interface only when a second implementation or a test needs it.
 
 ## Exercise authoring
