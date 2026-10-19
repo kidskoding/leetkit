@@ -82,8 +82,13 @@ Lower packages never import `tui` or `cli`.
 - Default theme is `terminal` (ANSI colors follow the user's terminal) instead of Tokyo Night; `tokyonight`,
   `gruvbox`, `gruvbox-light` are selectable with `theme = "..."` in config.toml.
 - `leetkit check` without an id checks every started exercise.
-- Dashboard exercise list is a flat `bubbles/list` (module shown in the preview) rather than a collapsible
-  module tree; this keeps Bubbles' built-in fuzzy search.
+- The dashboard follows Rustlings: it opens on the current exercise (watch screen) and the exercise list is a
+  secondary screen. The list is a flat `bubbles/list` (module shown in the preview) rather than a collapsible
+  module tree, which keeps Bubbles' built-in fuzzy search.
+- Keys use ranger/lf-style navigation: j/k move, l/→/enter open an exercise, h/←/esc go to the list. Hints are
+  on `t` (SPEC: `h`) and reset is `r` in the list.
+- Added beyond SPEC: tests rerun automatically when the working copy is saved (mtime polling, like Rustlings
+  watch mode).
 - Root `main.go` instead of `cmd/leetkit`; single `internal/tui` instead of `internal/app` + `internal/ui`.
 
 ## Go conventions
