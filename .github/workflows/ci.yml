@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Go tests (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+      - uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+      # Creates .venv with pytest; the curriculum tests run every exercise with it.
+      - run: uv sync
+      - name: gofmt
+        run: test -z "$(gofmt -l .)" || { gofmt -l .; exit 1; }
+      - run: go vet ./...
+      - run: go test -race ./...
+
+  nix:
+    name: Nix build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: cachix/install-nix-action@v31
+      - run: nix build -L
+      - run: ./result/bin/leetkit version
+      # The package bundles Python with pytest: solve one exercise with its
+      # reference solution and require a passing check.
+      - name: Check an exercise end to end
+        env:
+          XDG_DATA_HOME: ${{ runner.temp }}/data
+        run: |
+          mkdir -p "$XDG_DATA_HOME/leetkit/workspace/enumerate-01"
+          cp exercises/01_iteration/01_enumerate-01/solution.py "$XDG_DATA_HOME/leetkit/workspace/enumerate-01/starter.py"
+          ./result/bin/leetkit check enumerate-01
