@@ -24,7 +24,7 @@
     });
 
     devShells = forAllSystems (pkgs: let
-      pythonWithPytest = pkgs.python3.withPackages (ps: [ps.pytest]);
+      pythonWithPytest = pkgs.python315.withPackages (ps: [ps.pytest]);
     in {
       default = pkgs.mkShell {
         packages = with pkgs; [

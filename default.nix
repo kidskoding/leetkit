@@ -1,10 +1,10 @@
 {
   lib,
   buildGoApplication,
-  python3,
+  python315,
 }: let
   # Bundled so `nix run` works without any Python setup; user settings still win.
-  python = python3.withPackages (ps: [ps.pytest]);
+  python = python315.withPackages (ps: [ps.pytest]);
 in
   buildGoApplication {
     pname = "leetkit";
