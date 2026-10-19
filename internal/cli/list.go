@@ -4,7 +4,10 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"text/tabwriter"
+
+	"charm.land/lipgloss/v2"
+
+	"github.com/anirudhkonidala/leetkit/internal/theme"
 )
 
 func runList(_ context.Context, env Env, args []string) error {
@@ -23,15 +26,24 @@ func runList(_ context.Context, env Env, args []string) error {
 		fmt.Fprintln(env.Stdout, "No exercises found.")
 		return nil
 	}
-	tw := tabwriter.NewWriter(env.Stdout, 0, 0, 2, ' ', 0)
+	idWidth, titleWidth, levelWidth := 0, 0, 0
+	for _, ex := range cat.All() {
+		idWidth = max(idWidth, lipgloss.Width(ex.ID))
+		titleWidth = max(titleWidth, lipgloss.Width(ex.Title))
+		levelWidth = max(levelWidth, lipgloss.Width(ex.Difficulty))
+	}
 	for i, m := range cat.Modules {
 		if i > 0 {
-			fmt.Fprintln(tw)
+			fmt.Fprintln(env.Stdout)
 		}
-		fmt.Fprintln(tw, m.Title)
+		fmt.Fprintln(env.Stdout, theme.Heading.Render(m.Title))
 		for _, ex := range m.Exercises {
-			fmt.Fprintf(tw, "  %s\t%s\t%s\t%s\n", ex.ID, ex.Title, ex.Difficulty, ex.TypeLabel())
+			fmt.Fprintf(env.Stdout, "  %s  %s  %s  %s\n",
+				theme.ID.Render(pad(ex.ID, idWidth)),
+				theme.Text.Render(pad(ex.Title, titleWidth)),
+				theme.Faint.Render(pad(ex.Difficulty, levelWidth)),
+				theme.Faint.Render(ex.TypeLabel()))
 		}
 	}
-	return tw.Flush()
+	return nil
 }

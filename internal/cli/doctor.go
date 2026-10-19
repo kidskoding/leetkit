@@ -13,6 +13,7 @@ import (
 	"github.com/anirudhkonidala/leetkit/internal/config"
 	"github.com/anirudhkonidala/leetkit/internal/editor"
 	"github.com/anirudhkonidala/leetkit/internal/runner"
+	"github.com/anirudhkonidala/leetkit/internal/theme"
 )
 
 type report struct {
@@ -21,12 +22,14 @@ type report struct {
 }
 
 func (r *report) ok(name, format string, a ...any) {
-	fmt.Fprintf(r.w, "✓ %-10s %s\n", name, fmt.Sprintf(format, a...))
+	fmt.Fprintf(r.w, "%s %s %s\n", theme.Pass.Render("✓"), theme.Text.Render(pad(name, 10)),
+		theme.Faint.Render(fmt.Sprintf(format, a...)))
 }
 
 func (r *report) fail(name, problem, fix string) {
 	r.failed = true
-	fmt.Fprintf(r.w, "✗ %-10s %s\n%s\n", name, problem, indent(fix, "    "))
+	fmt.Fprintf(r.w, "%s %s %s\n%s\n", theme.Fail.Render("✗"), theme.Text.Render(pad(name, 10)),
+		theme.Bad.Render(problem), indent(fix, "    "))
 }
 
 func runDoctor(ctx context.Context, env Env, args []string) error {
@@ -90,7 +93,7 @@ func runDoctor(ctx context.Context, env Env, args []string) error {
 	if r.failed {
 		return errSilent
 	}
-	fmt.Fprintln(env.Stdout, "\nAll checks passed.")
+	fmt.Fprintln(env.Stdout, "\n"+theme.Pass.Render("All checks passed."))
 	return nil
 }
 

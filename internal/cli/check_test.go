@@ -54,20 +54,30 @@ func TestCheckStarterFails(t *testing.T) {
 	}
 }
 
-func TestCheckSolutionPasses(t *testing.T) {
-	usePytestPython(t)
-	env := tempEnv(t)
-	solution, err := exercises.FS.ReadFile("iteration/enumerate-01/solution.py")
-	if err != nil {
-		t.Fatal(err)
-	}
-	path := filepath.Join(env.Paths.WorkspaceDir(), "enumerate-01", "starter.py")
+func writeWork(t *testing.T, env Env, id string, code []byte) {
+	t.Helper()
+	path := filepath.Join(env.Paths.WorkspaceDir(), id, "starter.py")
 	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(path, solution, 0o644); err != nil {
+	if err := os.WriteFile(path, code, 0o644); err != nil {
 		t.Fatal(err)
 	}
+}
+
+func solution(t *testing.T) []byte {
+	t.Helper()
+	data, err := exercises.FS.ReadFile("iteration/enumerate-01/solution.py")
+	if err != nil {
+		t.Fatal(err)
+	}
+	return data
+}
+
+func TestCheckSolutionPasses(t *testing.T) {
+	usePytestPython(t)
+	env := tempEnv(t)
+	writeWork(t, env, "enumerate-01", solution(t))
 	code, out, errOut := run(t, env, "check", "enumerate-01")
 	if code != exitOK || !strings.Contains(out, "✓ All 6 tests passed") {
 		t.Errorf("exit %d\nstdout:\n%s\nstderr:\n%s", code, out, errOut)
@@ -80,8 +90,7 @@ func TestCheckArguments(t *testing.T) {
 		code int
 		want string
 	}{
-		{[]string{"check"}, exitUsage, "expected one exercise id"},
-		{[]string{"check", "a", "b"}, exitUsage, "expected one exercise id"},
+		{[]string{"check", "a", "b"}, exitUsage, "expected at most one exercise id"},
 		{[]string{"check", "nope-01"}, exitError, `no exercise "nope-01"`},
 	}
 	for _, tt := range tests {
@@ -123,5 +132,47 @@ func TestDoctorReportsProblems(t *testing.T) {
 		if !strings.Contains(out, want) {
 			t.Errorf("output missing %q:\n%s", want, out)
 		}
+	}
+}
+
+func TestCheckAll(t *testing.T) {
+	usePytestPython(t)
+	tests := []struct {
+		name  string
+		work  []byte
+		code  int
+		wants []string
+	}{
+		{"not started", nil, exitOK, []string{"○ enumerate-01", "not started", "0/1 passing"}},
+		{"solved", solution(t), exitOK, []string{"✓ enumerate-01", "6/6 passed", "1/1 passing"}},
+		{"failing", []byte("def find_index(nums, target):\n    return 0\n"), exitError,
+			[]string{"✗ enumerate-01", "1 failing", "leetkit check <id>"}},
+		{"syntax error", []byte("def find_index(\n"), exitError, []string{"could not run"}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			env := tempEnv(t)
+			if tt.work != nil {
+				writeWork(t, env, "enumerate-01", tt.work)
+			}
+			code, out, errOut := run(t, env, "check")
+			if code != tt.code {
+				t.Errorf("exit %d, want %d; stderr %s", code, tt.code, errOut)
+			}
+			for _, want := range tt.wants {
+				if !strings.Contains(out, want) {
+					t.Errorf("output missing %q:\n%s", want, out)
+				}
+			}
+		})
+	}
+}
+
+func TestCheckAllDoesNotCreateWorkingCopies(t *testing.T) {
+	usePytestPython(t)
+	env := tempEnv(t)
+	run(t, env, "check")
+	if _, err := os.Stat(env.Paths.WorkspaceDir()); !os.IsNotExist(err) {
+		t.Errorf("check created %s", env.Paths.WorkspaceDir())
 	}
 }

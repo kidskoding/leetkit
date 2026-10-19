@@ -8,6 +8,8 @@ import (
 	"testing"
 	"testing/fstest"
 
+	"github.com/charmbracelet/colorprofile"
+
 	"github.com/anirudhkonidala/leetkit/exercises"
 	"github.com/anirudhkonidala/leetkit/internal/config"
 )
@@ -15,7 +17,9 @@ import (
 func run(t *testing.T, env Env, args ...string) (code int, stdout, stderr string) {
 	t.Helper()
 	var out, errOut bytes.Buffer
-	env.Stdout, env.Stderr = &out, &errOut
+	// Same writer as main; buffers are not terminals, so styling is stripped.
+	env.Stdout = colorprofile.NewWriter(&out, nil)
+	env.Stderr = colorprofile.NewWriter(&errOut, nil)
 	if env.Paths == (config.Paths{}) {
 		dir := t.TempDir()
 		env.Paths = config.Paths{ConfigFile: filepath.Join(dir, "config.toml"), DataDir: filepath.Join(dir, "data")}

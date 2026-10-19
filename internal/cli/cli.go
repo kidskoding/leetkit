@@ -13,6 +13,7 @@ import (
 	"github.com/anirudhkonidala/leetkit/internal/config"
 	"github.com/anirudhkonidala/leetkit/internal/exercise"
 	"github.com/anirudhkonidala/leetkit/internal/runner"
+	"github.com/anirudhkonidala/leetkit/internal/theme"
 )
 
 type Env struct {
@@ -33,7 +34,8 @@ const usage = `LeetKit - master Python's toolkit for coding interviews.
 Usage:
   leetkit                 open the interactive dashboard
   leetkit list            list modules and exercises
-  leetkit check [-v] <id> run an exercise's tests
+  leetkit check           check every exercise you have started
+  leetkit check [-v] <id> run one exercise's tests
   leetkit doctor          check Python, pytest, and editor setup
   leetkit help            show this help
 `
@@ -63,14 +65,14 @@ func Run(ctx context.Context, args []string, env Env) int {
 	}
 	cmd, ok := commands[args[0]]
 	if !ok {
-		fmt.Fprintf(env.Stderr, "leetkit: unknown command %q\n\n%s", args[0], usage)
+		fmt.Fprintf(env.Stderr, "%s unknown command %q\n\n%s", theme.Fail.Render("leetkit:"), args[0], usage)
 		return exitUsage
 	}
 	if err := cmd(ctx, env, args[1:]); err != nil {
 		if errors.Is(err, errSilent) {
 			return exitError
 		}
-		fmt.Fprintf(env.Stderr, "leetkit %s: %v\n", args[0], err)
+		fmt.Fprintf(env.Stderr, "%s %v\n", theme.Fail.Render("leetkit "+args[0]+":"), err)
 		if errors.As(err, new(usageError)) {
 			fmt.Fprintf(env.Stderr, "\n%s", usage)
 			return exitUsage

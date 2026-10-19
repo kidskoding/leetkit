@@ -7,6 +7,8 @@ import (
 	"os"
 	"os/signal"
 
+	"github.com/charmbracelet/colorprofile"
+
 	"github.com/anirudhkonidala/leetkit/exercises"
 	"github.com/anirudhkonidala/leetkit/internal/cli"
 	"github.com/anirudhkonidala/leetkit/internal/config"
@@ -22,8 +24,10 @@ func main() {
 	code := cli.Run(ctx, os.Args[1:], cli.Env{
 		Exercises: exercises.FS,
 		Paths:     paths,
-		Stdout:    os.Stdout,
-		Stderr:    os.Stderr,
+		// colorprofile downsamples colors for the terminal and strips them when
+		// output is not a TTY or NO_COLOR is set.
+		Stdout: colorprofile.NewWriter(os.Stdout, os.Environ()),
+		Stderr: colorprofile.NewWriter(os.Stderr, os.Environ()),
 	})
 	stop()
 	os.Exit(code)
