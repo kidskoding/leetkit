@@ -1,9 +1,12 @@
 package cli
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 
+	"github.com/kidskoding/leetkit/exercises"
+	"github.com/kidskoding/leetkit/internal/exercise"
 	"github.com/kidskoding/leetkit/internal/progress"
 )
 
@@ -26,8 +29,18 @@ func TestProgress(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
+	cat, err := exercise.Load(exercises.FS)
+	if err != nil {
+		t.Fatal(err)
+	}
+	n := len(cat.Modules[0].Exercises)
 	code, out, _ = run(t, env, "progress")
-	for _, want := range []string{"Iteration and Unpacking", "1/9", "11%", "1 solved · 2 test runs · last activity"} {
+	for _, want := range []string{
+		"Iteration and Unpacking",
+		fmt.Sprintf("1/%d %d%%", n, 100/n),
+		fmt.Sprintf("1/%d ", len(cat.All())),
+		"1 solved · 2 test runs · last activity",
+	} {
 		if code != exitOK || !strings.Contains(out, want) {
 			t.Errorf("missing %q (exit %d):\n%s", want, code, out)
 		}
