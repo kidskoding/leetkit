@@ -1,0 +1,48 @@
+id = "union-find-01"
+title = "Find the Redundant Cable"
+module = "patterns"
+difficulty = "advanced"
+type = "application"
+concepts = ["union-find", "disjoint set", "path compression", "union by size", "dict"]
+
+description = """
+Implement find_redundant_cable(cables).
+
+cables is a list of (a, b) tuples, each an undirected cable laid between two
+machines, in the order they were installed. Machine labels are any hashable
+values (ints or strings) and are not known in advance. Return the first cable,
+in input order, whose two machines were already connected through earlier
+cables; return that tuple exactly as given. Return None if no cable is
+redundant.
+
+A cable from a machine to itself is redundant. A second cable between the same
+two machines is redundant, in either direction.
+
+Use a dict-based union-find: parent and size dicts that add a machine the
+first time it is seen, find() with path compression, and union by size.
+"""
+
+objective = "Detect a cycle while adding edges with a dict-based union-find using path compression and union by size."
+
+interview = """
+Redundant Connection, Number of Provinces, Accounts Merge, and Kruskal's
+minimum spanning tree are union-find problems. Dicts let the structure grow
+lazily for labels that are not 0..n-1, and path compression plus union by size
+make each operation effectively constant time.
+"""
+
+hints = [
+  "A cable is redundant exactly when both machines already have the same root before you join them.",
+  "Keep parent = {} and size = {}. In find(x), use parent.setdefault(x, x) and size.setdefault(x, 1), then follow parent links to the root.",
+  "Compress while walking (parent[x] = parent[parent[x]]). In the main loop, if find(a) == find(b) return the cable; otherwise attach the smaller root under the larger and add the sizes.",
+]
+
+[[examples]]
+input = "find_redundant_cable([('a', 'b'), ('b', 'c'), ('a', 'c')])"
+output = "('a', 'c')"
+explanation = "After a-b and b-c, machines a and c are already connected, so the third cable closes a loop."
+
+[[examples]]
+input = "find_redundant_cable([(1, 2), (3, 4)])"
+output = "None"
+explanation = "Each cable joins two separate groups, so no cable is redundant."

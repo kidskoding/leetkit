@@ -1,0 +1,55 @@
+id = "topological-sort-01"
+title = "Plan a Course Schedule"
+module = "patterns"
+difficulty = "advanced"
+type = "application"
+concepts = ["topological sort", "Kahn's algorithm", "defaultdict", "in-degree", "heapq"]
+
+description = """
+Implement course_order(n, prereqs).
+
+There are n courses labelled 0 to n - 1. prereqs is a list of (course, before)
+pairs meaning course before must be finished before course can start. Return a
+list containing every course exactly once in an order that respects all
+prerequisites.
+
+Whenever several courses are ready to take (all their prerequisites done),
+take the smallest-numbered one next, so the answer is unique. Return [] if the
+prerequisites contain a cycle (including a course that requires itself), since
+then no valid order exists. Duplicate pairs are allowed and change nothing.
+Return [] when n is 0.
+
+Use Kahn's algorithm: an adjacency list built with defaultdict(list), an
+in-degree count per course, and a heapq min-heap of ready courses.
+"""
+
+objective = "Order a dependency graph with Kahn's algorithm using defaultdict(list), in-degree counts, and a min-heap."
+
+interview = """
+Course Schedule I and II, Alien Dictionary, and build or task ordering are
+topological-sort problems. Kahn's algorithm doubles as cycle detection: if
+fewer than n nodes ever reach in-degree 0, there is a cycle. Swapping the
+usual deque for a heap is the standard follow-up when the interviewer asks
+for the lexicographically smallest order.
+"""
+
+hints = [
+  "A course is ready when the number of unfinished prerequisites (its in-degree) is 0. Finishing a course lowers the in-degree of every course it unlocks.",
+  "Build unlocks = defaultdict(list) with unlocks[before].append(course), and indegree[course] += 1 for each pair. Seed a heap with every course whose in-degree is 0.",
+  "Loop while the heap is non-empty: heappop the smallest course, append it to the order, decrement each unlocked course, and heappush any that hit 0. At the end, return order only if len(order) == n.",
+]
+
+[[examples]]
+input = "course_order(4, [(1, 0), (2, 0), (3, 1), (3, 2)])"
+output = "[0, 1, 2, 3]"
+explanation = "Only course 0 has no prerequisites. Finishing it unlocks 1 and 2 (smallest first), and finishing both unlocks 3."
+
+[[examples]]
+input = "course_order(4, [(1, 0)])"
+output = "[0, 1, 2, 3]"
+explanation = "Courses 0, 2 and 3 start ready. After taking 0, course 1 becomes ready and is now the smallest, so it goes before 2 and 3."
+
+[[examples]]
+input = "course_order(2, [(0, 1), (1, 0)])"
+output = "[]"
+explanation = "Each course requires the other, so neither can ever start: a cycle means no valid order."

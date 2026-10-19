@@ -1,0 +1,44 @@
+id = "monotonic-stack-01"
+title = "Days Until a Warmer Day"
+module = "patterns"
+difficulty = "intermediate"
+type = "application"
+concepts = ["monotonic stack", "list as stack", "enumerate", "next greater element"]
+
+description = """
+Implement days_until_warmer(temps).
+
+temps is a list of daily temperatures (integers). Return a list of the same
+length where position i holds how many days you must wait after day i for a
+strictly warmer temperature. If no later day is warmer, that position is 0.
+An equal temperature does not count as warmer.
+
+Return [] for an empty list. Keep a plain list as a stack of indices whose
+answer is still unknown, and use enumerate() to walk the days once.
+"""
+
+objective = "Answer next-greater-element queries in one pass with a list used as a stack of indices."
+
+interview = """
+Daily Temperatures, Next Greater Element, Stock Span, and Largest Rectangle in
+Histogram are all monotonic-stack problems. The nested-loop answer is O(n^2);
+keeping unresolved indices on a stack makes it O(n) because each index is
+pushed and popped at most once, and storing indices rather than values lets
+you compute distances.
+"""
+
+hints = [
+  "When today is warmer than an earlier unresolved day, today is that day's answer.",
+  "Keep stack = [] of indices. For i, t in enumerate(temps), pop while stack and temps[stack[-1]] < t.",
+  "Each popped index j gets answer[j] = i - j; then push i. Start with answer = [0] * len(temps).",
+]
+
+[[examples]]
+input = "days_until_warmer([73, 74, 75, 71, 69, 72, 76, 73])"
+output = "[1, 1, 4, 2, 1, 1, 0, 0]"
+explanation = "After 75 on day 2, the next warmer day is 76 on day 6, four days later. The last two days never see anything warmer, so they get 0."
+
+[[examples]]
+input = "days_until_warmer([70, 70, 71])"
+output = "[2, 1, 0]"
+explanation = "Day 1 ties day 0, which is not warmer, so day 0 waits until 71 on day 2."

@@ -1,0 +1,47 @@
+id = "backtracking-01"
+title = "Pack a Crate to an Exact Weight"
+module = "patterns"
+difficulty = "intermediate"
+type = "application"
+concepts = ["backtracking", "recursion", "append/pop", "list copy"]
+
+description = """
+Implement crate_loads(weights, target).
+
+weights is a list of distinct positive integers, one per item type, in any
+order; you may use each item type any number of times. target is a positive
+integer. Return every way to reach exactly target as a list of lists.
+
+Each inner list is in non-decreasing order, and the outer list is sorted in
+lexicographic order (the order you get by trying lighter items first). Two
+loads with the same items in a different order count once. Return [] if no
+load works or weights is empty.
+
+Use recursive backtracking with a single path list: append an item, recurse,
+then pop it.
+"""
+
+objective = "Enumerate combinations with recursive backtracking over one shared path list using append and pop."
+
+interview = """
+Combination Sum, Subsets, Permutations, and N-Queens are backtracking
+problems. The Python idiom is one mutable path list with append before the
+recursive call and pop after it, plus path[:] (or list(path)) when recording
+an answer so later pops do not erase it.
+"""
+
+hints = [
+  "Sort the weights. At each step choose an item at index start or later, so loads come out in non-decreasing order and are never repeated.",
+  "Write an inner def backtrack(start, remaining): when remaining == 0, record path[:]; otherwise loop i over range(start, len(weights)).",
+  "Inside the loop: stop once weights[i] > remaining, else path.append(weights[i]), backtrack(i, remaining - weights[i]), then path.pop(). Passing i, not i + 1, allows reuse.",
+]
+
+[[examples]]
+input = "crate_loads([2, 3, 6, 7], 7)"
+output = "[[2, 2, 3], [7]]"
+explanation = "2 + 2 + 3 and 7 alone both weigh exactly 7. [2, 2, 3] sorts before [7] because it starts with the lighter item."
+
+[[examples]]
+input = "crate_loads([5, 3, 2], 8)"
+output = "[[2, 2, 2, 2], [2, 3, 3], [3, 5]]"
+explanation = "Input order does not matter: weights are tried lightest first, which gives each load in non-decreasing order and the loads in lexicographic order."

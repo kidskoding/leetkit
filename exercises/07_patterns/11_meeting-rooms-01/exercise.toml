@@ -1,0 +1,43 @@
+id = "meeting-rooms-01"
+title = "Book the Fewest Meeting Rooms"
+module = "patterns"
+difficulty = "intermediate"
+type = "application"
+concepts = ["heapq", "min-heap", "sorting intervals", "intervals"]
+
+description = """
+Implement min_meeting_rooms(meetings).
+
+meetings is a list of (start, end) integer tuples with start < end, in any
+order. Return the minimum number of rooms needed so that no two meetings in
+the same room overlap. A meeting that ends at time t frees its room for a
+meeting that starts at time t.
+
+Return 0 for an empty list. Sort the meetings by start time and keep a heapq
+min-heap of the end times of rooms in use.
+"""
+
+objective = "Track the earliest-free resource with a heapq min-heap while sweeping intervals sorted by start."
+
+interview = """
+Meeting Rooms II is the classic interval-scheduling heap problem, and the same
+sweep answers minimum platforms, car pooling, and CPU task allocation. Sorting
+by start plus a min-heap of end times gives O(n log n), and the heap's size at
+the end is the answer.
+"""
+
+hints = [
+  "Process meetings in start order. A new meeting can reuse a room only if the room that frees up earliest is already free.",
+  "Keep ends = [] as a min-heap. ends[0] is the earliest end time among rooms in use.",
+  "For start, end in sorted(meetings): if ends and ends[0] <= start, heapq.heapreplace(ends, end); otherwise heapq.heappush(ends, end). Return len(ends).",
+]
+
+[[examples]]
+input = "min_meeting_rooms([(0, 30), (5, 10), (15, 20)])"
+output = "2"
+explanation = "The long 0-30 meeting holds one room. 5-10 needs a second room, and 15-20 reuses it because 5-10 ended at 10."
+
+[[examples]]
+input = "min_meeting_rooms([(1, 5), (5, 10)])"
+output = "1"
+explanation = "The first meeting ends exactly when the second starts, so the same room is reused."
