@@ -11,6 +11,8 @@ import (
 	"time"
 
 	"github.com/BurntSushi/toml"
+
+	"github.com/anirudhkonidala/leetkit/internal/theme"
 )
 
 const appName = "leetkit"
@@ -23,10 +25,11 @@ type Config struct {
 	// Editor is a command line such as "code --wait"; it takes precedence over $VISUAL and $EDITOR.
 	Editor  string        `toml:"editor"`
 	Timeout time.Duration `toml:"timeout"`
+	Theme   string        `toml:"theme"`
 }
 
 func Default() Config {
-	return Config{Timeout: DefaultTimeout}
+	return Config{Timeout: DefaultTimeout, Theme: theme.Default}
 }
 
 // Load reads the config file at path. A missing file yields the defaults.
@@ -52,6 +55,9 @@ func Load(path string) (Config, error) {
 	}
 	if cfg.Timeout <= 0 {
 		return cfg, fmt.Errorf("%s: timeout must be positive, for example \"10s\"", path)
+	}
+	if _, err := theme.Load(cfg.Theme); err != nil {
+		return cfg, fmt.Errorf("%s: %w", path, err)
 	}
 	return cfg, nil
 }

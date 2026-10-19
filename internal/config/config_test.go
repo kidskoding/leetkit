@@ -33,11 +33,12 @@ func TestLoadValues(t *testing.T) {
 python = "/opt/py/bin/python3"
 editor = "code --wait"
 timeout = "30s"
+theme = "tokyonight"
 `))
 	if err != nil {
 		t.Fatal(err)
 	}
-	want := Config{Python: "/opt/py/bin/python3", Editor: "code --wait", Timeout: 30 * time.Second}
+	want := Config{Python: "/opt/py/bin/python3", Editor: "code --wait", Timeout: 30 * time.Second, Theme: "tokyonight"}
 	if cfg != want {
 		t.Errorf("got %+v, want %+v", cfg, want)
 	}
@@ -50,6 +51,7 @@ func TestLoadErrors(t *testing.T) {
 		`timeout = "-1s"`:   "timeout must be positive",
 		`timeout = "never"`: "parse",
 		`timeout = 5`:       "duration string",
+		`theme = "nope"`:    `unknown theme "nope"`,
 	}
 	for content, want := range tests {
 		_, err := Load(writeConfig(t, content))
