@@ -10,6 +10,7 @@ import (
 
 func (a *app) list(_ context.Context, args []string) error {
 	fset := flag.NewFlagSet("list", flag.ContinueOnError)
+	idsOnly := fset.Bool("ids", false, "print only exercise ids, one per line")
 	if err := parseFlags(fset, args); err != nil {
 		return err
 	}
@@ -19,6 +20,12 @@ func (a *app) list(_ context.Context, args []string) error {
 	cat, err := a.catalog()
 	if err != nil {
 		return err
+	}
+	if *idsOnly {
+		for _, ex := range cat.All() {
+			fmt.Fprintln(a.Stdout, ex.ID)
+		}
+		return nil
 	}
 	if len(cat.All()) == 0 {
 		fmt.Fprintln(a.Stdout, "No exercises found.")
