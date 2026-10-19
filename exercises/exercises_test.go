@@ -2,7 +2,10 @@ package exercises_test
 
 import (
 	"context"
+	"fmt"
+	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
@@ -84,4 +87,26 @@ func pytestPython(t *testing.T) string {
 		t.Skipf("no Python with pytest (run `uv sync` or `nix develop`): %v", err)
 	}
 	return py.Path
+}
+
+// The README advertises the exercise count in a badge and in the curriculum
+// section; keep both in step with the catalog.
+func TestReadmeExerciseCount(t *testing.T) {
+	cat, err := exercise.Load(exercises.FS)
+	if err != nil {
+		t.Fatal(err)
+	}
+	readme, err := os.ReadFile(filepath.Join("..", "README.md"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	n := len(cat.All())
+	for _, want := range []string{
+		fmt.Sprintf("badge/exercises-%d-", n),
+		fmt.Sprintf("%d exercises across", n),
+	} {
+		if !strings.Contains(string(readme), want) {
+			t.Errorf("README.md does not mention %q; update it to %d exercises", want, n)
+		}
+	}
 }

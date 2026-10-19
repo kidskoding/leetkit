@@ -161,7 +161,8 @@ go test ./exercises                                 # all of them
 ```
 
 This verifies the metadata, that `solution.py` passes, and that `starter.py` fails with ordinary test
-failures rather than a syntax or import error. Then try it as a learner:
+failures rather than a syntax or import error. When you add exercises, update the exercise count in the README
+badge and curriculum section; `go test ./exercises` fails until they match. Then try it as a learner:
 
 ```bash
 go run . run zip-01

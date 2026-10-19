@@ -1,5 +1,13 @@
 # LeetKit
 
+[![CI](https://img.shields.io/github/actions/workflow/status/kidskoding/leetkit/ci.yml?branch=master&label=CI)](https://github.com/kidskoding/leetkit/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/kidskoding/leetkit?sort=semver)](https://github.com/kidskoding/leetkit/releases)
+[![Go](https://img.shields.io/github/go-mod/go-version/kidskoding/leetkit)](go.mod)
+[![Python](https://img.shields.io/badge/python-3.10%2B-3776AB?logo=python&logoColor=white)](#install)
+[![Exercises](https://img.shields.io/badge/exercises-91-2ea44f)](#curriculum)
+[![Nix flake](https://img.shields.io/badge/nix-flake-5277C3?logo=nixos&logoColor=white)](flake.nix)
+[![License](https://img.shields.io/github/license/kidskoding/leetkit)](LICENSE)
+
 **Master Python's toolkit for coding interviews.** Inspired by [Rustlings](https://github.com/rust-lang/rustlings).
 
 LeetKit is a terminal trainer for the Python features that make interview solutions short and correct:
