@@ -1,0 +1,42 @@
+id = "two-sum-01"
+title = "Two Sum in One Pass"
+module = "hashing"
+difficulty = "beginner"
+type = "application"
+concepts = ["dict", "complement lookup", "enumerate"]
+
+description = """
+Implement two_sum(nums, target).
+
+Return a list [i, j] of the two indices whose values add up to target, with
+i < j. You may not use the same index twice, but two different indices may hold
+equal values. Exactly one valid pair exists for every input, so you never need
+to handle the "no solution" case.
+
+Solve it in a single pass with a dict mapping value -> index of the numbers seen so far.
+"""
+
+objective = "Use a value-to-index dict to find a complement in O(1)."
+
+interview = """
+Two Sum is the most-asked hashing problem there is. The brute-force double loop
+is O(n^2); storing each value's index in a dict and looking up target - num
+makes it O(n). Checking for the complement before inserting the current number
+is what prevents pairing an element with itself.
+"""
+
+hints = [
+  "For each number, the partner you need is target - num.",
+  "Store seen numbers in a dict {value: index} and check `complement in seen`.",
+  "Loop with enumerate; if target - num is in seen, return [seen[target - num], i]; otherwise set seen[num] = i.",
+]
+
+[[examples]]
+input = "two_sum([2, 7, 11, 15], 9)"
+output = "[0, 1]"
+explanation = "At index 1 the complement 9 - 7 = 2 is already in the dict at index 0, so the pair is [0, 1]."
+
+[[examples]]
+input = "two_sum([3, 3], 6)"
+output = "[0, 1]"
+explanation = "Two different indices may hold the same value. The second 3 finds the first 3 (index 0) in the dict."

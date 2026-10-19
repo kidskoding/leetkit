@@ -1,0 +1,41 @@
+id = "sets-01"
+title = "Detect Duplicate Order IDs"
+module = "hashing"
+difficulty = "beginner"
+type = "application"
+concepts = ["set", "membership", "duplicates"]
+
+description = """
+Implement has_duplicate(order_ids).
+
+order_ids is a list of integers. Return True if any value appears at least
+twice, and False if every value is distinct. An empty list or a single-element
+list has no duplicates.
+
+Aim for a single pass in O(n) time using a set of IDs seen so far.
+"""
+
+objective = "Use a set to detect a repeated value in one pass."
+
+interview = """
+This is LeetCode's Contains Duplicate, a common warm-up. The naive nested loop
+is O(n^2) and sorting is O(n log n); a set gives O(n) with average O(1)
+membership checks. The "seen set" pattern reappears in cycle detection, BFS
+visited sets, and longest-substring problems.
+"""
+
+hints = [
+  "Keep track of every ID you have already looked at.",
+  "A set supports fast `x in seen` checks and seen.add(x).",
+  "For each id: if it is already in seen, return True; otherwise add it. Return False after the loop.",
+]
+
+[[examples]]
+input = "has_duplicate([101, 205, 309, 205])"
+output = "True"
+explanation = "205 is already in the seen set when it shows up again at index 3."
+
+[[examples]]
+input = "has_duplicate([42])"
+output = "False"
+explanation = "A single ID can't repeat, so the loop ends without finding a duplicate."

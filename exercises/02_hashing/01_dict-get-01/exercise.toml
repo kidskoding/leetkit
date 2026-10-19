@@ -1,0 +1,41 @@
+id = "dict-get-01"
+title = "Count Characters"
+module = "hashing"
+difficulty = "beginner"
+type = "syntax"
+concepts = ["dict", "dict.get", "frequency map"]
+
+description = """
+Implement char_counts(s).
+
+Return a dict mapping each character in s to the number of times it appears.
+Every character counts, including spaces and punctuation, and counting is
+case-sensitive ("a" and "A" are different keys). Return {} for an empty string.
+
+Use dict.get(key, 0) to read the current count instead of checking `if ch in counts`.
+"""
+
+objective = "Build a frequency map with dict.get(key, default)."
+
+interview = """
+Frequency maps are the backbone of anagram checks, "most common element",
+ransom-note and sliding-window problems. counts[ch] = counts.get(ch, 0) + 1
+is the one-line idiom interviewers expect, and it avoids the KeyError that a
+plain counts[ch] += 1 raises on the first occurrence.
+"""
+
+hints = [
+  "Reading a missing key with counts[ch] raises KeyError. Is there a way to read with a fallback?",
+  "dict.get(key, default) returns default when the key is missing.",
+  "Inside the loop: counts[ch] = counts.get(ch, 0) + 1.",
+]
+
+[[examples]]
+input = "char_counts(\"hello\")"
+output = "{'h': 1, 'e': 1, 'l': 2, 'o': 1}"
+explanation = "'l' appears twice and every other letter once. Keys appear in the order each character is first seen."
+
+[[examples]]
+input = "char_counts(\"\")"
+output = "{}"
+explanation = "An empty string has no characters to count, so the map stays empty."

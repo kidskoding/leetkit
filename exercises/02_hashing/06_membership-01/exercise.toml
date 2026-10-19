@@ -1,0 +1,42 @@
+id = "membership-01"
+title = "Count Jewels in Stones"
+module = "hashing"
+difficulty = "beginner"
+type = "application"
+concepts = ["set", "membership", "sum"]
+
+description = """
+Implement count_jewels(jewels, stones).
+
+jewels is a string of distinct characters, each a type of stone that is a jewel.
+stones is a string where each character is one stone you own. Return how many
+of your stones are jewels, as an int. Matching is case-sensitive ("a" and "A"
+are different types). Return 0 if either string is empty.
+
+Convert jewels to a set first so each membership check is O(1).
+"""
+
+objective = "Convert a lookup collection to a set for O(1) membership tests."
+
+interview = """
+This is LeetCode's Jewels and Stones. Checking `ch in jewels` on a string or
+list scans it every time, giving O(len(jewels) * len(stones)). Building a set
+once makes each check O(1) on average, so the whole thing is linear. "Turn the
+lookup side into a set" is one of the most common one-line optimisations.
+"""
+
+hints = [
+  "For every stone you need to answer: is this character a jewel?",
+  "set(jewels) gives O(1) average-time `ch in jewel_set` checks.",
+  "Build the set once, then count with sum(1 for ch in stones if ch in jewel_set).",
+]
+
+[[examples]]
+input = "count_jewels(\"aA\", \"aAAbbbb\")"
+output = "3"
+explanation = "The stones 'a', 'A' and 'A' are jewels. The four 'b' stones are not."
+
+[[examples]]
+input = "count_jewels(\"z\", \"ZZ\")"
+output = "0"
+explanation = "Matching is case-sensitive, so 'Z' is not the same type as the jewel 'z'."

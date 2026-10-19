@@ -1,0 +1,44 @@
+id = "setdefault-01"
+title = "Group Orders by Customer"
+module = "hashing"
+difficulty = "intermediate"
+type = "syntax"
+concepts = ["dict", "dict.setdefault", "grouping", "tuple unpacking"]
+
+description = """
+Implement orders_by_customer(orders).
+
+orders is a list of (customer, order_id) tuples, where customer is a string and
+order_id is an int. Return a dict mapping each customer to the list of their
+order IDs. Keys must appear in the order each customer is first seen, and each
+list must keep the order IDs in input order (repeated IDs are kept). Return {}
+for an empty list.
+
+Use groups.setdefault(customer, []).append(order_id) instead of an if/else on the key.
+"""
+
+objective = "Group values under a key in one line with dict.setdefault(key, []).append(...)."
+
+interview = """
+"Bucket records by a key" shows up constantly: building adjacency lists from an
+edge list, grouping log lines by user, collecting transactions per account
+before checking a rule. setdefault creates the empty list on first sight and
+returns it, so the grouping step is a single line and the dict keeps keys in
+first-seen order for free.
+"""
+
+hints = [
+  "Unpack each tuple in the loop header: for customer, order_id in orders.",
+  "groups.setdefault(customer, []) returns the list stored for customer, creating an empty one if needed.",
+  "Inside the loop: groups.setdefault(customer, []).append(order_id). Return groups.",
+]
+
+[[examples]]
+input = "orders_by_customer([(\"ava\", 101), (\"raj\", 102), (\"ava\", 103)])"
+output = "{'ava': [101, 103], 'raj': [102]}"
+explanation = "ava is seen first, so her key comes first, and her orders 101 and 103 stay in input order."
+
+[[examples]]
+input = "orders_by_customer([])"
+output = "{}"
+explanation = "With no orders there is nothing to group, so the result is an empty dict."

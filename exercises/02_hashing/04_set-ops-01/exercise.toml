@@ -1,0 +1,48 @@
+id = "set-ops-01"
+title = "Compare Course Rosters"
+module = "hashing"
+difficulty = "beginner"
+type = "syntax"
+concepts = ["set", "set operators", "sorted"]
+
+description = """
+Implement compare_rosters(course_a, course_b).
+
+Each argument is a list of student names (strings) and may contain repeats.
+Return a dict with exactly these four keys, each mapped to a sorted list of
+unique names:
+
+- "both": students in both courses
+- "either": students in at least one course
+- "only_a": students in course_a but not course_b
+- "exactly_one": students in one course but not the other
+
+Empty inputs give empty lists.
+
+Convert the lists to sets and use the operators &, |, - and ^.
+"""
+
+objective = "Use the set operators &, |, - and ^ for intersection, union, difference and symmetric difference."
+
+interview = """
+Set algebra turns "which items are shared / missing / unique" questions into
+one-liners: Intersection of Two Arrays, finding the missing or extra element,
+comparing two friend lists. Writing a & b instead of a nested loop is both
+faster (O(n + m)) and easier for an interviewer to read.
+"""
+
+hints = [
+  "Turn each list into a set first; duplicates disappear automatically.",
+  "Intersection is a & b, union is a | b, difference is a - b, symmetric difference is a ^ b.",
+  "Wrap each result in sorted() so the output order is deterministic, then build the dict.",
+]
+
+[[examples]]
+input = "compare_rosters([\"ana\", \"ben\", \"cal\"], [\"ben\", \"dee\"])"
+output = "{'both': ['ben'], 'either': ['ana', 'ben', 'cal', 'dee'], 'only_a': ['ana', 'cal'], 'exactly_one': ['ana', 'cal', 'dee']}"
+explanation = "Only ben is in both courses. Removing ben from the union leaves the students who are in exactly one course."
+
+[[examples]]
+input = "compare_rosters([\"ana\", \"ana\"], [])"
+output = "{'both': [], 'either': ['ana'], 'only_a': ['ana'], 'exactly_one': ['ana']}"
+explanation = "Repeats collapse when the list becomes a set, and an empty course shares nobody, so 'both' is empty."

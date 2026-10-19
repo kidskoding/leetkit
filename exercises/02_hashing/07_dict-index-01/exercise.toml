@@ -1,0 +1,43 @@
+id = "dict-index-01"
+title = "First Unique Character"
+module = "hashing"
+difficulty = "intermediate"
+type = "application"
+concepts = ["dict", "insertion order", "enumerate"]
+
+description = """
+Implement first_unique_index(s).
+
+Return the index of the first character in s that appears exactly once.
+Return -1 if every character repeats or s is empty. Characters are
+case-sensitive ("a" and "A" are different).
+
+Python dicts remember insertion order (3.7+), so a dict built while scanning s
+lists characters in order of first appearance. Use that instead of rescanning s
+with s.count() for every character.
+"""
+
+objective = "Exploit dict insertion order to find the first item meeting a count condition."
+
+interview = """
+First Unique Character in a String is a common easy problem that tests whether
+you avoid the O(n^2) s.count(ch) loop. Because dicts preserve insertion order,
+one pass to record counts or positions and one pass over the dict is enough,
+with no second scan of the whole string needed.
+"""
+
+hints = [
+  "Record something about each character in a dict during one pass over s.",
+  "Store each character's first index, and mark it as repeated (for example with -1) when you see it again.",
+  "Loop with enumerate to build {ch: index or -1}, then return the first value in the dict that is not -1, else -1.",
+]
+
+[[examples]]
+input = "first_unique_index(\"loveleetcode\")"
+output = "2"
+explanation = "'l' and 'o' both repeat, and 'v' at index 2 is the first character that appears exactly once."
+
+[[examples]]
+input = "first_unique_index(\"aabb\")"
+output = "-1"
+explanation = "Every character appears twice, so there is no unique character."
