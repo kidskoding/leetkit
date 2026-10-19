@@ -1,0 +1,42 @@
+id = "lambda-01"
+title = "Merge Meeting Intervals"
+module = "sorting"
+difficulty = "intermediate"
+type = "application"
+concepts = ["sorted", "lambda", "intervals"]
+
+description = """
+Implement merge_intervals(intervals).
+
+intervals is a list of [start, end] pairs with start <= end, in any order.
+Merge every group of overlapping intervals and return a list of [start, end]
+lists sorted by start. Intervals that touch also merge: [1, 3] and [3, 5]
+become [1, 5]. Return [] for an empty list. Do not modify the input.
+
+Sort with a lambda key that picks the start of each interval.
+"""
+
+objective = "Sort structured records with sorted(..., key=lambda ...) and then sweep through them in order."
+
+interview = """
+Merge Intervals is a classic, and its cousins (Meeting Rooms, Insert Interval,
+Non-overlapping Intervals) all begin with the same line: sort by start time.
+Writing sorted(intervals, key=lambda iv: iv[0]) quickly lets you spend the
+interview on the merge logic instead of the sorting.
+"""
+
+hints = [
+  "Once intervals are ordered by start, any overlap is with the interval you merged most recently.",
+  "Sort with sorted(intervals, key=lambda iv: iv[0]), then walk through the result.",
+  "Keep a merged list. If start <= merged[-1][1], extend merged[-1][1] with max(); otherwise append [start, end].",
+]
+
+[[examples]]
+input = "merge_intervals([[1, 3], [8, 10], [2, 6], [15, 18]])"
+output = "[[1, 6], [8, 10], [15, 18]]"
+explanation = "Sorted by start the intervals are [1, 3], [2, 6], [8, 10], [15, 18]. [2, 6] overlaps [1, 3] and they merge into [1, 6]; the other two overlap nothing."
+
+[[examples]]
+input = "merge_intervals([[4, 5], [1, 4]])"
+output = "[[1, 5]]"
+explanation = "After sorting, [1, 4] ends exactly where [4, 5] starts. Touching intervals count as overlapping, so they merge into [1, 5]."

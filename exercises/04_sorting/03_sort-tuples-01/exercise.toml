@@ -1,0 +1,42 @@
+id = "sort-tuples-01"
+title = "Rank the Leaderboard"
+module = "sorting"
+difficulty = "intermediate"
+type = "syntax"
+concepts = ["sorted", "tuple key", "multi-key sort"]
+
+description = """
+Implement rank_players(scores).
+
+scores is a list of (name, score) tuples with integer scores. Return a list of
+names ordered by score from highest to lowest. Players with the same score are
+ordered by name alphabetically (A before Z). Return [] for an empty list.
+
+Use a single sorted() call whose key returns a tuple, negating the score so
+that higher scores come first.
+"""
+
+objective = "Sort by several criteria at once with a tuple key, negating numeric fields to sort them descending."
+
+interview = """
+"Sort by frequency descending, then by value ascending" appears in Top K
+Frequent Words, Sort Characters by Frequency, leaderboards and log ordering.
+A tuple key like (-count, word) solves it in one line, where reverse=True
+would wrongly flip the tie-breaker as well.
+"""
+
+hints = [
+  "Tuples compare element by element, so a key can return more than one value.",
+  "Return (primary, secondary) from the key: key=lambda p: (..., ...).",
+  "Use key=lambda p: (-p[1], p[0]) and then take the names from the sorted pairs.",
+]
+
+[[examples]]
+input = 'rank_players([("ana", 90), ("bo", 95), ("cy", 90)])'
+output = "['bo', 'ana', 'cy']"
+explanation = "bo has the highest score, so bo comes first. ana and cy tie on 90, so they are ordered by name: ana before cy."
+
+[[examples]]
+input = 'rank_players([("zed", 10), ("amy", 10)])'
+output = "['amy', 'zed']"
+explanation = "Every score is equal, so names alone decide the order and amy comes before zed. Sorting with reverse=True would wrongly put zed first."

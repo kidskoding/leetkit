@@ -1,0 +1,43 @@
+id = "sort-inplace-01"
+title = "Top K Scores"
+module = "sorting"
+difficulty = "beginner"
+type = "syntax"
+concepts = ["sorted", "list.sort", "reverse"]
+
+description = """
+Implement top_k(scores, k).
+
+Return a new list holding the k largest values in scores, largest first.
+Duplicates count separately. If k is 0, return []. If k is larger than
+len(scores), return all the values in descending order. scores must be left
+exactly as it was: the caller still needs its original order.
+
+Use reverse=True. Remember that scores.sort() reorders the caller's list and
+returns None, while sorted() returns a new list.
+"""
+
+objective = "Choose between in-place list.sort() and sorted() and sort descending with reverse=True."
+
+interview = """
+Interviewers watch for accidental mutation: calling nums.sort() on an argument
+silently changes the caller's data, and writing result = nums.sort() leaves
+result as None. Knowing that sorted() copies and list.sort() works in place
+(saving memory) lets you pick deliberately and explain the trade-off.
+"""
+
+hints = [
+  "One of Python's two ways to sort returns a new list; the other changes the list and returns None.",
+  "sorted(scores, reverse=True) gives a descending copy without touching scores.",
+  "Slice the descending copy: return sorted(scores, reverse=True)[:k].",
+]
+
+[[examples]]
+input = "top_k([40, 10, 90, 70], 2)"
+output = "[90, 70]"
+explanation = "Sorted largest first the scores are 90, 70, 40, 10, and the first two are 90 and 70. The input list keeps its original order."
+
+[[examples]]
+input = "top_k([5, 5, 1], 5)"
+output = "[5, 5, 1]"
+explanation = "k is larger than the list, so every value comes back in descending order. The two 5s are counted separately."

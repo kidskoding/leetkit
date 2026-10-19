@@ -1,0 +1,42 @@
+id = "sorted-key-01"
+title = "Sort Words by Length"
+module = "sorting"
+difficulty = "beginner"
+type = "syntax"
+concepts = ["sorted", "key", "stability"]
+
+description = """
+Implement sort_by_length(words).
+
+Return a new list with the words ordered from shortest to longest.
+Words of the same length must keep their original relative order.
+Return [] for an empty list. Do not modify words.
+
+Use sorted() with key=len. Python's sort is stable, so ties keep their
+input order without any extra work.
+"""
+
+objective = "Sort by a computed property with sorted(..., key=...) and rely on sort stability for ties."
+
+interview = """
+Sorting by a derived value is everywhere: strings by length, people by age,
+intervals by start. Passing a key function is the Python idiom; it is clearer
+and faster than writing a comparator. Knowing that the sort is stable lets you
+state tie behaviour confidently instead of guessing.
+"""
+
+hints = [
+  "sorted() accepts a function that computes the value to sort by.",
+  "Pass the built-in len as the key: sorted(words, key=...).",
+  "return sorted(words, key=len) - stability handles equal lengths for you.",
+]
+
+[[examples]]
+input = 'sort_by_length(["banana", "fig", "apple", "kiwi"])'
+output = "['fig', 'kiwi', 'apple', 'banana']"
+explanation = "The lengths are 6, 3, 5 and 4, so ordering by length gives fig (3), kiwi (4), apple (5), banana (6)."
+
+[[examples]]
+input = 'sort_by_length(["bb", "aa", "c"])'
+output = "['c', 'bb', 'aa']"
+explanation = "c is shortest. bb and aa tie at length 2, so they keep their input order (bb before aa) instead of being alphabetised."

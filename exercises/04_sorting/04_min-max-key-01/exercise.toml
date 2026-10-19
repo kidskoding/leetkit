@@ -1,0 +1,41 @@
+id = "min-max-key-01"
+title = "Closest Point to the Origin"
+module = "sorting"
+difficulty = "beginner"
+type = "syntax"
+concepts = ["min", "max", "key"]
+
+description = """
+Implement closest_point(points).
+
+points is a list of (x, y) tuples of integers. Return the point closest to the
+origin (0, 0), measured by x * x + y * y. If several points are equally close,
+return the one that appears first in the list. Return None for an empty list.
+
+Use min() with key= (and default=) instead of sorting or a manual loop.
+"""
+
+objective = "Pick the best element by a computed score with min()/max() and key=, without sorting."
+
+interview = """
+"Find the element that minimises or maximises something" is a building block in
+K Closest Points, Longest Word in Dictionary and many greedy steps. min() with a
+key is O(n) and one line, whereas sorting just to take the first element costs
+O(n log n) and reads as overkill.
+"""
+
+hints = [
+  "min() and max() accept the same key= argument as sorted().",
+  "The key should compute the squared distance: lambda p: p[0] ** 2 + p[1] ** 2.",
+  "min(points, key=..., default=None) handles the empty list, and min keeps the first of equal keys.",
+]
+
+[[examples]]
+input = "closest_point([(3, 4), (1, -1), (5, 0)])"
+output = "(1, -1)"
+explanation = "The squared distances are 25, 2 and 25, so (1, -1) is closest. Negative coordinates are fine because they are squared."
+
+[[examples]]
+input = "closest_point([(0, 2), (2, 0)])"
+output = "(0, 2)"
+explanation = "Both points have squared distance 4. On a tie the point that comes first in the list wins, and min() keeps the first of equal keys."

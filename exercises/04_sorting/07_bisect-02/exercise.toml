@@ -1,0 +1,42 @@
+id = "bisect-02"
+title = "Count Prices in a Budget"
+module = "sorting"
+difficulty = "intermediate"
+type = "application"
+concepts = ["bisect", "bisect_left", "bisect_right", "range query"]
+
+description = """
+Implement count_in_range(prices, lo, hi).
+
+prices is sorted in ascending order and may contain duplicates. Return how
+many prices p satisfy lo <= p <= hi (both ends inclusive). Return 0 if lo > hi
+or if prices is empty.
+
+Find both boundaries with bisect_left and bisect_right rather than scanning
+the list.
+"""
+
+objective = "Combine bisect_left and bisect_right to count elements in an inclusive range in O(log n)."
+
+interview = """
+Range counting on sorted data appears in problems like Count of Range Sum,
+"how many events fall between t1 and t2", and as the query step after
+sorting once and answering many questions. Subtracting two bisect results is
+O(log n) per query and handles duplicates at both ends without special cases.
+"""
+
+hints = [
+  "The values in range form one contiguous block of the sorted list.",
+  "bisect_left(prices, lo) is where the block starts; bisect_right(prices, hi) is just past where it ends.",
+  "Return the difference of the two indices, but never less than 0.",
+]
+
+[[examples]]
+input = "count_in_range([5, 10, 10, 15, 20, 30], 10, 20)"
+output = "4"
+explanation = "bisect_left finds index 1, the first 10, and bisect_right finds index 5, just past the 20. That gives 5 - 1 = 4 prices: 10, 10, 15 and 20."
+
+[[examples]]
+input = "count_in_range([5, 10, 15], 11, 14)"
+output = "0"
+explanation = "No price falls between 11 and 14. Both searches land at index 2, so the count is 2 - 2 = 0."
