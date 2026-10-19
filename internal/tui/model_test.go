@@ -189,8 +189,8 @@ func TestTooSmall(t *testing.T) {
 
 func TestViewFitsWindow(t *testing.T) {
 	m := start(t, newFixture(t, runner.ErrNoPython).opts)
-	m, _ = update(t, m, press("t"))
-	for _, scr := range []screen{screenWatch, screenList} {
+	m, _ = update(t, m, press("t"), press("?"))
+	for _, scr := range []screen{screenWatch, screenList, screenProgress} {
 		m.screen = scr
 		for _, sz := range []tea.WindowSizeMsg{{Width: 60, Height: 12}, size, {Width: 200, Height: 50}} {
 			m, _ = update(t, m, sz)
@@ -349,4 +349,52 @@ func TestExplanationUnlocksWhenSolved(t *testing.T) {
 	assertContains(t, m, "── Explanation · enumerate-01", "x back to exercise")
 	m, _ = update(t, m, press("x"))
 	assertContains(t, m, "Describe enumerate-01.", "x explanation")
+}
+
+func TestProgressScreen(t *testing.T) {
+	f := newFixture(t, runner.ErrNoPython)
+	for id, passed := range map[string]bool{"enumerate-01": true, "zip-01": false} {
+		if _, err := f.store.Record(id, passed); err != nil {
+			t.Fatal(err)
+		}
+	}
+	m := start(t, f.opts)
+	for _, from := range []screen{screenWatch, screenList} {
+		m.screen = from
+		m, _ = update(t, m, press("p"))
+		if m.screen != screenProgress {
+			t.Fatalf("p from screen %d did not open progress", from)
+		}
+		assertContains(t, m, "Progress", "Overall", "1/3", "Iteration and Unpacking", "1/2",
+			"Dictionaries and Sets", "0/1", "1 solved · 2 test runs")
+		m, _ = update(t, m, press("esc"))
+		if m.screen != from {
+			t.Errorf("esc returned to %d, want %d", m.screen, from)
+		}
+	}
+	m, _ = update(t, m, press("p"))
+	if _, cmd := update(t, m, press("q")); !isQuit(cmd) {
+		t.Error("q did not quit from the progress screen")
+	}
+}
+
+func TestFullHelpToggle(t *testing.T) {
+	m := start(t, newFixture(t, runner.ErrNoPython).opts)
+	if strings.Contains(plain(m), "progress") {
+		t.Fatal("short help should not list every key")
+	}
+	m, _ = update(t, m, press("?"))
+	assertContains(t, m, "progress", "j/k scroll", "? less")
+	m, _ = update(t, m, press("?"))
+	if strings.Contains(plain(m), "progress") {
+		t.Error("? did not collapse the help")
+	}
+}
+
+func TestGlobalKeysIgnoredWhileSearching(t *testing.T) {
+	m := start(t, newFixture(t, runner.ErrNoPython).opts)
+	m, _ = update(t, m, press("h"), press("/"), press("p"))
+	if m.screen != screenList {
+		t.Error("typing p into search opened the progress screen")
+	}
 }

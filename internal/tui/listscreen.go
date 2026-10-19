@@ -95,7 +95,19 @@ func (m Model) selectedIndex() int {
 // Panels have a rounded border and one cell of horizontal padding; lipgloss
 // widths include both.
 func (m Model) listPaneSizes() (listWidth, bodyHeight int) {
-	return max(listMinWidth, m.width*2/5), m.height - 2
+	return max(listMinWidth, m.width*2/5), m.height - 1 - lipgloss.Height(m.listFooter())
+}
+
+func (m Model) listFooter() string {
+	footer := m.help.View(m.listKeys)
+	switch {
+	case m.confirmReset != "":
+		footer = m.th.Warn.Render("Reset "+m.confirmReset+" to the starter code? Your changes will be lost.") +
+			" " + m.th.Heading.Render("y") + m.th.Faint.Render("/") + m.th.Heading.Render("n")
+	case m.notice != "":
+		footer = m.th.Warn.Render(m.notice)
+	}
+	return lipgloss.NewStyle().MaxWidth(m.width).PaddingLeft(1).Render(footer)
 }
 
 func (m *Model) layoutList() {
@@ -106,15 +118,7 @@ func (m *Model) layoutList() {
 func (m Model) listView() string {
 	listWidth, bodyHeight := m.listPaneSizes()
 	header := " " + m.th.Heading.Render("Exercises") + "  " + m.progressBar()
-	footer := " " + m.help.View(m.listKeys)
-	switch {
-	case m.confirmReset != "":
-		footer = " " + m.th.Warn.Render("Reset "+m.confirmReset+" to the starter code? Your changes will be lost.") +
-			" " + m.th.Heading.Render("y") + m.th.Faint.Render("/") + m.th.Heading.Render("n")
-	case m.notice != "":
-		footer = " " + m.th.Warn.Render(m.notice)
-	}
-	footer = lipgloss.NewStyle().MaxWidth(m.width).Render(footer)
+	footer := m.listFooter()
 	left := m.panel(m.list.View(), listWidth, bodyHeight, true)
 	right := m.panel(m.preview(m.width-listWidth-4, bodyHeight-2), m.width-listWidth, bodyHeight, false)
 	return lipgloss.JoinVertical(lipgloss.Left, header, lipgloss.JoinHorizontal(lipgloss.Top, left, right), footer)

@@ -51,6 +51,7 @@ type screen int
 const (
 	screenWatch screen = iota
 	screenList
+	screenProgress
 )
 
 type Model struct {
@@ -58,10 +59,11 @@ type Model struct {
 	th        theme.Theme
 	exercises []*exercise.Exercise
 
-	screen  screen
-	current int
-	hints   int
-	editing bool
+	screen     screen
+	prevScreen screen
+	current    int
+	hints      int
+	editing    bool
 	// explaining shows explanation.md instead of the exercise details.
 	explaining bool
 	// confirmReset holds the exercise id awaiting a y/n reset confirmation.
@@ -71,14 +73,15 @@ type Model struct {
 
 	run runState
 
-	watchKeys watchKeys
-	listKeys  listKeys
-	list      list.Model
-	vp        viewport.Model
-	spinner   spinner.Model
-	help      help.Model
-	bar       progress.Model
-	notice    string
+	watchKeys    watchKeys
+	listKeys     listKeys
+	progressKeys progressKeys
+	list         list.Model
+	vp           viewport.Model
+	spinner      spinner.Model
+	help         help.Model
+	bar          progress.Model
+	notice       string
 
 	width, height int
 }
@@ -97,12 +100,13 @@ func Run(ctx context.Context, opts Options) error {
 func New(opts Options) Model {
 	th := opts.Theme
 	m := Model{
-		opts:      opts,
-		th:        th,
-		exercises: opts.Catalog.All(),
-		watchKeys: newWatchKeys(),
-		listKeys:  newListKeys(),
-		notice:    opts.Notice,
+		opts:         opts,
+		th:           th,
+		exercises:    opts.Catalog.All(),
+		watchKeys:    newWatchKeys(),
+		listKeys:     newListKeys(),
+		progressKeys: newProgressKeys(),
+		notice:       opts.Notice,
 	}
 	m.list = newList(th, m.exercises)
 	m.vp = viewport.New()
@@ -214,9 +218,29 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		}
 		m.notice = ""
+		if m.acceptsGlobalKeys() {
+			switch msg.String() {
+			case "p":
+				m.prevScreen, m.screen = m.screen, screenProgress
+				return m, nil
+			case "?":
+				m.help.ShowAll = !m.help.ShowAll
+				desc := "more"
+				if m.help.ShowAll {
+					desc = "less"
+				}
+				m.watchKeys.Help.SetHelp("?", desc)
+				m.listKeys.Help.SetHelp("?", desc)
+				m.layout()
+				return m, nil
+			}
+		}
 	}
-	if m.screen == screenList {
+	switch m.screen {
+	case screenList:
 		return m.updateList(msg)
+	case screenProgress:
+		return m.updateProgress(msg)
 	}
 	return m.updateWatch(msg)
 }
@@ -241,10 +265,24 @@ func (m Model) render() string {
 		return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center,
 			m.th.Faint.Render("No exercises found. Press q to quit."))
 	}
-	if m.screen == screenList {
+	switch m.screen {
+	case screenList:
 		return m.listView()
+	case screenProgress:
+		return m.progressView()
 	}
 	return m.watchView()
+}
+
+// acceptsGlobalKeys is false while a text field or prompt owns the keyboard.
+func (m Model) acceptsGlobalKeys() bool {
+	switch {
+	case m.screen == screenProgress, m.confirmReset != "":
+		return false
+	case m.screen == screenList && m.list.SettingFilter():
+		return false
+	}
+	return true
 }
 
 func (m *Model) layout() {

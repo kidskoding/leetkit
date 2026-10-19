@@ -17,10 +17,6 @@ import (
 	"github.com/kidskoding/leetkit/internal/runner"
 )
 
-// statusLines is the fixed block under the scrolling content: a blank line,
-// progress, current file, and the key line.
-const statusLines = 4
-
 func (m Model) updateWatch(msg tea.Msg) (tea.Model, tea.Cmd) {
 	k, ok := msg.(tea.KeyPressMsg)
 	if !ok {
@@ -107,7 +103,7 @@ func (m *Model) revealHint() {
 
 func (m *Model) layoutWatch() {
 	m.vp.SetWidth(max(m.width-2, 0))
-	m.vp.SetHeight(max(m.height-statusLines, 0))
+	m.vp.SetHeight(max(m.height-lipgloss.Height(m.watchStatus()), 0))
 	m.refreshWatch()
 }
 
@@ -127,19 +123,28 @@ func (m *Model) refreshWatch() {
 }
 
 func (m Model) watchView() string {
-	content := lipgloss.NewStyle().PaddingLeft(1).Render(m.vp.View())
-	footer := " " + m.help.View(m.watchKeys)
+	status := m.watchStatus()
+	// The status block can grow (full help), so size the viewport per render.
+	vp := m.vp
+	vp.SetHeight(max(m.height-lipgloss.Height(status), 0))
+	content := lipgloss.NewStyle().PaddingLeft(1).Render(vp.View())
+	return lipgloss.JoinVertical(lipgloss.Left, content, status)
+}
+
+// watchStatus is the fixed block under the scrolling content: progress,
+// current file, and the key help or a notice.
+func (m Model) watchStatus() string {
+	footer := m.help.View(m.watchKeys)
 	if m.notice != "" {
-		footer = " " + m.th.Warn.Render(m.notice)
+		footer = m.th.Warn.Render(m.notice)
 	}
 	path := truncateLeft(shortenHome(m.opts.Workspace.Path(m.currentExercise().ID)), m.width-11)
-	status := strings.Join([]string{
+	return strings.Join([]string{
 		"",
 		" " + m.th.Faint.Render("Progress ") + m.progressBar(),
 		" " + m.th.Faint.Render("Current  ") + m.th.ID.Render(path),
-		lipgloss.NewStyle().MaxWidth(m.width).Render(footer),
+		lipgloss.NewStyle().MaxWidth(m.width).PaddingLeft(1).Render(footer),
 	}, "\n")
-	return lipgloss.JoinVertical(lipgloss.Left, content, status)
 }
 
 func (m Model) watchContent(width int) string {
