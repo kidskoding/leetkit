@@ -19,7 +19,7 @@ Learners edit Python exercises in their own editor; LeetKit runs pytest and trac
 
 ```bash
 go run .                       # launch the TUI
-go run . list | check [-v] <id> | doctor
+go run . list [--ids] | run <id> | check [-v] [<id>] | progress | reset [-y] <id> | doctor | completion <shell>
 go fmt ./... && go vet ./... && go test ./...   # required before every checkpoint
 go test -race ./...
 ```
