@@ -4,15 +4,16 @@ Terminal app (Go + Charm v2) that trains Python syntax and standard-library flue
 Learners edit Python exercises in their own editor; LeetKit runs pytest and tracks progress.
 
 - **Spec (source of truth):** `SPEC.md`
-- **Plan, milestones, deviations:** `docs/PLAN.md` (local only, gitignored) — update it when a decision changes.
+- **Deviations from the spec:** see "Deviations from SPEC.md" below; update it when a decision changes.
 
 ## Workflow rules
 
-- Build one milestone at a time (see `docs/PLAN.md`). At each checkpoint, stop and hand the user a
-  Conventional Commits message. **Never run `git commit` or `git push`** — the user commits.
+- Work in small units (one package or one user-facing feature). Commit each unit with a Conventional Commits
+  message, no `Co-Authored-By` trailer, then stop for review. Every commit must pass `go vet` and `go test` on
+  its own. **Never `git push`.**
 - Smallest working vertical slice first. No feature is done until it works end to end.
 - Write tests with the code. Business logic must be testable without a terminal.
-- Record any departure from `SPEC.md` in the deviations table in `docs/PLAN.md`.
+- Record any departure from `SPEC.md` under "Deviations from SPEC.md" below.
 
 ## Commands
 
