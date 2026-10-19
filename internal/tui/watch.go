@@ -156,7 +156,7 @@ func (m Model) watchContent(width int) string {
 	b.WriteString(th.Faint.Render(m.position(m.current)+"  ") + th.ID.Bold(true).Render(ex.ID) +
 		th.Faint.Render(" · ") + th.Text.Bold(true).Render(ex.Title) + "\n")
 	b.WriteString(th.Faint.Render(m.moduleTitle(ex)+" · "+ex.Difficulty+" · "+ex.TypeLabel()) + "\n\n")
-	b.WriteString(th.Text.Render(strings.TrimSpace(ex.Description)) + "\n")
+	b.WriteString(th.Text.Render(reflow(ex.Description)) + "\n")
 	for i, e := range ex.Examples {
 		b.WriteString("\n" + m.example(i+1, e, width) + "\n")
 	}

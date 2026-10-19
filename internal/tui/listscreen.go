@@ -150,7 +150,7 @@ func (m Model) preview(width, height int) string {
 	var b strings.Builder
 	b.WriteString(th.ID.Bold(true).Render(ex.ID) + th.Faint.Render(" · ") + th.Text.Bold(true).Render(ex.Title) + "\n")
 	b.WriteString(th.Faint.Render(m.moduleTitle(ex)+" · "+ex.Difficulty+" · "+ex.TypeLabel()) + "\n")
-	b.WriteString("\n" + th.Heading.Render("Objective") + "\n" + th.Text.Render(strings.TrimSpace(ex.Objective)) + "\n")
-	b.WriteString("\n" + th.Heading.Render("Problem") + "\n" + th.Text.Render(strings.TrimSpace(ex.Description)) + "\n")
+	b.WriteString("\n" + th.Heading.Render("Objective") + "\n" + th.Text.Render(reflow(ex.Objective)) + "\n")
+	b.WriteString("\n" + th.Heading.Render("Problem") + "\n" + th.Text.Render(reflow(ex.Description)) + "\n")
 	return lipgloss.NewStyle().Width(width).MaxHeight(height).Render(b.String())
 }

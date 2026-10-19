@@ -12,23 +12,37 @@ import (
 // headings, fenced code, bullets, and inline code. It avoids pulling in a
 // full Markdown renderer for a handful of short documents.
 func renderMarkdown(th theme.Theme, src string, width int) string {
-	var out []string
+	var out, para []string
 	inFence := false
+	flush := func() {
+		if len(para) > 0 {
+			out = append(out, lipgloss.NewStyle().Width(width).Render(inlineCode(th, strings.Join(para, " "))))
+			para = nil
+		}
+	}
 	for _, line := range strings.Split(strings.TrimSpace(src), "\n") {
 		trimmed := strings.TrimSpace(line)
 		switch {
 		case strings.HasPrefix(trimmed, "```"):
+			flush()
 			inFence = !inFence
 		case inFence:
 			out = append(out, "  "+th.ID.Render(line))
+		case trimmed == "":
+			flush()
+			out = append(out, "")
 		case strings.HasPrefix(trimmed, "#"):
+			flush()
 			out = append(out, th.Heading.Render(strings.TrimSpace(strings.TrimLeft(trimmed, "#"))))
 		case strings.HasPrefix(trimmed, "- "), strings.HasPrefix(trimmed, "* "):
+			flush()
 			out = append(out, wrapHanging(th, "• ", inlineCode(th, trimmed[2:]), width))
 		default:
-			out = append(out, lipgloss.NewStyle().Width(width).Render(inlineCode(th, line)))
+			// Source paragraphs are hard-wrapped; join them so they wrap to the window.
+			para = append(para, trimmed)
 		}
 	}
+	flush()
 	return strings.Join(out, "\n")
 }
 
