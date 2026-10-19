@@ -16,6 +16,7 @@ import (
 	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
 
+	"github.com/kidskoding/leetkit/internal/editor"
 	"github.com/kidskoding/leetkit/internal/exercise"
 	pstore "github.com/kidskoding/leetkit/internal/progress"
 	"github.com/kidskoding/leetkit/internal/runner"
@@ -36,6 +37,9 @@ type Options struct {
 	// RunnerErr explains why tests cannot run, such as a missing Python. The
 	// dashboard still opens so learners can browse exercises.
 	RunnerErr error
+	Editor    editor.Editor
+	// EditorErr explains why no editor could be resolved.
+	EditorErr error
 	Theme     theme.Theme
 	// Notice is shown in the footer until the first key press.
 	Notice string
@@ -180,6 +184,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, m.startRun()
 	case runDoneMsg:
 		return m, m.finishRun(msg)
+	case editorDoneMsg:
+		return m, m.finishEdit(msg)
 	case spinner.TickMsg:
 		if !m.run.active {
 			return m, nil

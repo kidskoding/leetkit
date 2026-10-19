@@ -9,6 +9,7 @@ type watchKeys struct {
 	showNext bool
 
 	Next   key.Binding
+	Edit   key.Binding
 	Hint   key.Binding
 	Run    key.Binding
 	List   key.Binding
@@ -20,6 +21,7 @@ func newWatchKeys() watchKeys {
 	return watchKeys{
 		Next:   key.NewBinding(key.WithKeys("n"), key.WithHelp("n", "next")),
 		Hint:   key.NewBinding(key.WithKeys("t"), key.WithHelp("t", "hint")),
+		Edit:   key.NewBinding(key.WithKeys("e"), key.WithHelp("e", "edit")),
 		Run:    key.NewBinding(key.WithKeys("r"), key.WithHelp("r", "run")),
 		List:   key.NewBinding(key.WithKeys("h", "left", "esc"), key.WithHelp("h/←", "list")),
 		Scroll: key.NewBinding(key.WithKeys("j", "k", "down", "up", "pgdown", "pgup"), key.WithHelp("j/k", "scroll")),
@@ -28,7 +30,7 @@ func newWatchKeys() watchKeys {
 }
 
 func (k watchKeys) ShortHelp() []key.Binding {
-	keys := []key.Binding{k.Hint, k.Run, k.List, k.Scroll, k.Quit}
+	keys := []key.Binding{k.Edit, k.Hint, k.Run, k.List, k.Scroll, k.Quit}
 	if k.showNext {
 		keys = append([]key.Binding{k.Next}, keys...)
 	}

@@ -1,12 +1,15 @@
 package tui
 
 import (
+	"os"
+	"os/exec"
 	"strings"
 	"testing"
 
 	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
 
+	"github.com/kidskoding/leetkit/internal/editor"
 	"github.com/kidskoding/leetkit/internal/runner"
 )
 
@@ -202,4 +205,48 @@ func TestViewFitsWindow(t *testing.T) {
 			}
 		}
 	}
+}
+
+func TestEditWithoutEditorShowsFix(t *testing.T) {
+	f := newFixture(t, runner.ErrNoPython)
+	f.opts.EditorErr = editor.ErrNoEditor
+	m := start(t, f.opts)
+	m, cmd := update(t, m, press("e"))
+	if cmd != nil {
+		t.Error("edit without an editor returned a command")
+	}
+	assertContains(t, m, "No editor", "Set $EDITOR")
+}
+
+func TestEditOpensWorkingCopy(t *testing.T) {
+	f := newFixture(t, runner.ErrNoPython)
+	f.opts.Editor = editor.Editor{Argv: []string{"true"}, Source: "test"}
+	m := start(t, f.opts)
+	m, cmd := update(t, m, press("e"))
+	if cmd == nil {
+		t.Fatal("e returned no command")
+	}
+	if _, err := os.Stat(f.opts.Workspace.Path("enumerate-01")); err != nil {
+		t.Errorf("working copy not created before opening the editor: %v", err)
+	}
+}
+
+func TestEditorExitRerunsTests(t *testing.T) {
+	f := newFixture(t, nil).withPython(t)
+	m := start(t, f.opts)
+	f.writeWork(t, "enumerate-01", solutionCode)
+	m, cmd := update(t, m, editorDoneMsg{})
+	m = settle(t, m, cmd, idle)
+	assertContains(t, m, "✓ Exercise complete!")
+}
+
+func TestEditorStartFailure(t *testing.T) {
+	f := newFixture(t, runner.ErrNoPython)
+	f.opts.Editor = editor.Editor{Argv: []string{"missing-editor"}}
+	m := start(t, f.opts)
+	m, cmd := update(t, m, editorDoneMsg{err: exec.ErrNotFound})
+	if cmd != nil {
+		t.Error("a failed editor launch should not rerun tests")
+	}
+	assertContains(t, m, "Could not start missing-editor")
 }

@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/kidskoding/leetkit/internal/config"
+	"github.com/kidskoding/leetkit/internal/editor"
 	"github.com/kidskoding/leetkit/internal/progress"
 	"github.com/kidskoding/leetkit/internal/runner"
 	"github.com/kidskoding/leetkit/internal/tui"
@@ -37,12 +38,15 @@ func (a *app) dashboard(ctx context.Context, args []string) error {
 		notice = "Config error; using defaults. Run `leetkit doctor` for details."
 	}
 	py, pyErr := a.findPython(cfg)
+	ed, edErr := editor.Resolve(cfg.Editor)
 	return tui.Run(ctx, tui.Options{
 		Catalog:   cat,
 		Store:     store,
 		Workspace: workspace.Workspace{Dir: a.Paths.WorkspaceDir()},
 		Runner:    runner.Runner{Python: py.Path, Timeout: cfg.Timeout},
 		RunnerErr: pyErr,
+		Editor:    ed,
+		EditorErr: edErr,
 		Theme:     a.th,
 		Notice:    notice,
 	})

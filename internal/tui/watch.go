@@ -30,6 +30,8 @@ func (m Model) updateWatch(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case key.Matches(k, keys.Quit):
 		m.run.cancel()
 		return m, tea.Quit
+	case key.Matches(k, keys.Edit):
+		return m, m.edit()
 	case key.Matches(k, keys.Run):
 		return m, m.startRun()
 	case key.Matches(k, keys.Next):
