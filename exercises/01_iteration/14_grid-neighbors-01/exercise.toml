@@ -1,0 +1,46 @@
+id = "grid-neighbors-01"
+title = "Find Peaks in a Height Map"
+module = "iteration"
+difficulty = "intermediate"
+type = "application"
+concepts = ["grid", "neighbors", "directions", "bounds checking", "all"]
+
+description = """
+Implement find_peaks(heights).
+
+heights is a rectangular grid (a list of rows of ints). A cell is a peak if its
+height is strictly greater than every orthogonal neighbour (up, down, left,
+right) that lies inside the grid. Diagonal cells do not count, and neighbours
+outside the grid are ignored, so a 1 x 1 grid is a single peak.
+
+Return the peaks as a list of (row, col) tuples in row-major order (top to
+bottom, left to right within a row). Return [] for an empty grid ([]).
+
+Loop over a DIRECTIONS list of (dr, dc) offsets and bounds-check each neighbour.
+"""
+
+objective = "Visit grid neighbours with a DIRECTIONS list of (dr, dc) offsets and a bounds check."
+
+interview = """
+Number of Islands, Rotting Oranges, Game of Life, Pacific Atlantic Water Flow,
+and Find a Peak Element II all visit the neighbours of a cell. A single
+DIRECTIONS = [(-1, 0), (1, 0), (0, -1), (0, 1)] list plus one bounds check
+replaces four copy-pasted if blocks and makes switching to 8 directions a
+one-line change.
+"""
+
+hints = [
+  "Describe 'up, down, left, right' as row and column offsets, and loop over them instead of writing four checks.",
+  "DIRECTIONS = [(-1, 0), (1, 0), (0, -1), (0, 1)]; for each (dr, dc), the neighbour is (r + dr, c + dc) if 0 <= r + dr < rows and 0 <= c + dc < cols.",
+  "A cell is a peak when all(heights[r][c] > heights[nr][nc] for every in-bounds neighbour); all() of nothing is True.",
+]
+
+[[examples]]
+input = "find_peaks([[1, 2, 1], [2, 5, 2], [1, 2, 1]])"
+output = "[(1, 1)]"
+explanation = "The centre 5 beats its four neighbours (all 2). Every edge 2 has the 5 next to it, and each corner 1 has a 2 next to it, so none of them is a peak."
+
+[[examples]]
+input = "find_peaks([[3, 3], [1, 0]])"
+output = "[]"
+explanation = "The two 3s are equal neighbours, so neither is strictly taller; the bottom cells each sit below a 3. A plateau has no peak."

@@ -1,0 +1,42 @@
+id = "dict-items-02"
+title = "Top N Best Sellers"
+module = "iteration"
+difficulty = "intermediate"
+type = "application"
+concepts = ["dict", "items", "sorted", "key function"]
+
+description = """
+Implement top_sellers(sales, n).
+
+sales maps a product name (str) to the number of units sold (int). Return a list
+of the top n (product, units) tuples, ranked by units sold from highest to
+lowest. Products with the same units are ordered by name, alphabetically.
+
+If n is larger than the number of products, return all of them in ranked order.
+If n is 0 or sales is empty, return []. Do not modify sales.
+"""
+
+objective = "Rank dictionary entries with sorted(d.items(), key=...) and a tuple sort key."
+
+interview = """
+"Top K" questions (Top K Frequent Words, leaderboards, Rank Teams by Votes)
+usually end with a count dict that has to be ordered by value with a tie-break.
+sorted(d.items(), key=lambda kv: (-kv[1], kv[0])) does the whole ranking in one
+call: the tuple key sorts by the first field, then falls back to the second.
+"""
+
+hints = [
+  "d.items() gives (name, units) pairs, and sorted() can order them by anything you compute from a pair.",
+  "Use a key function that returns a tuple: units descending first, then name ascending. Negating the units flips their order.",
+  "sorted(sales.items(), key=lambda kv: (-kv[1], kv[0]))[:n]",
+]
+
+[[examples]]
+input = "top_sellers({'mug': 40, 'pen': 95, 'cap': 60, 'bag': 12}, 2)"
+output = "[('pen', 95), ('cap', 60)]"
+explanation = "Ranked by units the order is pen (95), cap (60), mug (40), bag (12); the first two are kept."
+
+[[examples]]
+input = "top_sellers({'tea': 30, 'gum': 30, 'ink': 50}, 3)"
+output = "[('ink', 50), ('gum', 30), ('tea', 30)]"
+explanation = "gum and tea tie at 30, so the tie is broken alphabetically and gum comes before tea."

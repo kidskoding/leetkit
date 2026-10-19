@@ -1,0 +1,44 @@
+id = "zip-02"
+title = "Build a Price Lookup"
+module = "iteration"
+difficulty = "beginner"
+type = "syntax"
+concepts = ["zip", "dict", "strict"]
+
+description = """
+Implement price_lookup(items, prices).
+
+items is a list of item names (str) and prices is a parallel list of prices,
+where prices[i] belongs to items[i]. Return a dict mapping each item to its
+price. If an item name repeats, the later price wins. Two empty lists give {}.
+
+If the lists have different lengths the data is corrupt: raise ValueError
+instead of silently dropping the extra entries.
+
+Use dict(zip(items, prices, strict=True)).
+"""
+
+objective = "Pair parallel lists into a dict with dict(zip(...)), and catch length mismatches with strict=True."
+
+interview = """
+Inputs often arrive as parallel arrays: names and scores, keys and values,
+equations and results (Evaluate Division). dict(zip(keys, values)) turns them
+into a lookup in one call. Plain zip() silently stops at the shorter input,
+which hides bad data; strict=True (Python 3.10+) raises ValueError instead.
+"""
+
+hints = [
+  "dict() accepts any iterable of (key, value) pairs.",
+  "zip(items, prices) produces exactly those pairs; zip() also takes a strict keyword.",
+  "return dict(zip(items, prices, strict=True)) raises ValueError on a length mismatch.",
+]
+
+[[examples]]
+input = "price_lookup(['apple', 'bread'], [3, 5])"
+output = "{'apple': 3, 'bread': 5}"
+explanation = "zip pairs 'apple' with 3 and 'bread' with 5, and dict() turns those pairs into a mapping."
+
+[[examples]]
+input = "price_lookup(['tea', 'tea'], [2, 4])"
+output = "{'tea': 4}"
+explanation = "Both pairs use the key 'tea'; dict() keeps the last value it sees, so the price is 4."

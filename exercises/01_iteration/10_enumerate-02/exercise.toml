@@ -1,0 +1,42 @@
+id = "enumerate-02"
+title = "Number the Report Lines"
+module = "iteration"
+difficulty = "beginner"
+type = "syntax"
+concepts = ["enumerate", "start", "f-strings"]
+
+description = """
+Implement number_lines(lines).
+
+lines is a list of strings. Return a new list of strings where each line is
+prefixed with its 1-based line number, a period, and a space: "1. first",
+"2. second", and so on. Empty strings are still numbered ("3. "). Return [] for
+an empty list.
+
+Use enumerate(lines, start=1) instead of adding 1 to a 0-based index.
+"""
+
+objective = "Count from 1 with enumerate(iterable, start=1)."
+
+interview = """
+Output formats often want human positions: line numbers, 1-based ranks,
+"Case #k:" headers, or problems whose answer is a 1-indexed position.
+enumerate(..., start=1) produces those numbers directly, so there is no i + 1
+scattered through the loop body to forget or double-apply.
+"""
+
+hints = [
+  "enumerate() can start counting from any number you like.",
+  "Try: for n, line in enumerate(lines, start=1):",
+  "Build f\"{n}. {line}\" for each pair; a list comprehension over enumerate(...) works well.",
+]
+
+[[examples]]
+input = "number_lines(['revenue up', 'costs flat'])"
+output = "['1. revenue up', '2. costs flat']"
+explanation = "Counting starts at 1, so the first line gets '1. ' and the second gets '2. '."
+
+[[examples]]
+input = "number_lines(['intro', '', 'end'])"
+output = "['1. intro', '2. ', '3. end']"
+explanation = "The blank line still occupies position 2, so it becomes '2. ' and 'end' keeps number 3."

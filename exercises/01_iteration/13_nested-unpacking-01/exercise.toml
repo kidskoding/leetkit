@@ -1,0 +1,43 @@
+id = "nested-unpacking-01"
+title = "Points Inside a Box"
+module = "iteration"
+difficulty = "intermediate"
+type = "syntax"
+concepts = ["tuple unpacking", "nested unpacking", "iteration"]
+
+description = """
+Implement points_in_box(points, box).
+
+points is a list of ((x, y), label) entries: a coordinate pair and a string
+label. box is ((x_min, y_min), (x_max, y_max)), the bottom-left and top-right
+corners of a rectangle. Return the labels of the points that lie inside the box,
+edges included, in the order they appear in points. Return [] if none do or
+points is empty.
+
+Unpack each entry directly in the loop header: for (x, y), label in points.
+"""
+
+objective = "Unpack nested tuples straight in a for-loop target instead of indexing entry[0][1]."
+
+interview = """
+Interview data is often nested: ((row, col), dist) in BFS queues,
+(cost, (node, parent)) in Dijkstra heaps, ((x, y), name) for points. Unpacking
+the full shape in the loop header names every piece once and avoids
+p[0][1]-style indexing, which is hard to read and easy to get wrong.
+"""
+
+hints = [
+  "A for-loop target can mirror the shape of each item, parentheses included.",
+  "for (x, y), label in points: gives you x, y and label as three names. The box can be unpacked the same way.",
+  "(x_min, y_min), (x_max, y_max) = box, then keep label when x_min <= x <= x_max and y_min <= y <= y_max.",
+]
+
+[[examples]]
+input = "points_in_box([((1, 1), 'cafe'), ((5, 2), 'park'), ((2, 3), 'gym')], ((0, 0), (3, 3)))"
+output = "['cafe', 'gym']"
+explanation = "cafe (1, 1) and gym (2, 3) are inside the 0..3 by 0..3 box; park has x = 5, which is past x_max = 3."
+
+[[examples]]
+input = "points_in_box([((3, 0), 'edge')], ((0, 0), (3, 3)))"
+output = "['edge']"
+explanation = "The point sits exactly on the box's right edge and edges count as inside."
