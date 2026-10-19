@@ -306,3 +306,29 @@ func TestCheckFileReportsModTime(t *testing.T) {
 		t.Error("missing file reported ok")
 	}
 }
+
+func TestResetFromList(t *testing.T) {
+	f := newFixture(t, runner.ErrNoPython)
+	f.writeWork(t, "zip-01", solutionCode)
+	if _, err := f.store.Record("zip-01", true); err != nil {
+		t.Fatal(err)
+	}
+	m := start(t, f.opts)
+	m, _ = update(t, m, press("h"), press("j"), press("r"))
+	assertContains(t, m, "Reset zip-01 to the starter code?", "y/n")
+
+	m, _ = update(t, m, press("n"))
+	if !f.store.Completed("zip-01") {
+		t.Fatal("declining the prompt reset progress")
+	}
+
+	m, _ = update(t, m, press("r"), press("y"))
+	data, err := os.ReadFile(f.opts.Workspace.Path("zip-01"))
+	if err != nil || string(data) != starterCode {
+		t.Errorf("working copy = %q, %v; want starter", data, err)
+	}
+	if _, ok := f.store.Entry("zip-01"); ok {
+		t.Error("progress not cleared")
+	}
+	assertContains(t, m, "Reset zip-01 to the starter code.", "○ zip-01")
+}

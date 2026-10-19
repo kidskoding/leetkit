@@ -43,6 +43,7 @@ type listKeys struct {
 	Move   key.Binding
 	Open   key.Binding
 	Search key.Binding
+	Reset  key.Binding
 	Back   key.Binding
 }
 
@@ -51,12 +52,13 @@ func newListKeys() listKeys {
 		Move:   key.NewBinding(key.WithKeys("j", "k", "down", "up"), key.WithHelp("j/k", "move")),
 		Open:   key.NewBinding(key.WithKeys("l", "right", "enter"), key.WithHelp("l/enter", "open")),
 		Search: key.NewBinding(key.WithKeys("/"), key.WithHelp("/", "search")),
+		Reset:  key.NewBinding(key.WithKeys("r"), key.WithHelp("r", "reset")),
 		Back:   key.NewBinding(key.WithKeys("esc", "q"), key.WithHelp("esc", "back")),
 	}
 }
 
 func (k listKeys) ShortHelp() []key.Binding {
-	return []key.Binding{k.Move, k.Open, k.Search, k.Back}
+	return []key.Binding{k.Move, k.Open, k.Search, k.Reset, k.Back}
 }
 
 func (k listKeys) FullHelp() [][]key.Binding { return [][]key.Binding{k.ShortHelp()} }

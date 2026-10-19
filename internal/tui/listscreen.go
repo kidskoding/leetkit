@@ -44,8 +44,21 @@ func newList(th theme.Theme, exercises []*exercise.Exercise) list.Model {
 }
 
 func (m Model) updateList(msg tea.Msg) (tea.Model, tea.Cmd) {
+	if k, ok := msg.(tea.KeyPressMsg); ok && m.confirmReset != "" {
+		id := m.confirmReset
+		m.confirmReset = ""
+		if k.String() == "y" {
+			return m, m.reset(id)
+		}
+		return m, nil
+	}
 	if k, ok := msg.(tea.KeyPressMsg); ok && !m.list.SettingFilter() {
 		switch {
+		case key.Matches(k, m.listKeys.Reset):
+			if i := m.selectedIndex(); i >= 0 {
+				m.confirmReset = m.exercises[i].ID
+			}
+			return m, nil
 		case key.Matches(k, m.listKeys.Open):
 			if i := m.selectedIndex(); i >= 0 {
 				m.screen = screenWatch
@@ -94,9 +107,14 @@ func (m Model) listView() string {
 	listWidth, bodyHeight := m.listPaneSizes()
 	header := " " + m.th.Heading.Render("Exercises") + "  " + m.progressBar()
 	footer := " " + m.help.View(m.listKeys)
-	if m.notice != "" {
+	switch {
+	case m.confirmReset != "":
+		footer = " " + m.th.Warn.Render("Reset "+m.confirmReset+" to the starter code? Your changes will be lost.") +
+			" " + m.th.Heading.Render("y") + m.th.Faint.Render("/") + m.th.Heading.Render("n")
+	case m.notice != "":
 		footer = " " + m.th.Warn.Render(m.notice)
 	}
+	footer = lipgloss.NewStyle().MaxWidth(m.width).Render(footer)
 	left := m.panel(m.list.View(), listWidth, bodyHeight, true)
 	right := m.panel(m.preview(m.width-listWidth-4, bodyHeight-2), m.width-listWidth, bodyHeight, false)
 	return lipgloss.JoinVertical(lipgloss.Left, header, lipgloss.JoinHorizontal(lipgloss.Top, left, right), footer)
