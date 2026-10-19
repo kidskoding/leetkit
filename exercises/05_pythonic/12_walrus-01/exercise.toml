@@ -1,0 +1,46 @@
+id = "walrus-01"
+title = "Score Words Above a Cutoff"
+module = "pythonic"
+difficulty = "intermediate"
+type = "syntax"
+concepts = ["walrus operator", "assignment expression", "list comprehension"]
+
+description = """
+Implement high_scoring_words(words, cutoff).
+
+words is a list of lowercase strings made of the letters a-z. A word's score
+is the sum of its letter positions in the alphabet (a = 1, b = 2, ..., z = 26),
+so "cab" scores 3 + 1 + 2 = 6 and "" scores 0.
+
+Return a list of (word, score) tuples for the words whose score is strictly
+greater than cutoff, in their original order. Duplicate words appear once per
+occurrence. Return [] if no word qualifies.
+
+Use the walrus operator := inside a list comprehension so each score is
+computed only once, both for the filter and for the output.
+"""
+
+objective = "Bind a computed value with := inside a comprehension filter and reuse it in the output."
+
+interview = """
+A common shape is "transform each item, keep the ones that pass a test, and
+return the transformed value". Without := you either compute the transform
+twice or fall back to a loop with a temporary. The walrus operator also tidies
+while loops that read until a sentinel, such as while (line := next_line()).
+"""
+
+hints = [
+  "Write the score as an expression first: sum(ord(ch) - ord(\"a\") + 1 for ch in word).",
+  "In a comprehension's if clause, (score := expression) both stores the value and evaluates to it.",
+  "[(word, score) for word in words if (score := ...) > cutoff] uses the stored score in the output.",
+]
+
+[[examples]]
+input = "high_scoring_words([\"cab\", \"zoo\", \"a\"], 5)"
+output = "[('cab', 6), ('zoo', 56)]"
+explanation = "'cab' scores 6 and 'zoo' scores 26 + 15 + 15 = 56, both above 5. 'a' scores only 1."
+
+[[examples]]
+input = "high_scoring_words([\"bad\", \"ace\"], 9)"
+output = "[]"
+explanation = "'ace' scores 1 + 3 + 5 = 9, which equals the cutoff, so it is not strictly greater. 'bad' scores 7."

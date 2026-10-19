@@ -1,0 +1,48 @@
+id = "string-methods-01"
+title = "Valid Palindrome Ignoring Punctuation"
+module = "pythonic"
+difficulty = "beginner"
+type = "syntax"
+concepts = ["str.isalnum", "str.lower", "strings"]
+
+description = """
+Implement is_valid_palindrome(s).
+
+Return True if s reads the same forwards and backwards after you lowercase
+it and drop every character that is not a letter or digit (spaces,
+punctuation, symbols). Otherwise return False. Comparison is
+case-insensitive: "Aa" is a palindrome. A string that is empty, or becomes
+empty after cleaning (such as ".,!"), counts as a palindrome and returns True.
+
+Use the string methods str.isalnum() and str.lower() to normalize the text.
+"""
+
+objective = "Normalize messy text with str methods such as isalnum() and lower() before comparing it."
+
+interview = """
+Valid Palindrome is one of the most common warm-up questions, and many string
+problems start with the same cleanup step: lowercase, drop punctuation, trim
+whitespace. Knowing isalnum(), lower(), strip() and split() by heart turns
+that step into one line, leaving time for the actual algorithm.
+"""
+
+hints = [
+  "First build a cleaned version of s that only keeps letters and digits, all lowercase.",
+  "ch.isalnum() tells you whether a character is a letter or digit; ch.lower() lowercases it.",
+  "Build cleaned with a comprehension over s, then compare cleaned with cleaned[::-1].",
+]
+
+[[examples]]
+input = "is_valid_palindrome(\"A man, a plan, a canal: Panama\")"
+output = "True"
+explanation = "Dropping spaces and punctuation and lowercasing gives 'amanaplanacanalpanama', which is the same reversed."
+
+[[examples]]
+input = "is_valid_palindrome(\"race a car\")"
+output = "False"
+explanation = "Cleaning gives 'raceacar', whose reverse is 'racaecar', so it is not a palindrome."
+
+[[examples]]
+input = "is_valid_palindrome(\" .,!\")"
+output = "True"
+explanation = "Nothing survives cleaning, and an empty string reads the same in both directions."

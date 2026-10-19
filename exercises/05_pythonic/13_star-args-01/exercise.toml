@@ -1,0 +1,49 @@
+id = "star-args-01"
+title = "Layer Config Settings"
+module = "pythonic"
+difficulty = "intermediate"
+type = "syntax"
+concepts = ["*args", "**kwargs", "dict unpacking", "functions"]
+
+description = """
+Implement merge_settings(*layers, **overrides).
+
+Each positional argument is a dict of settings, and there can be any number of
+them, including none. Merge them left to right so that a later layer wins
+when two layers share a key. Then apply the keyword arguments on top: a
+keyword override beats every layer.
+
+Return a new dict. Do not modify any of the input dicts. Calling
+merge_settings() with no arguments returns {}. Keys keep the position where
+they first appeared.
+
+Accept the layers with *layers and the overrides with **overrides. The tests
+call your function with unpacking, such as merge_settings(*configs) and
+merge_settings(base, **flags).
+"""
+
+objective = "Accept any number of arguments with *args and **kwargs, and pass collections in with * and ** at the call site."
+
+interview = """
+Variadic signatures show up when you write helpers and decorators (a
+decorator's wrapper is almost always def wrapper(*args, **kwargs)), and
+interviewers often ask what * and ** mean on each side of a call. Config
+layering, where defaults are overridden by files and then by flags, is a
+natural place to use both.
+"""
+
+hints = [
+  "Inside the function, layers is a tuple of dicts and overrides is a dict of keyword arguments.",
+  "Start with an empty dict and call .update() with each layer in order; update overwrites existing keys.",
+  "After the loop over layers, update with overrides last so the keywords win, then return the new dict.",
+]
+
+[[examples]]
+input = "merge_settings({\"theme\": \"light\", \"font\": 12}, {\"font\": 14}, debug=True)"
+output = "{'theme': 'light', 'font': 14, 'debug': True}"
+explanation = "The second layer replaces font 12 with 14, and the keyword override debug=True is added last."
+
+[[examples]]
+input = "merge_settings(*[{\"a\": 1}, {\"a\": 2}], **{\"a\": 3})"
+output = "{'a': 3}"
+explanation = "* spreads the list into two layers (a becomes 1, then 2) and ** spreads the dict into the keyword a=3, which wins."

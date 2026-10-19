@@ -1,0 +1,44 @@
+id = "map-filter-01"
+title = "Parse Positive Readings"
+module = "pythonic"
+difficulty = "beginner"
+type = "syntax"
+concepts = ["map", "filter", "lambda", "functional style"]
+
+description = """
+Implement positive_readings(tokens).
+
+tokens is a list of strings, each holding one integer, possibly with a leading
+sign and surrounding whitespace (such as "42", "-7" or " 3 "). Convert every
+token to an int and return a list of the values that are strictly greater
+than 0, in their original order. Zero is not positive. Return [] for an empty
+list.
+
+Return a list, not a map or filter object. Use map() to convert the tokens and
+filter() to keep the positives.
+"""
+
+objective = "Chain map() and filter() to convert and select values, and know when a comprehension reads better."
+
+interview = """
+Parsing input is the first line of many problems: list(map(int, line.split()))
+is the standard way to read numbers in Python. map and filter with a built-in
+like int are concise and lazy, and interviewers sometimes ask how they compare
+to list comprehensions.
+"""
+
+hints = [
+  "int() already ignores surrounding whitespace and understands a leading - or +.",
+  "map(int, tokens) converts lazily; filter(lambda n: n > 0, ...) keeps the values that pass the test.",
+  "Wrap the result: return list(filter(lambda n: n > 0, map(int, tokens))).",
+]
+
+[[examples]]
+input = "positive_readings([\"42\", \"-7\", \" 3 \", \"0\"])"
+output = "[42, 3]"
+explanation = "The tokens convert to 42, -7, 3 and 0. Only 42 and 3 are strictly greater than 0; zero is dropped too."
+
+[[examples]]
+input = "positive_readings([])"
+output = "[]"
+explanation = "There is nothing to convert, so the result is an empty list."

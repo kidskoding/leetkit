@@ -1,0 +1,47 @@
+id = "fstring-01"
+title = "Format a Receipt Line"
+module = "pythonic"
+difficulty = "beginner"
+type = "syntax"
+concepts = ["f-strings", "format spec", "strings"]
+
+description = """
+Implement receipt_line(item, qty, unit_price).
+
+item is a str, qty is a non-negative int and unit_price is a float. Return one
+line of a receipt made of three columns separated by single spaces:
+
+- item, left-aligned and padded with spaces to width 10
+- qty, right-aligned in width 3
+- the line total qty * unit_price, right-aligned in width 8 with exactly 2 decimal places
+
+Values longer than their column are never truncated; they just push the rest
+of the line to the right. There is no trailing newline.
+
+Use an f-string with format specs (:<10, :>3, :>8.2f) instead of manual padding.
+"""
+
+objective = "Pad, align and round values in one f-string using format specs."
+
+interview = """
+Printing a table, a receipt or a debug trace comes up in OOD and simulation
+questions, and occasionally the output format is the whole problem. Format
+specs such as :>8.2f do alignment and rounding in one place, so you never
+hand-count spaces or call round() and str() separately.
+"""
+
+hints = [
+  "Inside an f-string, anything after a colon in {value:spec} controls how the value is formatted.",
+  "< left-aligns, > right-aligns, the number after it is the width, and .2f means two decimal places.",
+  "Compute total = qty * unit_price, then return f\"{item:<10} {qty:>3} {total:>8.2f}\".",
+]
+
+[[examples]]
+input = "receipt_line(\"apple\", 3, 0.5)"
+output = "'apple        3     1.50'"
+explanation = "'apple' is padded to 10 characters, 3 is right-aligned in 3, and the total 1.5 becomes '1.50' right-aligned in 8, with single spaces between the columns."
+
+[[examples]]
+input = "receipt_line(\"watermelon slice\", 12, 2.25)"
+output = "'watermelon slice  12    27.00'"
+explanation = "The item is longer than 10 characters, so it is kept whole and pushes the other columns right. 12 * 2.25 is 27.0, printed as '27.00'."
