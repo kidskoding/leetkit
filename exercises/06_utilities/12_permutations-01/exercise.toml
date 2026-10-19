@@ -1,0 +1,42 @@
+id = "permutations-01"
+title = "Distinct Word Arrangements"
+module = "utilities"
+difficulty = "intermediate"
+type = "syntax"
+concepts = ["itertools.permutations", "set", "sorted"]
+
+description = """
+Implement arrangements(word).
+
+Return a list of every distinct string that uses all the letters of word
+exactly once, rearranged. When word has repeated letters, each resulting
+string appears only once. Return the list sorted alphabetically. For an empty
+word return [""] (there is one way to arrange nothing).
+
+Use itertools.permutations instead of writing the backtracking yourself.
+"""
+
+objective = "Generate every ordering of a sequence with itertools.permutations and dedupe the results."
+
+interview = """
+Permutations and Permutations II (with duplicates) are standard backtracking
+questions, and "try every ordering" is a common brute-force baseline. Knowing
+permutations() lets you state the brute force in one line, and knowing that it
+works by position (so repeated letters produce duplicates) is the classic trap.
+"""
+
+hints = [
+  "itertools has a function that yields every ordering of the items in an iterable.",
+  "permutations(word) yields tuples of characters by position, so 'aab' produces some tuples twice.",
+  "Join each tuple into a string, collect them in a set to drop duplicates, then return sorted(...).",
+]
+
+[[examples]]
+input = "arrangements('cat')"
+output = "['act', 'atc', 'cat', 'cta', 'tac', 'tca']"
+explanation = "Three distinct letters give 3! = 6 arrangements, listed in alphabetical order."
+
+[[examples]]
+input = "arrangements('aab')"
+output = "['aab', 'aba', 'baa']"
+explanation = "permutations treats the two a's as different positions and yields 6 tuples, but only 3 distinct strings remain."

@@ -1,0 +1,42 @@
+id = "heapq-merge-01"
+title = "Merge Sorted Event Streams"
+module = "utilities"
+difficulty = "intermediate"
+type = "syntax"
+concepts = ["heapq.merge", "k-way merge", "iterators"]
+
+description = """
+Implement merge_streams(streams).
+
+streams is a list of lists of integer timestamps, and each inner list is
+already sorted in ascending order. Return a single list of all timestamps in
+ascending order. Keep duplicates (both within and across streams). Empty
+streams contribute nothing, and an empty list of streams returns [].
+
+Use heapq.merge instead of concatenating and re-sorting.
+"""
+
+objective = "Merge k already-sorted sequences lazily with heapq.merge."
+
+interview = """
+Merge k Sorted Lists is a classic heap problem, and the same k-way merge shows up
+when combining sorted logs, shards, or external-sort chunks. heapq.merge does the
+heap bookkeeping for you in O(N log k) and streams its output, so it is the
+idiomatic answer when the inputs are plain sorted iterables.
+"""
+
+hints = [
+  "heapq has a helper that takes several sorted iterables and yields one sorted stream.",
+  "heapq.merge(*iterables) accepts each sorted list as a separate argument; unpack streams with *.",
+  "heapq.merge returns an iterator, so wrap it: list(heapq.merge(*streams)).",
+]
+
+[[examples]]
+input = "merge_streams([[1, 4, 9], [2, 3, 10], [5]])"
+output = "[1, 2, 3, 4, 5, 9, 10]"
+explanation = "Each stream is sorted, so the merge repeatedly takes the smallest front value across the three streams."
+
+[[examples]]
+input = "merge_streams([[3, 3], [], [3]])"
+output = "[3, 3, 3]"
+explanation = "Duplicates are all kept, and the empty stream adds nothing."

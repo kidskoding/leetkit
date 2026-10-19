@@ -1,0 +1,42 @@
+id = "groupby-01"
+title = "Compress Repeated Log Levels"
+module = "utilities"
+difficulty = "intermediate"
+type = "syntax"
+concepts = ["itertools.groupby", "run-length encoding", "tuples"]
+
+description = """
+Implement compress_levels(levels).
+
+levels is a list of log level strings such as "INFO" or "ERROR", in the order
+they were logged. Return a list of (level, count) tuples, one per run of
+consecutive equal levels, in order. A level that appears again after a
+different level starts a new run. Return [] for an empty list.
+
+Use itertools.groupby; do not sort the input first.
+"""
+
+objective = "Collapse consecutive runs of equal items with itertools.groupby."
+
+interview = """
+Run-length encoding shows up in String Compression, Count and Say, and log or
+event summarising. groupby turns "track the previous item and a counter" into
+one loop, and knowing that it only groups adjacent items is the detail
+interviewers check.
+"""
+
+hints = [
+  "itertools has a function that yields (key, group) for each run of equal adjacent items.",
+  "groupby(levels) yields (level, group) pairs; group is an iterator over that run.",
+  "Count a run with len(list(group)) or sum(1 for _ in group) inside a list comprehension.",
+]
+
+[[examples]]
+input = "compress_levels(['INFO', 'INFO', 'WARN', 'INFO'])"
+output = "[('INFO', 2), ('WARN', 1), ('INFO', 1)]"
+explanation = "The first two INFO lines form one run; the last INFO comes after WARN, so it starts a new run."
+
+[[examples]]
+input = "compress_levels([])"
+output = "[]"
+explanation = "An empty log has no runs."

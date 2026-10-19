@@ -1,0 +1,42 @@
+id = "nlargest-01"
+title = "Top K Orders by Total"
+module = "utilities"
+difficulty = "beginner"
+type = "syntax"
+concepts = ["heapq.nlargest", "key functions", "dicts"]
+
+description = """
+Implement top_orders(orders, k).
+
+orders is a list of dicts, each with an "id" (str) and a "total" (number).
+Return a list of the ids of the k orders with the largest totals, largest
+first. Orders with equal totals keep their input order. If k is larger than
+the number of orders, return all of them in that order; if k is 0 or orders is
+empty, return [].
+
+Use heapq.nlargest with a key= function.
+"""
+
+objective = "Pick the top k records by a field with heapq.nlargest(k, items, key=...)."
+
+interview = """
+"Top k" questions (k most frequent words, k closest points, k biggest spenders)
+are everywhere. heapq.nlargest and heapq.nsmallest answer them in O(n log k)
+without sorting everything, and key= lets you rank dicts or tuples by any field.
+"""
+
+hints = [
+  "heapq has a function that returns the k largest items of an iterable.",
+  "heapq.nlargest(k, orders, key=...) ranks whole dicts; the key picks out the total.",
+  "Use key=lambda o: o[\"total\"], then collect o[\"id\"] from the result with a list comprehension.",
+]
+
+[[examples]]
+input = "top_orders([{'id': 'a1', 'total': 25}, {'id': 'b2', 'total': 90}, {'id': 'c3', 'total': 40}], 2)"
+output = "['b2', 'c3']"
+explanation = "The two largest totals are 90 (b2) and 40 (c3), listed largest first."
+
+[[examples]]
+input = "top_orders([{'id': 'x', 'total': 50}, {'id': 'y', 'total': 50}], 1)"
+output = "['x']"
+explanation = "Both totals tie at 50, so the order that came first in the input wins."

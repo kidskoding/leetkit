@@ -1,0 +1,43 @@
+id = "lru-cache-01"
+title = "Climbing Stairs With a Cache"
+module = "utilities"
+difficulty = "intermediate"
+type = "syntax"
+concepts = ["functools.lru_cache", "functools.cache", "memoization", "recursion"]
+
+description = """
+Implement climb_stairs(n).
+
+You climb a staircase of n steps, taking either 1 or 2 steps at a time. Return
+the number of distinct ways to reach the top, as an int. climb_stairs(0) is 1
+(the empty climb) and climb_stairs(1) is 1.
+
+Write it recursively, climb_stairs(n - 1) + climb_stairs(n - 2), and decorate
+climb_stairs itself with @functools.cache or @functools.lru_cache(maxsize=None)
+so each n is computed only once.
+"""
+
+objective = "Memoize a recursive function with the functools.lru_cache or functools.cache decorator."
+
+interview = """
+Top-down dynamic programming is "write the recursion, then cache it". In Python
+that cache is one decorator line, which turns exponential recursions such as
+Climbing Stairs, Unique Paths, or Decode Ways into linear time and lets you
+spend interview time on the recurrence instead of a memo dict.
+"""
+
+hints = [
+  "functools has a decorator that remembers the result for each argument it has already seen.",
+  "Put @cache (or @lru_cache(maxsize=None)) on the line above def climb_stairs(n).",
+  "Base case: if n <= 1 return 1; otherwise return climb_stairs(n - 1) + climb_stairs(n - 2).",
+]
+
+[[examples]]
+input = "climb_stairs(3)"
+output = "3"
+explanation = "The ways are 1+1+1, 1+2, and 2+1."
+
+[[examples]]
+input = "climb_stairs(0)"
+output = "1"
+explanation = "With no steps there is exactly one way: do nothing."

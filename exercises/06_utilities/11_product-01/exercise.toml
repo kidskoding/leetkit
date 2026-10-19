@@ -1,0 +1,44 @@
+id = "product-01"
+title = "Every Code of Length N"
+module = "utilities"
+difficulty = "intermediate"
+type = "syntax"
+concepts = ["itertools.product", "repeat", "str.join"]
+
+description = """
+Implement all_codes(alphabet, n).
+
+alphabet is a string of distinct characters. Return a list of every string of
+length n whose characters all come from alphabet (characters may repeat). Order
+the strings the way itertools.product(alphabet, repeat=n) produces them: the
+first character changes slowest, and characters follow their order in alphabet
+(not alphabetical order). For n == 0 return [""] (exactly one empty code). If
+alphabet is empty and n > 0, return [].
+
+Use itertools.product with repeat= instead of nested loops.
+"""
+
+objective = "Generate every length-n sequence over a set of choices with itertools.product(..., repeat=n)."
+
+interview = """
+Brute-forcing every PIN, every bit string, or every letter combination is a
+common first step and a handy test harness. product() replaces n nested loops
+(where n is not even known in advance) with one call, and the same tool builds
+the cartesian product of several different lists.
+"""
+
+hints = [
+  "itertools has a function for the cartesian product: every way to pick one item from each position.",
+  "product(alphabet, repeat=n) yields tuples of n characters, such as ('a', 'b').",
+  "Turn each tuple into a string with \"\".join(t) inside a list comprehension.",
+]
+
+[[examples]]
+input = "all_codes('ab', 2)"
+output = "['aa', 'ab', 'ba', 'bb']"
+explanation = "The first character changes slowest: both codes starting with 'a' come before both starting with 'b'."
+
+[[examples]]
+input = "all_codes('xy', 0)"
+output = "['']"
+explanation = "There is exactly one way to pick zero characters: the empty string."
