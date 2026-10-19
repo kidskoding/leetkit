@@ -1,0 +1,43 @@
+id = "zip-01"
+title = "Grade an Answer Sheet"
+module = "iteration"
+difficulty = "beginner"
+type = "syntax"
+concepts = ["zip", "iteration"]
+
+description = """
+Implement count_correct(answers, key).
+
+answers is a student's list of answers and key is the list of correct answers.
+Return the number of positions i where answers[i] == key[i], as an int.
+
+If the lists have different lengths, only compare positions that exist in both
+(extra items in the longer list are ignored). Empty input returns 0.
+
+Use zip() instead of indexing.
+"""
+
+objective = "Walk two sequences in lockstep with zip()."
+
+interview = """
+Comparing two sequences position by position shows up constantly: matching
+strings character by character, Bulls and Cows, Hamming distance, checking
+whether two arrays agree. zip() pairs the elements for you and stops at the
+shorter input, so there is no index bookkeeping and no IndexError.
+"""
+
+hints = [
+  "Python can hand you one element from each list on every loop iteration.",
+  "Try: for given, correct in zip(answers, key):",
+  "Count the pairs where given == correct; sum(... for ... in zip(...)) works too.",
+]
+
+[[examples]]
+input = "count_correct(['a', 'c', 'b', 'd'], ['a', 'b', 'b', 'd'])"
+output = "3"
+explanation = "Positions 0, 2 and 3 match the key ('a', 'b', 'd'); position 1 has 'c' instead of 'b'. That is 3 correct."
+
+[[examples]]
+input = "count_correct(['a', 'b'], ['a', 'b', 'c'])"
+output = "2"
+explanation = "zip() stops at the shorter list, so only the first two positions are compared and both match. The extra key entry 'c' is ignored."

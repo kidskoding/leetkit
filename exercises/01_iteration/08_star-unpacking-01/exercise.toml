@@ -1,0 +1,44 @@
+id = "star-unpacking-01"
+title = "Split a Flight Route"
+module = "iteration"
+difficulty = "intermediate"
+type = "syntax"
+concepts = ["star unpacking", "extended unpacking", "tuple unpacking"]
+
+description = """
+Implement split_route(route).
+
+route is a string of airport codes joined by "-", for example "LAX-ORD-DEN-JFK".
+It always contains at least two codes.
+
+Return a tuple (origin, stops, destination): origin is the first code (str),
+destination is the last code (str), and stops is a list of the codes in
+between, in order. A direct flight has stops == [].
+
+Use extended unpacking: origin, *stops, destination = ...
+"""
+
+objective = "Peel off the first and last items of a sequence with starred unpacking."
+
+interview = """
+Extended unpacking shows up when parsing input (a command and its arguments, a
+header and its rows), splitting off the head or tail of a list, and in
+recursive solutions that process first and rest. It is clearer than juggling
+parts[0], parts[-1], and parts[1:-1], and the starred name is always a list.
+"""
+
+hints = [
+  "Split the string into codes, then assign the pieces in a single statement.",
+  "A starred name in an assignment collects everything the other names do not take.",
+  "origin, *stops, destination = route.split('-'), then return (origin, stops, destination).",
+]
+
+[[examples]]
+input = "split_route('LAX-ORD-DEN-JFK')"
+output = "('LAX', ['ORD', 'DEN'], 'JFK')"
+explanation = "LAX is the first code and JFK is the last. ORD and DEN are collected in between as stops."
+
+[[examples]]
+input = "split_route('SFO-SEA')"
+output = "('SFO', [], 'SEA')"
+explanation = "A direct flight has only two codes, so the starred name collects nothing and stops is an empty list."

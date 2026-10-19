@@ -1,0 +1,43 @@
+id = "range-01"
+title = "Sample Readings From the End"
+module = "iteration"
+difficulty = "beginner"
+type = "syntax"
+concepts = ["range", "iteration"]
+
+description = """
+Implement sample_from_end(readings, k).
+
+Starting with the last element of readings, take every k-th element moving
+backwards toward the front. Return the sampled values as a list, in the order
+they were visited (last element first).
+
+k is always a positive int. An empty list returns [].
+
+Use range(start, stop, step) with a negative step to generate the indices.
+"""
+
+objective = "Generate index sequences with range(start, stop, step), including negative steps."
+
+interview = """
+Custom index walks appear in many problems: scanning from the right (Daily
+Temperatures, next greater element), stepping by a stride, or iterating over
+every other position. Knowing range's start/stop/step semantics, and that the
+stop value is excluded, prevents the classic off-by-one when counting down to 0.
+"""
+
+hints = [
+  "range() takes a third argument: the step between indices. It can be negative.",
+  "The last index is len(readings) - 1, and you want to step by -k.",
+  "The stop is exclusive, so to include index 0 use -1: range(len(readings) - 1, -1, -k).",
+]
+
+[[examples]]
+input = "sample_from_end([1, 2, 3, 4, 5, 6, 7], 3)"
+output = "[7, 4, 1]"
+explanation = "Start at the last index (6, value 7) and step back by 3: indices 6, 3, 0 give 7, 4, 1."
+
+[[examples]]
+input = "sample_from_end([10, 20, 30, 40], 2)"
+output = "[40, 20]"
+explanation = "Indices 3 and 1 give 40 and 20. The next index would be -1, which is past the front, so index 0 is not sampled."

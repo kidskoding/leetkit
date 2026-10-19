@@ -1,0 +1,41 @@
+id = "pairwise-01"
+title = "Largest Temperature Swing"
+module = "iteration"
+difficulty = "beginner"
+type = "application"
+concepts = ["zip", "adjacent pairs", "slicing"]
+
+description = """
+Implement largest_swing(temps).
+
+temps is a list of hourly temperature readings (ints, possibly negative).
+Return the largest absolute difference between two consecutive readings, as an
+int. If there are fewer than two readings, return 0.
+
+Pair each reading with the next one using zip(temps, temps[1:]).
+"""
+
+objective = "Compare neighbouring elements by zipping a list with itself shifted by one."
+
+interview = """
+Many array problems only care about neighbours: is the array sorted, best stock
+profit from day-to-day changes, longest increasing run, largest gap. Zipping a
+list with its tail, zip(xs, xs[1:]), yields every adjacent pair without index
+arithmetic or a special case for the last element.
+"""
+
+hints = [
+  "Each reading only needs to be compared with the one right after it.",
+  "zip(temps, temps[1:]) yields (temps[0], temps[1]), (temps[1], temps[2]), ...",
+  "Take max(abs(b - a) for a, b in zip(temps, temps[1:])) and use default=0 for short lists.",
+]
+
+[[examples]]
+input = "largest_swing([12, 15, 9, 10])"
+output = "6"
+explanation = "The consecutive differences are |15-12| = 3, |9-15| = 6 and |10-9| = 1. The largest is 6."
+
+[[examples]]
+input = "largest_swing([20])"
+output = "0"
+explanation = "A single reading has no neighbour to compare with, so the answer is 0."

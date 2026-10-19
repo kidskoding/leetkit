@@ -1,0 +1,41 @@
+id = "tuple-unpacking-01"
+title = "Iterative Fibonacci"
+module = "iteration"
+difficulty = "beginner"
+type = "syntax"
+concepts = ["tuple unpacking", "multiple assignment", "swap"]
+
+description = """
+Implement fib(n).
+
+Return the n-th Fibonacci number as an int, where fib(0) == 0, fib(1) == 1, and
+fib(n) == fib(n - 1) + fib(n - 2) for n >= 2. n is a non-negative int.
+
+Compute it iteratively in O(n) time with two variables updated together:
+a, b = b, a + b. No temporary variable, no recursion.
+"""
+
+objective = "Update several variables at once with tuple unpacking (a, b = b, a + b)."
+
+interview = """
+Rolling two-variable DP shows up in Fibonacci, Climbing Stairs, House Robber,
+and many "only the last two states matter" problems. Tuple assignment evaluates
+the whole right-hand side before assigning, so a, b = b, a + b updates both
+values safely, and the same trick swaps two values in one line.
+"""
+
+hints = [
+  "You only ever need the previous two Fibonacci numbers.",
+  "Start with a, b = 0, 1 and move the pair forward n times.",
+  "Inside the loop: a, b = b, a + b. After n steps, a holds fib(n).",
+]
+
+[[examples]]
+input = "fib(10)"
+output = "55"
+explanation = "The sequence runs 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, so fib(10) is 55."
+
+[[examples]]
+input = "fib(0)"
+output = "0"
+explanation = "Base case: the loop runs zero times and a is still 0."

@@ -1,0 +1,3 @@
+def split_route(route):
+    # TODO: split on "-" and unpack with origin, *stops, destination = ...
+    pass

@@ -1,0 +1,42 @@
+id = "dict-items-01"
+title = "Over-Budget Categories"
+module = "iteration"
+difficulty = "beginner"
+type = "syntax"
+concepts = ["dict", "items", "iteration"]
+
+description = """
+Implement over_budget(spending, limit).
+
+spending maps a category name (str) to the amount spent (int). Return a list of
+the category names whose amount is strictly greater than limit, in the
+dictionary's insertion order. Return [] if no category is over the limit or the
+dict is empty.
+
+Iterate with for category, amount in spending.items().
+"""
+
+objective = "Iterate over key-value pairs together with dict.items()."
+
+interview = """
+After building a frequency map or a grouping dict, the next step is almost
+always scanning it: keys with count > k, the most common element, groups larger
+than a threshold. for key, value in d.items() reads both at once instead of
+looking each key up again with d[key].
+"""
+
+hints = [
+  "A dict can hand you the key and the value together in a loop.",
+  "Try: for category, amount in spending.items():",
+  "Collect category when amount > limit; a list comprehension over .items() works well.",
+]
+
+[[examples]]
+input = "over_budget({'rent': 1200, 'food': 450, 'fun': 300}, 400)"
+output = "['rent', 'food']"
+explanation = "rent (1200) and food (450) are above 400, but fun (300) is not. The result keeps insertion order."
+
+[[examples]]
+input = "over_budget({'food': 400}, 400)"
+output = "[]"
+explanation = "400 is equal to the limit, not strictly greater, so nothing is over budget."

@@ -1,0 +1,44 @@
+id = "matrix-01"
+title = "Rotate an Image"
+module = "iteration"
+difficulty = "intermediate"
+type = "application"
+concepts = ["zip", "star unpacking", "matrix", "transpose"]
+
+description = """
+Implement rotate_clockwise(matrix).
+
+matrix is a rectangular grid given as a list of rows (lists of ints). Return a
+new list of lists that is the grid rotated 90 degrees clockwise. An R x C input
+becomes a C x R output. Do not modify the input.
+
+Return [] for an empty matrix ([]) or a matrix whose rows are empty ([[]]).
+
+Rotating clockwise is the same as reversing the row order and then transposing,
+and zip(*rows) transposes a grid.
+"""
+
+objective = "Transpose and rotate grids with zip(*matrix) instead of nested index loops."
+
+interview = """
+Grid problems (Rotate Image, Transpose Matrix, Spiral Matrix, Valid Sudoku
+column checks) need column-wise access all the time. zip(*matrix) turns columns
+into rows in one expression, and combining it with reversed() gives rotations
+without any i/j index bookkeeping.
+"""
+
+hints = [
+  "Try a 2x2 example on paper: which input row ends up as the first output column?",
+  "zip(*matrix) yields the columns of matrix as tuples; reversing the rows first gives a clockwise turn.",
+  "[list(row) for row in zip(*reversed(matrix))] or zip(*matrix[::-1]).",
+]
+
+[[examples]]
+input = "rotate_clockwise([[1, 2], [3, 4]])"
+output = "[[3, 1], [4, 2]]"
+explanation = "The bottom-left 3 moves to the top-left and the top-left 1 moves to the top-right. Each input column, read bottom to top, becomes an output row."
+
+[[examples]]
+input = "rotate_clockwise([[1, 2, 3], [4, 5, 6]])"
+output = "[[4, 1], [5, 2], [6, 3]]"
+explanation = "A 2 x 3 grid becomes 3 x 2: the first column [1, 4], read bottom to top, becomes the first row [4, 1]."

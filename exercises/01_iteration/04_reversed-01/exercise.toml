@@ -1,0 +1,42 @@
+id = "reversed-01"
+title = "Last Login Index"
+module = "iteration"
+difficulty = "beginner"
+type = "syntax"
+concepts = ["reversed", "range", "iteration"]
+
+description = """
+Implement last_index(events, user).
+
+events is a list of user names in the order they logged in. Return the index
+of the most recent (last) occurrence of user in events. Return -1 if user never
+appears.
+
+Scan from the back so you can stop at the first match. Use reversed() rather
+than copying the list with events[::-1].
+"""
+
+objective = "Traverse a sequence backwards lazily with reversed()."
+
+interview = """
+"Last occurrence" questions (last index of a value, the most recent event, the
+rightmost element satisfying a condition) are cleanest when you scan from the
+end and return early. reversed() iterates backwards without building a copy, and
+reversed(range(len(xs))) gives you descending indices with no off-by-one risk.
+"""
+
+hints = [
+  "Walk the indices from the end toward the front and return on the first match.",
+  "reversed() works on a range, too: reversed(range(len(events))).",
+  "for i in reversed(range(len(events))): if events[i] == user, return i. After the loop, return -1.",
+]
+
+[[examples]]
+input = "last_index(['ana', 'bo', 'ana', 'cy'], 'ana')"
+output = "2"
+explanation = "'ana' appears at indices 0 and 2. Scanning from the back finds index 2 first."
+
+[[examples]]
+input = "last_index(['ana', 'bo'], 'dee')"
+output = "-1"
+explanation = "'dee' never appears, so the function returns -1."
