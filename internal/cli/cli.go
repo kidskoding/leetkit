@@ -10,10 +10,10 @@ import (
 	"io/fs"
 	"os"
 
-	"github.com/anirudhkonidala/leetkit/internal/config"
-	"github.com/anirudhkonidala/leetkit/internal/exercise"
-	"github.com/anirudhkonidala/leetkit/internal/runner"
-	"github.com/anirudhkonidala/leetkit/internal/theme"
+	"github.com/kidskoding/leetkit/internal/config"
+	"github.com/kidskoding/leetkit/internal/exercise"
+	"github.com/kidskoding/leetkit/internal/runner"
+	"github.com/kidskoding/leetkit/internal/theme"
 )
 
 type Env struct {

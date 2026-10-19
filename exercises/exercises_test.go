@@ -3,8 +3,8 @@ package exercises_test
 import (
 	"testing"
 
-	"github.com/anirudhkonidala/leetkit/exercises"
-	"github.com/anirudhkonidala/leetkit/internal/exercise"
+	"github.com/kidskoding/leetkit/exercises"
+	"github.com/kidskoding/leetkit/internal/exercise"
 )
 
 func TestBundledCurriculumLoads(t *testing.T) {

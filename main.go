@@ -10,9 +10,9 @@ import (
 	"github.com/charmbracelet/colorprofile"
 	"github.com/charmbracelet/x/term"
 
-	"github.com/anirudhkonidala/leetkit/exercises"
-	"github.com/anirudhkonidala/leetkit/internal/cli"
-	"github.com/anirudhkonidala/leetkit/internal/config"
+	"github.com/kidskoding/leetkit/exercises"
+	"github.com/kidskoding/leetkit/internal/cli"
+	"github.com/kidskoding/leetkit/internal/config"
 )
 
 // defaultPython lets packagers bundle an interpreter with pytest, for example

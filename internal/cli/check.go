@@ -14,11 +14,11 @@ import (
 
 	"charm.land/lipgloss/v2"
 
-	"github.com/anirudhkonidala/leetkit/internal/exercise"
-	"github.com/anirudhkonidala/leetkit/internal/report"
-	"github.com/anirudhkonidala/leetkit/internal/runner"
-	"github.com/anirudhkonidala/leetkit/internal/theme"
-	"github.com/anirudhkonidala/leetkit/internal/workspace"
+	"github.com/kidskoding/leetkit/internal/exercise"
+	"github.com/kidskoding/leetkit/internal/report"
+	"github.com/kidskoding/leetkit/internal/runner"
+	"github.com/kidskoding/leetkit/internal/theme"
+	"github.com/kidskoding/leetkit/internal/workspace"
 )
 
 // errSilent signals a non-zero exit after the command already reported why.

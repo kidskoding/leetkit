@@ -10,7 +10,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/anirudhkonidala/leetkit/internal/atomicfile"
+	"github.com/kidskoding/leetkit/internal/atomicfile"
 )
 
 const schemaVersion = 1

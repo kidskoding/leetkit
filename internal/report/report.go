@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/anirudhkonidala/leetkit/internal/runner"
-	"github.com/anirudhkonidala/leetkit/internal/theme"
+	"github.com/kidskoding/leetkit/internal/runner"
+	"github.com/kidskoding/leetkit/internal/theme"
 )
 
 // Result renders a summary line followed by each failing or erroring test.

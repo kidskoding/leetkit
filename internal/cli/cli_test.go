@@ -11,8 +11,8 @@ import (
 
 	"github.com/charmbracelet/colorprofile"
 
-	"github.com/anirudhkonidala/leetkit/exercises"
-	"github.com/anirudhkonidala/leetkit/internal/config"
+	"github.com/kidskoding/leetkit/exercises"
+	"github.com/kidskoding/leetkit/internal/config"
 )
 
 func run(t *testing.T, env Env, args ...string) (code int, stdout, stderr string) {

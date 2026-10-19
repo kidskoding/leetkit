@@ -12,7 +12,7 @@ import (
 
 	"github.com/BurntSushi/toml"
 
-	"github.com/anirudhkonidala/leetkit/internal/theme"
+	"github.com/kidskoding/leetkit/internal/theme"
 )
 
 const appName = "leetkit"

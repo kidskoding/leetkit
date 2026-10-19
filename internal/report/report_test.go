@@ -7,8 +7,8 @@ import (
 
 	"github.com/charmbracelet/x/ansi"
 
-	"github.com/anirudhkonidala/leetkit/internal/runner"
-	"github.com/anirudhkonidala/leetkit/internal/theme"
+	"github.com/kidskoding/leetkit/internal/runner"
+	"github.com/kidskoding/leetkit/internal/theme"
 )
 
 func render(t *testing.T, res *runner.Result, verbose bool) string {

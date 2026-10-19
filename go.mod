@@ -1,4 +1,4 @@
-module github.com/anirudhkonidala/leetkit
+module github.com/kidskoding/leetkit
 
 go 1.26.0
 

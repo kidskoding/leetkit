@@ -7,9 +7,9 @@ import (
 
 	tea "charm.land/bubbletea/v2"
 
-	"github.com/anirudhkonidala/leetkit/internal/exercise"
-	"github.com/anirudhkonidala/leetkit/internal/runner"
-	"github.com/anirudhkonidala/leetkit/internal/workspace"
+	"github.com/kidskoding/leetkit/internal/exercise"
+	"github.com/kidskoding/leetkit/internal/runner"
+	"github.com/kidskoding/leetkit/internal/workspace"
 )
 
 type runState struct {

@@ -15,7 +15,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/anirudhkonidala/leetkit/internal/exercise"
+	"github.com/kidskoding/leetkit/internal/exercise"
 )
 
 const (

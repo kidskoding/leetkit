@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/anirudhkonidala/leetkit/internal/config"
-	"github.com/anirudhkonidala/leetkit/internal/progress"
-	"github.com/anirudhkonidala/leetkit/internal/runner"
-	"github.com/anirudhkonidala/leetkit/internal/tui"
-	"github.com/anirudhkonidala/leetkit/internal/workspace"
+	"github.com/kidskoding/leetkit/internal/config"
+	"github.com/kidskoding/leetkit/internal/progress"
+	"github.com/kidskoding/leetkit/internal/runner"
+	"github.com/kidskoding/leetkit/internal/tui"
+	"github.com/kidskoding/leetkit/internal/workspace"
 )
 
 func (a *app) dashboard(ctx context.Context, args []string) error {

@@ -7,7 +7,7 @@ import (
 	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
 
-	"github.com/anirudhkonidala/leetkit/internal/runner"
+	"github.com/kidskoding/leetkit/internal/runner"
 )
 
 func assertContains(t *testing.T, m Model, wants ...string) {

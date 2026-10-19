@@ -7,9 +7,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/anirudhkonidala/leetkit/exercises"
-	"github.com/anirudhkonidala/leetkit/internal/config"
-	"github.com/anirudhkonidala/leetkit/internal/runner"
+	"github.com/kidskoding/leetkit/exercises"
+	"github.com/kidskoding/leetkit/internal/config"
+	"github.com/kidskoding/leetkit/internal/runner"
 )
 
 // usePytestPython points LEETKIT_PYTHON at an interpreter with pytest, or skips.

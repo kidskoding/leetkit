@@ -13,11 +13,11 @@ import (
 	tea "charm.land/bubbletea/v2"
 	"github.com/charmbracelet/x/ansi"
 
-	"github.com/anirudhkonidala/leetkit/internal/exercise"
-	"github.com/anirudhkonidala/leetkit/internal/progress"
-	"github.com/anirudhkonidala/leetkit/internal/runner"
-	"github.com/anirudhkonidala/leetkit/internal/theme"
-	"github.com/anirudhkonidala/leetkit/internal/workspace"
+	"github.com/kidskoding/leetkit/internal/exercise"
+	"github.com/kidskoding/leetkit/internal/progress"
+	"github.com/kidskoding/leetkit/internal/runner"
+	"github.com/kidskoding/leetkit/internal/theme"
+	"github.com/kidskoding/leetkit/internal/workspace"
 )
 
 const (

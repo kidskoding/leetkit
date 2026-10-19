@@ -12,8 +12,8 @@ import (
 	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
 
-	"github.com/anirudhkonidala/leetkit/internal/report"
-	"github.com/anirudhkonidala/leetkit/internal/runner"
+	"github.com/kidskoding/leetkit/internal/report"
+	"github.com/kidskoding/leetkit/internal/runner"
 )
 
 // statusLines is the fixed block under the scrolling content: a blank line,

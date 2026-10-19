@@ -8,8 +8,8 @@ import (
 	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
 
-	"github.com/anirudhkonidala/leetkit/internal/exercise"
-	"github.com/anirudhkonidala/leetkit/internal/theme"
+	"github.com/kidskoding/leetkit/internal/exercise"
+	"github.com/kidskoding/leetkit/internal/theme"
 )
 
 const listMinWidth = 34

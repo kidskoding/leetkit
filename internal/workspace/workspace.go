@@ -9,8 +9,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/anirudhkonidala/leetkit/internal/atomicfile"
-	"github.com/anirudhkonidala/leetkit/internal/exercise"
+	"github.com/kidskoding/leetkit/internal/atomicfile"
+	"github.com/kidskoding/leetkit/internal/exercise"
 )
 
 type Workspace struct {

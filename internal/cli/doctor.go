@@ -11,11 +11,11 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/anirudhkonidala/leetkit/internal/config"
-	"github.com/anirudhkonidala/leetkit/internal/editor"
-	"github.com/anirudhkonidala/leetkit/internal/report"
-	"github.com/anirudhkonidala/leetkit/internal/runner"
-	"github.com/anirudhkonidala/leetkit/internal/theme"
+	"github.com/kidskoding/leetkit/internal/config"
+	"github.com/kidskoding/leetkit/internal/editor"
+	"github.com/kidskoding/leetkit/internal/report"
+	"github.com/kidskoding/leetkit/internal/runner"
+	"github.com/kidskoding/leetkit/internal/theme"
 )
 
 type checklist struct {
