@@ -24,7 +24,7 @@
     });
 
     devShells = forAllSystems (pkgs: let
-      python = pkgs.python3.withPackages (ps: [ps.pytest]);
+      pythonWithPytest = pkgs.python3.withPackages (ps: [ps.pytest]);
     in {
       default = pkgs.mkShell {
         packages = with pkgs; [
@@ -40,12 +40,12 @@
           gotests
           gotools
 
-          python
+          pythonWithPytest
           uv
         ];
 
         # Keep uv on the Nix interpreter; uv-managed Pythons need nix-ld on NixOS.
-        UV_PYTHON = "${python}/bin/python3";
+        UV_PYTHON = "${pythonWithPytest}/bin/python3";
         UV_PYTHON_DOWNLOADS = "never";
 
         shellHook = ''
