@@ -76,5 +76,6 @@ func (a *app) openDashboard(ctx context.Context, cat *exercise.Catalog, start st
 		Theme:     a.th,
 		Notice:    notice,
 		Start:     start,
+		SetupHelp: pytestSetup(a.Paths) + "\n\nThen restart LeetKit. `leetkit doctor` checks the whole setup.",
 	})
 }

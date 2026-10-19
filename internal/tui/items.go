@@ -6,7 +6,7 @@ import (
 
 	"charm.land/bubbles/v2/list"
 	tea "charm.land/bubbletea/v2"
-	"charm.land/lipgloss/v2"
+	"github.com/charmbracelet/x/ansi"
 
 	"github.com/kidskoding/leetkit/internal/exercise"
 	"github.com/kidskoding/leetkit/internal/progress"
@@ -46,7 +46,6 @@ func (i item) FilterValue() string {
 
 type delegate struct {
 	th       theme.Theme
-	idWidth  int
 	numWidth int
 }
 
@@ -68,13 +67,10 @@ func (d delegate) Render(w io.Writer, m list.Model, index int, li list.Item) {
 	default:
 		mark = d.th.Faint.Render("○")
 	}
-	id := fmt.Sprintf("%-*s", d.idWidth, it.ex.ID)
-	cursor, idStyle, titleStyle := "  ", d.th.ID, d.th.Faint
+	cursor, title := "  ", d.th.Text.Render(it.ex.Title)
 	if index == m.Index() {
-		cursor = d.th.Heading.Render("▌ ")
-		idStyle, titleStyle = idStyle.Bold(true), d.th.Text
+		cursor, title = d.th.Heading.Render("▌ "), d.th.Heading.Render(it.ex.Title)
 	}
 	num := d.th.Faint.Render(fmt.Sprintf("%0*d", d.numWidth, it.num))
-	line := cursor + num + " " + mark + " " + idStyle.Render(id) + "  " + titleStyle.Render(it.ex.Title)
-	fmt.Fprint(w, lipgloss.NewStyle().MaxWidth(m.Width()).Render(line))
+	fmt.Fprint(w, ansi.Truncate(cursor+num+" "+mark+" "+title, m.Width(), "…"))
 }

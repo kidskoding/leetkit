@@ -10,18 +10,21 @@ import (
 	"charm.land/lipgloss/v2"
 
 	"github.com/kidskoding/leetkit/internal/exercise"
+	"github.com/kidskoding/leetkit/internal/report"
 	"github.com/kidskoding/leetkit/internal/theme"
 )
 
-const listMinWidth = 34
+const (
+	listMinWidth = 34
+	// listMaxWidth fits the longest titles; extra width goes to the preview.
+	listMaxWidth = 56
+)
 
 func newList(th theme.Theme, exercises []*exercise.Exercise) list.Model {
-	idWidth := 0
-	for _, ex := range exercises {
-		idWidth = max(idWidth, lipgloss.Width(ex.ID))
-	}
-	l := list.New(nil, delegate{th: th, idWidth: idWidth, numWidth: max(len(fmt.Sprint(len(exercises))), 2)}, 0, 0)
+	l := list.New(nil, delegate{th: th, numWidth: max(len(fmt.Sprint(len(exercises))), 2)}, 0, 0)
 	l.SetShowTitle(false)
+	// The filter row only appears while searching; otherwise it is a blank line.
+	l.SetShowFilter(false)
 	l.SetShowHelp(false)
 	l.SetShowPagination(false)
 	l.SetStatusBarItemName("exercise", "exercises")
@@ -77,6 +80,7 @@ func (m Model) updateList(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 	var cmd tea.Cmd
 	m.list, cmd = m.list.Update(msg)
+	m.list.SetShowFilter(m.list.FilterState() != list.Unfiltered)
 	return m, cmd
 }
 
@@ -96,7 +100,7 @@ func (m Model) selectedIndex() int {
 // Panels have a rounded border and one cell of horizontal padding; lipgloss
 // widths include both.
 func (m Model) listPaneSizes() (listWidth, bodyHeight int) {
-	return max(listMinWidth, m.width*2/5), m.height - 1 - lipgloss.Height(m.listFooter())
+	return min(max(listMinWidth, m.width*2/5), listMaxWidth), m.height - 1 - lipgloss.Height(m.listFooter())
 }
 
 func (m Model) listFooter() string {
@@ -118,7 +122,9 @@ func (m *Model) layoutList() {
 
 func (m Model) listView() string {
 	listWidth, bodyHeight := m.listPaneSizes()
-	header := " " + m.th.Heading.Render("Exercises") + "  " + m.progressBar()
+	solved, total := m.solvedCount()
+	header := " " + m.th.Heading.Render("Exercises") + "  " + report.Meter(m.th, solved, total, min(max(m.width/5, 8), 24)) +
+		" " + m.th.Faint.Render(fmt.Sprintf("%d/%d solved", solved, total))
 	footer := m.listFooter()
 	left := m.panel(m.list.View(), listWidth, bodyHeight, true)
 	right := m.panel(m.preview(m.width-listWidth-4, bodyHeight-2), m.width-listWidth, bodyHeight, false)
@@ -148,9 +154,11 @@ func (m Model) preview(width, height int) string {
 	ex := m.exercises[i]
 	th := m.th
 	var b strings.Builder
-	b.WriteString(th.ID.Bold(true).Render(ex.ID) + th.Faint.Render(" · ") + th.Text.Bold(true).Render(ex.Title) + "\n")
-	b.WriteString(th.Faint.Render(m.moduleTitle(ex)+" · "+ex.Difficulty+" · "+ex.TypeLabel()) + "\n")
-	b.WriteString("\n" + th.Heading.Render("Objective") + "\n" + th.Text.Render(reflow(ex.Objective)) + "\n")
-	b.WriteString("\n" + th.Heading.Render("Problem") + "\n" + th.Text.Render(reflow(ex.Description)) + "\n")
+	b.WriteString(th.Text.Bold(true).Render(ex.Title) + "\n")
+	b.WriteString(th.Faint.Render(ex.ID+" · "+m.moduleTitle(ex)+" · "+ex.Difficulty+" · "+ex.TypeLabel()) + "\n")
+	b.WriteString("\n" + th.Text.Render(reflow(ex.Description)) + "\n")
+	for n, e := range ex.Examples {
+		b.WriteString("\n" + m.example(n+1, e, width) + "\n")
+	}
 	return lipgloss.NewStyle().Width(width).MaxHeight(height).Render(b.String())
 }

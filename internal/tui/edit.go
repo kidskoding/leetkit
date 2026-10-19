@@ -47,5 +47,6 @@ func (m *Model) finishEdit(msg editorDoneMsg) tea.Cmd {
 		m.notice = "Could not start " + m.opts.Editor.String() + ": " + msg.err.Error()
 		return nil
 	}
+	m.revealResults = true
 	return m.startRun()
 }

@@ -30,8 +30,8 @@ func TestOpensOnFirstPendingAndRunsTests(t *testing.T) {
 		t.Fatal(err)
 	}
 	m := start(t, f.opts)
-	assertContains(t, m, "zip-01 · Pair Up", "Describe zip-01.", "Example 1", "Input:", "double(2)", "Explanation: Two doubled is four.", "── Tests", "✗ 0 passed, 1 failed",
-		"Progress", "1/3", "Current", "zip-01/starter.py")
+	assertContains(t, m, "Pair Up", "zip-01 · Iteration and Unpacking", "2 / 3", "Describe zip-01.", "Example 1", "Input:", "double(2)", "Explanation: Two doubled is four.", "── Tests", "✗ 0 passed, 1 failed",
+		"1/3 solved", "✗ 0 of 1 tests passing", "zip-01/starter.py")
 	if e, _ := f.store.Entry("zip-01"); e.Attempts != 1 {
 		t.Errorf("run not recorded: %+v", e)
 	}
@@ -43,26 +43,26 @@ func TestResumesSavedExercise(t *testing.T) {
 		t.Fatal(err)
 	}
 	m := start(t, f.opts)
-	assertContains(t, m, "sets-01 · Spot Duplicates")
+	assertContains(t, m, "Spot Duplicates", "sets-01 · Dictionaries and Sets")
 }
 
 func TestRunnerErrorIsShown(t *testing.T) {
 	m := start(t, newFixture(t, runner.ErrNoPython).opts)
-	assertContains(t, m, "No Python interpreter found", "leetkit doctor")
+	assertContains(t, m, "No Python interpreter found", "✗ Tests cannot run")
 }
 
 func TestPassingRunCompletesExercise(t *testing.T) {
 	f := newFixture(t, nil).withPython(t)
 	f.writeWork(t, "enumerate-01", solutionCode)
 	m := start(t, f.opts)
-	assertContains(t, m, "✓ All 1 tests passed", "✓ Exercise complete!", "Objective for enumerate-01.", "x explanation")
+	assertContains(t, m, "✓ All 1 tests passed", "Press n for the next exercise or x for the explanation.", "✓ Solved")
 	if !f.store.Completed("enumerate-01") {
 		t.Error("completion not saved")
 	}
 
 	m, cmd := update(t, m, press("n"))
 	m = settle(t, m, cmd, idle)
-	assertContains(t, m, "zip-01 · Pair Up")
+	assertContains(t, m, "Pair Up", "zip-01 ·")
 	if f.store.Current() != "zip-01" {
 		t.Errorf("current = %q, want zip-01", f.store.Current())
 	}
@@ -71,29 +71,29 @@ func TestPassingRunCompletesExercise(t *testing.T) {
 func TestNextAndPreviousCycleThroughExercises(t *testing.T) {
 	f := newFixture(t, runner.ErrNoPython)
 	m := start(t, f.opts)
-	assertContains(t, m, "01/03  enumerate-01 · Find an Index", "n/N next/prev")
+	assertContains(t, m, "Find an Index", "1 / 3", "n next")
 
 	m, cmd := update(t, m, press("n"))
 	m = settle(t, m, cmd, idle)
-	assertContains(t, m, "02/03  zip-01 · Pair Up")
+	assertContains(t, m, "Pair Up", "2 / 3")
 	if f.store.Current() != "zip-01" {
 		t.Errorf("current = %q, want zip-01", f.store.Current())
 	}
 
 	m, cmd = update(t, m, press("n"), press("n"))
 	m = settle(t, m, cmd, idle)
-	assertContains(t, m, "01/03  enumerate-01", "Describe enumerate-01.")
+	assertContains(t, m, "1 / 3", "Describe enumerate-01.")
 
 	m, cmd = update(t, m, press("N"))
 	m = settle(t, m, cmd, idle)
-	assertContains(t, m, "03/03  sets-01 · Spot Duplicates")
+	assertContains(t, m, "Spot Duplicates", "3 / 3")
 }
 
 func TestHints(t *testing.T) {
 	m := start(t, newFixture(t, runner.ErrNoPython).opts)
-	assertContains(t, m, "t hint 0/1")
+	assertContains(t, m, "t hint")
 	m, _ = update(t, m, press("t"))
-	assertContains(t, m, "── Hint 1/1", "First hint for enumerate-01.")
+	assertContains(t, m, "── Hints 1/1", "1. First hint for enumerate-01.")
 	m, _ = update(t, m, press("t"))
 	assertContains(t, m, "No more hints")
 }
@@ -101,16 +101,16 @@ func TestHints(t *testing.T) {
 func TestListSelectsExercise(t *testing.T) {
 	f := newFixture(t, runner.ErrNoPython)
 	m := start(t, f.opts)
-	m, _ = update(t, m, press("h"))
-	assertContains(t, m, "Exercises", "○ enumerate-01", "Objective for enumerate-01.")
+	m, _ = update(t, m, press("l"))
+	assertContains(t, m, "Exercises", "○ Find an Index", "Describe enumerate-01.", "Example 1")
 	m, _ = update(t, m, press("j"), press("down"))
-	assertContains(t, m, "Objective for sets-01.")
+	assertContains(t, m, "Describe sets-01.")
 	m, cmd := update(t, m, press("l"))
 	m = settle(t, m, cmd, idle)
 	if m.screen != screenWatch {
 		t.Fatal("enter did not return to the watch screen")
 	}
-	assertContains(t, m, "sets-01 · Spot Duplicates")
+	assertContains(t, m, "Spot Duplicates", "sets-01 · Dictionaries and Sets")
 	if f.store.Current() != "sets-01" {
 		t.Errorf("current = %q", f.store.Current())
 	}
@@ -118,16 +118,16 @@ func TestListSelectsExercise(t *testing.T) {
 
 func TestListBackKeysDoNotQuit(t *testing.T) {
 	m := start(t, newFixture(t, runner.ErrNoPython).opts)
-	for _, open := range []string{"h", "left", "esc"} {
+	for _, open := range []string{"l", "esc"} {
 		m, _ = update(t, m, press(open))
 		if m.screen != screenList {
 			t.Fatalf("%s did not open the list", open)
 		}
 		m, _ = update(t, m, press("esc"))
 	}
-	for _, k := range []string{"esc", "q"} {
+	for _, k := range []string{"esc", "q", "h", "left"} {
 		var cmd tea.Cmd
-		m, _ = update(t, m, press("h"))
+		m, _ = update(t, m, press("l"))
 		m, cmd = update(t, m, press(k))
 		if isQuit(cmd) || m.screen != screenWatch {
 			t.Errorf("%s in list: quit=%v screen=%v", k, isQuit(cmd), m.screen)
@@ -137,7 +137,7 @@ func TestListBackKeysDoNotQuit(t *testing.T) {
 
 func TestListSearch(t *testing.T) {
 	m := start(t, newFixture(t, runner.ErrNoPython).opts)
-	m, _ = update(t, m, press("h"), press("/"))
+	m, _ = update(t, m, press("l"), press("/"))
 	m, cmd := update(t, m, press("q"))
 	if isQuit(cmd) || m.screen != screenList {
 		t.Fatal("typing q into search left the list")
@@ -149,7 +149,7 @@ func TestListSearch(t *testing.T) {
 	m = settle(t, m, cmd, func(m Model) bool { return m.selectedIndex() == 2 })
 	m, cmd = update(t, m, press("enter"), press("enter"))
 	m = settle(t, m, cmd, idle)
-	assertContains(t, m, "sets-01 · Spot Duplicates")
+	assertContains(t, m, "Spot Duplicates", "sets-01 · Dictionaries and Sets")
 }
 
 func TestQuit(t *testing.T) {
@@ -231,7 +231,7 @@ func TestEditorExitRerunsTests(t *testing.T) {
 	f.writeWork(t, "enumerate-01", solutionCode)
 	m, cmd := update(t, m, editorDoneMsg{})
 	m = settle(t, m, cmd, idle)
-	assertContains(t, m, "✓ Exercise complete!")
+	assertContains(t, m, "✓ Solved")
 }
 
 func TestEditorStartFailure(t *testing.T) {
@@ -268,7 +268,7 @@ func TestSaveTriggersRerun(t *testing.T) {
 		t.Fatal("changed file did not start a run")
 	}
 	m = settle(t, m, cmd, idle)
-	assertContains(t, m, "✓ Exercise complete!")
+	assertContains(t, m, "✓ Solved")
 }
 
 func TestWatchIgnoresOtherFilesAndEditing(t *testing.T) {
@@ -310,7 +310,7 @@ func TestResetFromList(t *testing.T) {
 		t.Fatal(err)
 	}
 	m := start(t, f.opts)
-	m, _ = update(t, m, press("h"), press("j"), press("r"))
+	m, _ = update(t, m, press("l"), press("j"), press("r"))
 	assertContains(t, m, "Reset zip-01 to the starter code?", "y/n")
 
 	m, _ = update(t, m, press("n"))
@@ -326,7 +326,7 @@ func TestResetFromList(t *testing.T) {
 	if _, ok := f.store.Entry("zip-01"); ok {
 		t.Error("progress not cleared")
 	}
-	assertContains(t, m, "Reset zip-01 to the starter code.", "○ zip-01")
+	assertContains(t, m, "Reset zip-01 to the starter code.", "○ Pair Up")
 }
 
 func TestExplanationUnlocksWhenSolved(t *testing.T) {
@@ -342,9 +342,9 @@ func TestExplanationUnlocksWhenSolved(t *testing.T) {
 		t.Fatal(err)
 	}
 	m, _ = update(t, m, press("x"))
-	assertContains(t, m, "── Explanation · enumerate-01", "x back to exercise")
+	assertContains(t, m, "── Explanation", "Find an Index")
 	m, _ = update(t, m, press("x"))
-	assertContains(t, m, "Describe enumerate-01.", "x explanation")
+	assertContains(t, m, "Describe enumerate-01.", "Example 1")
 }
 
 func TestProgressScreen(t *testing.T) {
@@ -380,7 +380,7 @@ func TestFullHelpToggle(t *testing.T) {
 		t.Fatal("short help should not list every key")
 	}
 	m, _ = update(t, m, press("?"))
-	assertContains(t, m, "progress", "j/k scroll", "? less")
+	assertContains(t, m, "progress", "j/k scroll", "close help")
 	m, _ = update(t, m, press("?"))
 	if strings.Contains(plain(m), "progress") {
 		t.Error("? did not collapse the help")
@@ -389,7 +389,7 @@ func TestFullHelpToggle(t *testing.T) {
 
 func TestGlobalKeysIgnoredWhileSearching(t *testing.T) {
 	m := start(t, newFixture(t, runner.ErrNoPython).opts)
-	m, _ = update(t, m, press("h"), press("/"), press("p"))
+	m, _ = update(t, m, press("l"), press("/"), press("p"))
 	if m.screen != screenList {
 		t.Error("typing p into search opened the progress screen")
 	}
@@ -402,5 +402,19 @@ func TestStartOptionWins(t *testing.T) {
 	}
 	f.opts.Start = "sets-01"
 	m := start(t, f.opts)
-	assertContains(t, m, "sets-01 · Spot Duplicates")
+	assertContains(t, m, "Spot Duplicates", "sets-01 · Dictionaries and Sets")
+}
+
+func TestRunScrollsToResults(t *testing.T) {
+	f := newFixture(t, nil).withPython(t)
+	m := start(t, f.opts)
+	m, _ = update(t, m, tea.WindowSizeMsg{Width: 70, Height: 14})
+	if m.vp.YOffset() != 0 {
+		t.Fatalf("opening an exercise should start at the top, offset %d", m.vp.YOffset())
+	}
+	m, cmd := update(t, m, press("r"))
+	m = settle(t, m, cmd, idle)
+	if m.vp.YOffset() == 0 || !strings.Contains(plain(m), "── Tests") {
+		t.Errorf("r did not scroll to the results (offset %d):\n%s", m.vp.YOffset(), plain(m))
+	}
 }

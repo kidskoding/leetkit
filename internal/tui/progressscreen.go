@@ -7,6 +7,8 @@ import (
 	"charm.land/bubbles/v2/key"
 	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
+
+	"github.com/kidskoding/leetkit/internal/report"
 )
 
 func (m Model) updateProgress(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -32,14 +34,12 @@ func (m Model) progressView() string {
 	}
 	barWidth := min(max(m.width-labelWidth-16, 10), 40)
 	row := func(label string, done, total int, style lipgloss.Style) string {
-		bar := m.bar
-		bar.SetWidth(barWidth)
-		ratio := 0.0
+		pct := 0
 		if total > 0 {
-			ratio = float64(done) / float64(total)
+			pct = done * 100 / total
 		}
-		return " " + style.Render(pad(label, labelWidth)) + "  " + bar.ViewAs(ratio) + " " +
-			th.Text.Render(fmt.Sprintf("%d/%d", done, total))
+		return " " + style.Render(pad(label, labelWidth)) + "  " + report.Meter(th, done, total, barWidth) + "  " +
+			th.Text.Render(fmt.Sprintf("%d/%d", done, total)) + th.Faint.Render(fmt.Sprintf("  %d%%", pct))
 	}
 
 	var all []string

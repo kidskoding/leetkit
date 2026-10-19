@@ -11,7 +11,6 @@ import (
 
 	"charm.land/bubbles/v2/help"
 	"charm.land/bubbles/v2/list"
-	"charm.land/bubbles/v2/progress"
 	"charm.land/bubbles/v2/spinner"
 	"charm.land/bubbles/v2/viewport"
 	tea "charm.land/bubbletea/v2"
@@ -46,6 +45,9 @@ type Options struct {
 	Notice string
 	// Start opens this exercise id instead of the saved one.
 	Start string
+	// SetupHelp explains how to install Python and pytest, shown when tests
+	// cannot run.
+	SetupHelp string
 }
 
 type screen int
@@ -66,6 +68,11 @@ type Model struct {
 	current    int
 	hints      int
 	editing    bool
+	// revealResults scrolls to the Tests section when the current run ends;
+	// set for runs the learner triggered (r, saving, leaving the editor).
+	revealResults bool
+	// testsLine is where the Tests section starts in the scrolling body.
+	testsLine int
 	// explaining shows explanation.md instead of the exercise details.
 	explaining bool
 	// confirmReset holds the exercise id awaiting a y/n reset confirmation.
@@ -82,7 +89,6 @@ type Model struct {
 	vp           viewport.Model
 	spinner      spinner.Model
 	help         help.Model
-	bar          progress.Model
 	notice       string
 
 	width, height int
@@ -119,9 +125,6 @@ func New(opts Options) Model {
 	m.help.Styles.ShortKey, m.help.Styles.FullKey = th.Heading, th.Heading
 	m.help.Styles.ShortDesc, m.help.Styles.FullDesc = th.Faint, th.Faint
 	m.help.Styles.ShortSeparator, m.help.Styles.FullSeparator = th.Faint, th.Faint
-
-	m.bar = progress.New(progress.WithoutPercentage(), progress.WithColors(th.Palette.Success))
-	m.bar.EmptyColor = th.Palette.Muted
 
 	m.current = m.startIndex()
 	m.refreshItems()
@@ -229,9 +232,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, nil
 			case "?":
 				m.help.ShowAll = !m.help.ShowAll
-				desc := "more"
+				desc := "help"
 				if m.help.ShowAll {
-					desc = "less"
+					desc = "close help"
 				}
 				m.watchKeys.Help.SetHelp("?", desc)
 				m.listKeys.Help.SetHelp("?", desc)

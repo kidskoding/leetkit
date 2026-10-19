@@ -2,8 +2,8 @@ package tui
 
 import "charm.land/bubbles/v2/key"
 
-// Navigation follows ranger/lf conventions: j/k move, l enters an exercise
-// from the list, and h leaves it for the list. Arrow keys mirror them.
+// j/k move or scroll everywhere. As in Rustlings, l opens the exercise list;
+// inside the list, l or enter opens an exercise and h or esc goes back.
 type watchKeys struct {
 	// solved shows x in the help once the exercise passes.
 	solved bool
@@ -23,16 +23,16 @@ type watchKeys struct {
 
 func newWatchKeys() watchKeys {
 	return watchKeys{
-		Next:     key.NewBinding(key.WithKeys("n"), key.WithHelp("n/N", "next/prev")),
-		Prev:     key.NewBinding(key.WithKeys("N")),
-		Explain:  key.NewBinding(key.WithKeys("x"), key.WithHelp("x", "explanation")),
+		Next:     key.NewBinding(key.WithKeys("n"), key.WithHelp("n", "next")),
+		Prev:     key.NewBinding(key.WithKeys("N"), key.WithHelp("N", "previous")),
+		Explain:  key.NewBinding(key.WithKeys("x"), key.WithHelp("x", "explain")),
 		Edit:     key.NewBinding(key.WithKeys("e"), key.WithHelp("e", "edit")),
 		Hint:     key.NewBinding(key.WithKeys("t"), key.WithHelp("t", "hint")),
 		Run:      key.NewBinding(key.WithKeys("r"), key.WithHelp("r", "run")),
-		List:     key.NewBinding(key.WithKeys("h", "left", "esc"), key.WithHelp("h/←", "list")),
+		List:     key.NewBinding(key.WithKeys("l", "esc"), key.WithHelp("l", "list")),
 		Scroll:   key.NewBinding(key.WithKeys("j", "k", "down", "up", "pgdown", "pgup"), key.WithHelp("j/k", "scroll")),
 		Progress: key.NewBinding(key.WithKeys("p"), key.WithHelp("p", "progress")),
-		Help:     key.NewBinding(key.WithKeys("?"), key.WithHelp("?", "more")),
+		Help:     key.NewBinding(key.WithKeys("?"), key.WithHelp("?", "help")),
 		Quit:     key.NewBinding(key.WithKeys("q", "ctrl+c"), key.WithHelp("q", "quit")),
 	}
 }
@@ -44,15 +44,17 @@ func (k watchKeys) solvedKeys() []key.Binding {
 	return nil
 }
 
+// ShortHelp keeps the footer to the keys used on every exercise; x is
+// prompted in the results once an exercise is solved.
 func (k watchKeys) ShortHelp() []key.Binding {
-	return append([]key.Binding{k.Next}, append(k.solvedKeys(), k.Edit, k.Hint, k.Run, k.List, k.Help, k.Quit)...)
+	return []key.Binding{k.Edit, k.Run, k.Hint, k.Next, k.List, k.Help, k.Quit}
 }
 
 func (k watchKeys) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
-		append([]key.Binding{k.Next}, append(k.solvedKeys(), k.Edit, k.Hint, k.Run)...),
-		{k.List, k.Scroll, k.Progress},
-		{k.Help, k.Quit},
+		append([]key.Binding{k.Edit, k.Run, k.Hint}, k.solvedKeys()...),
+		{k.Next, k.Prev, k.List, k.Progress},
+		{k.Scroll, k.Help, k.Quit},
 	}
 }
 
@@ -69,12 +71,12 @@ type listKeys struct {
 func newListKeys() listKeys {
 	return listKeys{
 		Move:     key.NewBinding(key.WithKeys("j", "k", "down", "up"), key.WithHelp("j/k", "move")),
-		Open:     key.NewBinding(key.WithKeys("l", "right", "enter"), key.WithHelp("l/enter", "open")),
+		Open:     key.NewBinding(key.WithKeys("enter", "l", "right"), key.WithHelp("enter", "open")),
 		Search:   key.NewBinding(key.WithKeys("/"), key.WithHelp("/", "search")),
 		Reset:    key.NewBinding(key.WithKeys("r"), key.WithHelp("r", "reset")),
 		Progress: key.NewBinding(key.WithKeys("p"), key.WithHelp("p", "progress")),
-		Help:     key.NewBinding(key.WithKeys("?"), key.WithHelp("?", "more")),
-		Back:     key.NewBinding(key.WithKeys("esc", "q"), key.WithHelp("esc", "back")),
+		Help:     key.NewBinding(key.WithKeys("?"), key.WithHelp("?", "help")),
+		Back:     key.NewBinding(key.WithKeys("esc", "q", "h", "left"), key.WithHelp("esc", "back")),
 	}
 }
 

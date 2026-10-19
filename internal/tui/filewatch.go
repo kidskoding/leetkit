@@ -42,6 +42,7 @@ func (m *Model) onFileCheck(msg fileCheckMsg) tea.Cmd {
 		changed := !m.lastMod.IsZero() && !msg.mod.Equal(m.lastMod)
 		m.lastMod = msg.mod
 		if changed {
+			m.revealResults = true
 			run = m.startRun()
 		}
 	}

@@ -45,7 +45,8 @@ func (m *Model) startRun() tea.Cmd {
 		return nil
 	}
 	m.run.cancel()
-	m.run = runState{seq: m.run.seq + 1}
+	// Keep the previous result on screen while the new run is in flight.
+	m.run = runState{seq: m.run.seq + 1, result: m.run.result}
 	if m.opts.RunnerErr != nil {
 		m.run.err = m.opts.RunnerErr
 		m.refreshWatch()
@@ -84,7 +85,7 @@ func prepareJob(cat *exercise.Catalog, ws workspace.Workspace, ex *exercise.Exer
 	if err != nil {
 		return runner.Job{}, fmt.Errorf("read your code: %w", err)
 	}
-	return runner.Job{Tests: tests, Code: code, CodePath: path}, nil
+	return runner.Job{Tests: tests, Code: code, CodePath: shortenHome(path)}, nil
 }
 
 func (m *Model) finishRun(msg runDoneMsg) tea.Cmd {
@@ -100,5 +101,9 @@ func (m *Model) finishRun(msg runDoneMsg) tea.Cmd {
 		m.refreshItems()
 	}
 	m.refreshWatch()
+	if m.revealResults {
+		m.showResults()
+		m.revealResults = false
+	}
 	return nil
 }
