@@ -13,25 +13,26 @@ import (
 
 	"github.com/anirudhkonidala/leetkit/internal/config"
 	"github.com/anirudhkonidala/leetkit/internal/editor"
+	"github.com/anirudhkonidala/leetkit/internal/report"
 	"github.com/anirudhkonidala/leetkit/internal/runner"
 	"github.com/anirudhkonidala/leetkit/internal/theme"
 )
 
-type report struct {
+type checklist struct {
 	w      io.Writer
 	th     theme.Theme
 	failed bool
 }
 
-func (r *report) ok(name, format string, a ...any) {
+func (r *checklist) ok(name, format string, a ...any) {
 	fmt.Fprintf(r.w, "%s %s %s\n", r.th.Pass.Render("✓"), r.th.Text.Render(pad(name, 10)),
 		r.th.Faint.Render(fmt.Sprintf(format, a...)))
 }
 
-func (r *report) fail(name, problem, fix string) {
+func (r *checklist) fail(name, problem, fix string) {
 	r.failed = true
 	fmt.Fprintf(r.w, "%s %s %s\n%s\n", r.th.Fail.Render("✗"), r.th.Text.Render(pad(name, 10)),
-		r.th.Bad.Render(problem), indent(fix, "    "))
+		r.th.Bad.Render(problem), report.Indent(fix, "    "))
 }
 
 func (a *app) doctor(ctx context.Context, args []string) error {
@@ -42,7 +43,7 @@ func (a *app) doctor(ctx context.Context, args []string) error {
 	if fset.NArg() > 0 {
 		return usagef("unexpected argument %q", fset.Arg(0))
 	}
-	r := &report{w: a.Stdout, th: a.th}
+	r := &checklist{w: a.Stdout, th: a.th}
 
 	cfg := a.cfg
 	switch {

@@ -11,11 +11,11 @@ import (
 	"runtime"
 	"strings"
 	"sync"
-	"time"
 
 	"charm.land/lipgloss/v2"
 
 	"github.com/anirudhkonidala/leetkit/internal/exercise"
+	"github.com/anirudhkonidala/leetkit/internal/report"
 	"github.com/anirudhkonidala/leetkit/internal/runner"
 	"github.com/anirudhkonidala/leetkit/internal/theme"
 	"github.com/anirudhkonidala/leetkit/internal/workspace"
@@ -86,7 +86,7 @@ func (c checker) one(ctx context.Context, w io.Writer, ex *exercise.Exercise, ve
 		return err
 	}
 	fmt.Fprintf(w, "%s %s %s\n", c.th.ID.Bold(true).Render(ex.ID), c.th.Faint.Render("·"), c.th.Text.Render(ex.Title))
-	printResult(w, c.th, res, verbose)
+	fmt.Fprint(w, report.Result(c.th, res, verbose))
 	fmt.Fprintf(w, "\n%s %s\n", c.th.Faint.Render("Your code:"), c.th.ID.Render(path))
 	if res.Status != runner.StatusPassed {
 		return errSilent
@@ -218,32 +218,6 @@ func findExercise(cat *exercise.Catalog, id string) (*exercise.Exercise, error) 
 	return ex, nil
 }
 
-func printResult(w io.Writer, th theme.Theme, res *runner.Result, verbose bool) {
-	passed, failed := res.Count(runner.OutcomePassed), res.Count(runner.OutcomeFailed)
-	elapsed := th.Faint.Render(res.Duration.Round(10 * time.Millisecond).String())
-	switch res.Status {
-	case runner.StatusPassed:
-		fmt.Fprintf(w, "%s %s\n", th.Pass.Render(fmt.Sprintf("✓ All %d tests passed", passed)), elapsed)
-	case runner.StatusFailed:
-		fmt.Fprintf(w, "%s %s, %s %s\n", th.Fail.Render("✗"),
-			th.Good.Render(fmt.Sprintf("%d passed", passed)),
-			th.Bad.Render(fmt.Sprintf("%d failed", failed)), elapsed)
-	case runner.StatusError:
-		fmt.Fprintln(w, th.Fail.Render("✗ "+res.Problem))
-	default:
-		fmt.Fprintln(w, th.Warn.Render("! "+res.Problem))
-	}
-	for _, c := range res.Cases {
-		if c.Outcome != runner.OutcomeFailed && c.Outcome != runner.OutcomeError {
-			continue
-		}
-		fmt.Fprintf(w, "\n  %s\n%s\n", th.Bad.Render("✗ "+c.Name), indent(c.Message, "    "))
-	}
-	if verbose && res.Output != "" {
-		fmt.Fprintf(w, "\n%s\n%s", th.Faint.Render("─── pytest output ───"), res.Output)
-	}
-}
-
 func pad(s string, width int) string {
 	return s + strings.Repeat(" ", max(width-lipgloss.Width(s), 0))
 }
@@ -251,12 +225,4 @@ func pad(s string, width int) string {
 func firstLine(s string) string {
 	line, _, _ := strings.Cut(s, "\n")
 	return line
-}
-
-func indent(s, prefix string) string {
-	lines := strings.Split(strings.TrimRight(s, "\n"), "\n")
-	for i, l := range lines {
-		lines[i] = prefix + l
-	}
-	return strings.Join(lines, "\n")
 }
