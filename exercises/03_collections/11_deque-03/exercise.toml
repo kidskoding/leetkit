@@ -1,0 +1,45 @@
+id = "deque-03"
+title = "Sliding Window Maximum"
+module = "collections"
+difficulty = "advanced"
+type = "application"
+concepts = ["deque", "monotonic queue", "sliding window"]
+
+description = """
+Implement max_sliding_window(nums, k).
+
+Return a list with the maximum of every contiguous window of k elements,
+from left to right. A list of length n has n - k + 1 windows.
+
+If nums is empty, return []. Otherwise 1 <= k <= len(nums). nums may contain
+negatives and duplicates.
+
+Keep a deque of indices whose values are in decreasing order, so the front is
+always the current window's maximum. The whole scan should be O(n).
+"""
+
+objective = "Maintain a monotonic deque of indices to answer sliding-window maximum queries in O(n)."
+
+interview = """
+Sliding Window Maximum is a well-known hard question, and the monotonic
+deque behind it also solves Shortest Subarray with Sum at Least K and
+Constrained Subsequence Sum. Calling max() on every window is O(nk); the
+deque version touches each index at most twice, and a deque is needed because
+you pop from both ends.
+"""
+
+hints = [
+  "A smaller value to the left of a newer, larger value can never be a window maximum again, so it can be discarded.",
+  "Store indices in a deque. Before appending i, pop from the right while nums[back] <= nums[i]; pop from the left when the front index falls out of the window.",
+  "The front index is the max. Once i >= k - 1, append nums[window[0]] to the result.",
+]
+
+[[examples]]
+input = "max_sliding_window([1, 3, -1, -3, 5, 3, 6, 7], 3)"
+output = "[3, 3, 5, 5, 6, 7]"
+explanation = "The six windows are [1,3,-1], [3,-1,-3], [-1,-3,5], [-3,5,3], [5,3,6] and [3,6,7], with maxima 3, 3, 5, 5, 6, 7."
+
+[[examples]]
+input = "max_sliding_window([9, 8, 7, 6], 2)"
+output = "[9, 8, 7]"
+explanation = "In a decreasing list the maximum of each window is its leftmost element, so the front of the deque expires on every step."

@@ -1,0 +1,46 @@
+id = "counter-04"
+title = "Find All Anagrams in a String"
+module = "collections"
+difficulty = "intermediate"
+type = "application"
+concepts = ["Counter", "sliding window", "Counter equality"]
+
+description = """
+Implement find_anagrams(s, p).
+
+Return a list of every start index i such that the substring of s of length
+len(p) starting at i is an anagram of p (the same letters with the same
+counts, in any order). Indices must be in ascending order.
+
+Both strings contain only lowercase English letters and p is non-empty. If p
+is longer than s, or nothing matches, return [].
+
+Keep one Counter for the current window and update it as the window slides:
+add the letter that enters and decrement the letter that leaves, instead of
+rebuilding a Counter for every substring.
+"""
+
+objective = "Maintain a Counter incrementally across a fixed-size sliding window and compare it to a target Counter."
+
+interview = """
+Find All Anagrams in a String and Permutation in String are classic sliding
+window questions. Rebuilding Counter(s[i:i + k]) at every step costs O(k) per
+position; updating one Counter as letters enter and leave keeps each step
+O(1) for the counts, which is the optimization interviewers look for.
+"""
+
+hints = [
+  "Count p once. Then walk s, keeping counts only for the last len(p) letters.",
+  "When s[i] enters, do window[s[i]] += 1. Once i >= len(p), the letter s[i - len(p)] leaves: window[s[i - len(p)]] -= 1.",
+  "After updating, if window == Counter(p) the window starts at i - len(p) + 1. In Python 3.10+ Counter equality ignores zero counts.",
+]
+
+[[examples]]
+input = "find_anagrams(\"cbaebabacd\", \"abc\")"
+output = "[0, 6]"
+explanation = "The windows starting at 0 (\"cba\") and 6 (\"bac\") are rearrangements of \"abc\"; every other length-3 window has a letter that \"abc\" lacks."
+
+[[examples]]
+input = "find_anagrams(\"abab\", \"ab\")"
+output = "[0, 1, 2]"
+explanation = "Windows overlap, so \"ab\", \"ba\" and \"ab\" at indices 0, 1 and 2 all count."

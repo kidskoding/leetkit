@@ -1,0 +1,45 @@
+id = "counter-05"
+title = "Find Common Characters"
+module = "collections"
+difficulty = "intermediate"
+type = "syntax"
+concepts = ["Counter", "Counter intersection", "elements"]
+
+description = """
+Implement common_chars(words).
+
+Return a sorted list of the characters that appear in every word, including
+duplicates: if a character appears at least twice in every word, it appears
+twice in the result, and so on (the minimum count across all words).
+
+words contains at least one word; words contain only lowercase English
+letters. If no character is shared by every word, return [].
+
+Use Counter & Counter (minimum of counts) and .elements() to expand the result.
+"""
+
+objective = "Intersect multisets with Counter & and expand them back into items with elements()."
+
+interview = """
+Find Common Characters is a frequent easy question, and "keep the minimum
+count across several inputs" also appears in shared-inventory and
+common-tags problems. Counter & takes the minimum per key and drops keys that
+reach zero, and elements() turns the counts back into a list of repeated
+items, so the whole answer is a fold and a sort.
+"""
+
+hints = [
+  "Count each word's letters; a letter's count in the answer is the smallest count it has in any word.",
+  "Counter(a) & Counter(b) keeps min(a[c], b[c]) for each letter. Start from the first word and & in the rest.",
+  "Finish with sorted(common.elements()): elements() repeats each key as many times as its count.",
+]
+
+[[examples]]
+input = "common_chars([\"bella\", \"label\", \"roller\"])"
+output = "['e', 'l', 'l']"
+explanation = "Every word has at least one 'e' and at least two 'l's; 'b', 'a' and 'r' are missing from at least one word."
+
+[[examples]]
+input = "common_chars([\"abc\", \"def\"])"
+output = "[]"
+explanation = "The two words share no letters, so the intersection is empty."

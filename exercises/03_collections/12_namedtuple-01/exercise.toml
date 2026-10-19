@@ -1,0 +1,47 @@
+id = "namedtuple-01"
+title = "Parse a Leaderboard"
+module = "collections"
+difficulty = "beginner"
+type = "syntax"
+concepts = ["namedtuple", "records", "max with key"]
+
+description = """
+Implement parse_players(lines) and best_player(lines).
+
+Each line has the form "name,score", for example "ana,90", with no spaces and
+an integer score (possibly negative).
+
+- parse_players(lines) returns a list of Player records in input order, where
+  Player is a namedtuple with fields name (str) and score (int).
+- best_player(lines) returns the name of the player with the highest score.
+  If several players tie for the highest score, return the one that appears
+  first. If lines is empty, return None.
+
+Define Player with collections.namedtuple and read fields by name
+(player.score), not by index.
+"""
+
+objective = "Use collections.namedtuple to give tuple records readable field names."
+
+interview = """
+Interview code often juggles small records: (name, score), (start, end),
+(x, y, dist). Indexing like p[1] hides which field you mean; a namedtuple
+lets you write p.score while staying a lightweight, immutable tuple that
+still sorts, unpacks, and compares like one.
+"""
+
+hints = [
+  "Create the record type once at module level, then build one record per line.",
+  "Player = namedtuple(\"Player\", [\"name\", \"score\"]); split each line on \",\" and convert the score with int().",
+  "For best_player, max(players, key=lambda p: p.score).name; max keeps the first of equal scores. Check for an empty list first.",
+]
+
+[[examples]]
+input = "parse_players([\"ana,90\", \"bo,75\"])"
+output = "[Player(name='ana', score=90), Player(name='bo', score=75)]"
+explanation = "Each line becomes a Player record; the score is converted from the string \"90\" to the integer 90."
+
+[[examples]]
+input = "best_player([\"ana,90\", \"bo,95\", \"cy,95\"])"
+output = "'bo'"
+explanation = "bo and cy tie at 95, and bo appears first, so bo wins the tie."

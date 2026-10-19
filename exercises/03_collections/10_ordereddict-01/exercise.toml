@@ -1,0 +1,47 @@
+id = "ordereddict-01"
+title = "LRU Cache"
+module = "collections"
+difficulty = "advanced"
+type = "application"
+concepts = ["OrderedDict", "move_to_end", "popitem", "class design"]
+
+description = """
+Implement the class LRUCache(capacity), a least-recently-used cache.
+
+- get(key) returns the value stored for key, or -1 if key is not in the
+  cache. A successful get marks key as the most recently used.
+- put(key, value) inserts or updates key and marks it as the most recently
+  used. If the insert makes the cache hold more than capacity keys, evict the
+  least recently used key.
+
+capacity is always at least 1. Updating an existing key never evicts
+anything. Both get and put should run in O(1) average time.
+
+Store the entries in a collections.OrderedDict, using move_to_end() and
+popitem(last=False).
+"""
+
+objective = "Use OrderedDict's move_to_end and popitem(last=False) to keep entries in recency order."
+
+interview = """
+LRU Cache is one of the most-asked design questions. The textbook answer is a
+hash map plus a doubly linked list; OrderedDict is exactly that structure, so
+in Python the whole cache fits in a dozen lines. Interviewers usually accept
+it if you can explain what move_to_end and popitem(last=False) do underneath.
+"""
+
+hints = [
+  "Keep the keys ordered from least recently used (front) to most recently used (back).",
+  "OrderedDict.move_to_end(key) moves a key to the back; popitem(last=False) removes the front item.",
+  "In get, move the key to the end before returning it. In put, assign, move to the end, and pop the front if len exceeds capacity.",
+]
+
+[[examples]]
+input = "cache = LRUCache(2); cache.put(1, 1); cache.put(2, 2); cache.get(1); cache.put(3, 3); cache.get(2)"
+output = "-1"
+explanation = "get(1) makes key 1 the most recently used, so putting key 3 into the full cache evicts key 2."
+
+[[examples]]
+input = "cache = LRUCache(2); cache.put(1, 1); cache.put(2, 2); cache.put(1, 10); cache.put(3, 3); cache.get(1)"
+output = "10"
+explanation = "Updating key 1 refreshes it and does not evict anything; the later put(3, 3) evicts key 2, the least recently used, so key 1 survives with its new value."
