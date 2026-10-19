@@ -41,3 +41,14 @@ def test_winding_island_and_grid_unchanged():
     original = copy.deepcopy(grid)
     assert count_islands(grid) == 1
     assert grid == original
+
+
+def test_horizontal_neighbours_connect():
+    assert count_islands(to_grid(["0110", "0000", "1101"])) == 3
+
+
+def test_search_must_also_go_up_and_left():
+    # Reaching every cell of these islands from their first cell in reading
+    # order needs a step up (the U) or a step left (the L).
+    assert count_islands(to_grid(["101", "111"])) == 1
+    assert count_islands(to_grid(["01", "11"])) == 1

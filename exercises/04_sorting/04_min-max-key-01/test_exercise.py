@@ -43,3 +43,8 @@ def test_uses_min_with_key():
     assert calls_with_key(closest_point, "min"), (
         "This drill practices min() with key=: `min(points, key=lambda p: ..., default=None)`."
     )
+
+
+def test_distance_uses_both_coordinates():
+    assert closest_point([(0, 3), (2, 0)]) == (2, 0)
+    assert closest_point([(0, 3), (2, 1)]) == (2, 1)

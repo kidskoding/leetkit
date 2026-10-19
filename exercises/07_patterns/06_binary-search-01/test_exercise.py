@@ -34,3 +34,14 @@ def test_uses_logarithmic_checks_within_range():
     assert first_bad_build(n, is_bad) == 765_432
     assert all(1 <= b <= n for b in calls), "Only call is_bad on builds 1..n."
     assert len(calls) <= 25, "Use binary search: about log2(n) calls to is_bad, not one per build."
+
+
+def test_no_bad_build_stays_within_range():
+    calls = []
+
+    def is_bad(b):
+        calls.append(b)
+        return False
+
+    assert first_bad_build(100, is_bad) == -1
+    assert all(1 <= b <= 100 for b in calls), "Only call is_bad on builds 1..n."

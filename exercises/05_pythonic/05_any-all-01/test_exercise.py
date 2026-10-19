@@ -46,3 +46,7 @@ def test_uses_any_and_all():
         "This drill practices any() and all(): use any(...) for the 'at least one' rules "
         "and all(...) for the 'no whitespace' rule."
     )
+
+
+def test_exactly_eight_characters_is_long_enough():
+    assert is_strong_password("Abcdef12") is True

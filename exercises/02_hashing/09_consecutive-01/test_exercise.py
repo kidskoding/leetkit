@@ -28,3 +28,7 @@ def test_no_neighbours():
 
 def test_picks_longer_of_two_runs():
     assert longest_consecutive([50, 1, 51, 2, 52, 53, 3]) == 4
+
+
+def test_gap_of_one_before_a_run():
+    assert longest_consecutive([1, 3, 4, 5]) == 3

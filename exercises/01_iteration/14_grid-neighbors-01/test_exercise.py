@@ -44,3 +44,8 @@ def test_one_by_one_grid():
 
 def test_empty_grid():
     assert find_peaks([]) == []
+
+
+def test_taller_cell_directly_above_or_below_blocks_a_peak():
+    assert find_peaks([[9, 0], [5, 1]]) == [(0, 0)]
+    assert find_peaks([[5, 1], [9, 0]]) == [(1, 0)]
