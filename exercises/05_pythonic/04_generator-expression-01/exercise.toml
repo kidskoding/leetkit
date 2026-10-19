@@ -1,0 +1,41 @@
+id = "generator-expression-01"
+title = "Total a Shopping Cart"
+module = "pythonic"
+difficulty = "beginner"
+type = "syntax"
+concepts = ["generator expression", "sum", "tuple unpacking"]
+
+description = """
+Implement cart_total(items).
+
+items is a list of (price, quantity) tuples, where price and quantity are
+integers (price in cents). Return the total cost: the sum of price * quantity
+over all items. Return 0 for an empty cart.
+
+Pass a generator expression straight to sum() instead of building a list first.
+"""
+
+objective = "Feed a generator expression directly into sum() without building a list."
+
+interview = """
+Aggregates such as totals, maximums and counts are everywhere: total weight,
+longest word, number of valid pairs. sum(f(x) for x in xs) computes them in one
+line without allocating an intermediate list, and interviewers recognise it as
+idiomatic Python.
+"""
+
+hints = [
+  "sum() accepts any iterable, not only a list.",
+  "A generator expression looks like a list comprehension without the square brackets.",
+  "Unpack each tuple in the for clause: sum(price * qty for price, qty in items).",
+]
+
+[[examples]]
+input = "cart_total([(250, 2), (100, 3)])"
+output = "800"
+explanation = "250 * 2 = 500 and 100 * 3 = 300, and 500 + 300 = 800."
+
+[[examples]]
+input = "cart_total([])"
+output = "0"
+explanation = "An empty cart has nothing to add up, and sum() of an empty iterable is 0."

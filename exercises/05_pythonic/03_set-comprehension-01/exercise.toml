@@ -1,0 +1,41 @@
+id = "set-comprehension-01"
+title = "Distinct Email Domains"
+module = "pythonic"
+difficulty = "beginner"
+type = "syntax"
+concepts = ["set comprehension", "sets", "string methods"]
+
+description = """
+Implement email_domains(emails).
+
+Each email has the form "user@domain". Return a set of the distinct domains
+(the text after the last "@"), converted to lowercase, so "Gmail.com" and
+"gmail.com" count as the same domain. Return an empty set for an empty list.
+
+Use a set comprehension instead of a loop with add().
+"""
+
+objective = "Collect unique, normalized values with a set comprehension."
+
+interview = """
+Deduplication is a frequent sub-step: unique emails after normalization,
+distinct characters in a window, the set of visited states. A set comprehension
+normalizes and deduplicates in one pass, and the curly-brace syntax makes the
+"unique values" intent obvious to the reader.
+"""
+
+hints = [
+  "Sets have a comprehension syntax that removes duplicates for you.",
+  "The shape is {expression for item in iterable}.",
+  "Split each email on its last \"@\" (rpartition or rsplit) and lowercase the domain.",
+]
+
+[[examples]]
+input = "email_domains([\"ann@Gmail.com\", \"bob@gmail.com\"])"
+output = "{'gmail.com'}"
+explanation = "Both domains lowercase to 'gmail.com', so the set holds it only once."
+
+[[examples]]
+input = "email_domains([])"
+output = "set()"
+explanation = "No emails means no domains, so the result is an empty set (written set(), not {})."

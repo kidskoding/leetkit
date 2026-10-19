@@ -1,0 +1,52 @@
+id = "any-all-01"
+title = "Check Password Strength"
+module = "pythonic"
+difficulty = "beginner"
+type = "syntax"
+concepts = ["any", "all", "generator expression", "validation"]
+
+description = """
+Implement is_strong_password(password).
+
+Return True if password meets every rule below, otherwise False:
+
+- at least 8 characters long
+- contains at least one uppercase letter
+- contains at least one lowercase letter
+- contains at least one digit
+- contains no whitespace characters
+
+An empty string is not strong.
+
+Use any() for the "at least one" rules and all() for the "no whitespace" rule.
+"""
+
+objective = "Express validation rules with any() and all() over generator expressions."
+
+interview = """
+Validation checks come up in string problems, grid checks and simulations:
+"does any cell contain...", "are all rows the same length". any() and all()
+turn each rule into one readable line and stop early as soon as the answer is
+known.
+"""
+
+hints = [
+  "Each rule asks whether some character, or every character, satisfies a test.",
+  "any(test for ch in password) is True if at least one character passes; all(...) needs every one to pass.",
+  "Combine len(password) >= 8 with any(ch.isupper() ...), any(ch.islower() ...), any(ch.isdigit() ...) and all(not ch.isspace() ...) using and.",
+]
+
+[[examples]]
+input = "is_strong_password(\"Secure123\")"
+output = "True"
+explanation = "It has 9 characters, an uppercase S, lowercase letters, digits and no whitespace, so every rule passes."
+
+[[examples]]
+input = "is_strong_password(\"secure123\")"
+output = "False"
+explanation = "There is no uppercase letter, so the any(ch.isupper() ...) rule fails."
+
+[[examples]]
+input = "is_strong_password(\"Secure 123\")"
+output = "False"
+explanation = "It contains a space, so the all(not ch.isspace() ...) rule fails even though the other rules pass."

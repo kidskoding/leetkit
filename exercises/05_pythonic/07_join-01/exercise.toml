@@ -1,0 +1,44 @@
+id = "join-01"
+title = "Run-Length Encode a String"
+module = "pythonic"
+difficulty = "beginner"
+type = "syntax"
+concepts = ["str.join", "strings"]
+
+description = """
+Implement run_length_encode(s).
+
+Replace every run of consecutive identical characters with the character
+followed by the length of the run, and return the encoded string. Every run
+gets a count, even a run of length 1: "aaabcc" becomes "a3b1c2". Runs are
+case-sensitive ("aA" becomes "a1A1"), and the same character can start a new
+run later ("aabaa" becomes "a2b1a2"). Return "" for an empty string.
+
+Collect the pieces in a list and combine them once with "".join() instead of
+repeated += on a string.
+"""
+
+objective = "Build an output string from parts with str.join()."
+
+interview = """
+String-building problems such as compression, formatting output and
+serializing a tree are common. Appending pieces to a list and calling
+"".join() once is the idiomatic, linear-time way to do it, whereas repeated
++= can copy the string over and over.
+"""
+
+hints = [
+  "Walk through s and find where each run of the same character ends.",
+  "For each run, append a piece like f\"{ch}{count}\" to a list.",
+  "Return \"\".join(parts) at the end.",
+]
+
+[[examples]]
+input = "run_length_encode(\"aaabcc\")"
+output = "'a3b1c2'"
+explanation = "The runs are three 'a', one 'b' and two 'c', giving 'a3' + 'b1' + 'c2'. A run of length 1 still gets its count."
+
+[[examples]]
+input = "run_length_encode(\"\")"
+output = "''"
+explanation = "An empty string has no runs, so joining zero pieces gives an empty string."

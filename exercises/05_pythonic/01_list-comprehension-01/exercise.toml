@@ -1,0 +1,41 @@
+id = "list-comprehension-01"
+title = "Square the Evens"
+module = "pythonic"
+difficulty = "beginner"
+type = "syntax"
+concepts = ["list comprehension", "filtering"]
+
+description = """
+Implement even_squares(nums).
+
+Return a new list containing the square of every even number in nums,
+in the same order they appear. Odd numbers are skipped. Zero and negative
+even numbers count as even. Return [] for an empty list.
+
+Use a single list comprehension with an if clause instead of a loop with append().
+"""
+
+objective = "Filter and transform a list in one list comprehension."
+
+interview = """
+Filtering and mapping a list is the most common piece of glue code in interview
+solutions: keep the valid neighbours, square the values, collect the indices
+that match. A comprehension does it in one readable line and signals that you
+write Python, not Java translated into Python.
+"""
+
+hints = [
+  "A list comprehension can both transform values and skip some of them.",
+  "The shape is [expression for item in iterable if condition].",
+  "Square with n * n, and keep only items where n % 2 == 0.",
+]
+
+[[examples]]
+input = "even_squares([1, 2, 3, 4])"
+output = "[4, 16]"
+explanation = "Only 2 and 4 are even; their squares are 4 and 16, kept in input order."
+
+[[examples]]
+input = "even_squares([1, 3, 5])"
+output = "[]"
+explanation = "Every number is odd, so nothing passes the filter and the list is empty."

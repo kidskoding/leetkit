@@ -1,0 +1,42 @@
+id = "slicing-01"
+title = "Rotate an Array Right"
+module = "pythonic"
+difficulty = "beginner"
+type = "syntax"
+concepts = ["slicing", "modulo"]
+
+description = """
+Implement rotate_right(nums, k).
+
+Return a new list with the elements of nums rotated to the right by k steps:
+each element moves k positions toward the end, and elements that fall off the
+end wrap around to the front. k is a non-negative integer and may be larger
+than len(nums). Return [] for an empty list. Do not modify nums.
+
+Use slicing (nums[a:b]) instead of moving elements one at a time.
+"""
+
+objective = "Use slicing and modulo to rotate a list in one expression."
+
+interview = """
+Rotation shows up directly (Rotate Array) and indirectly in circular buffers,
+cyclic shifts of strings and "is s2 a rotation of s1" checks. Slicing makes it a
+one-liner, and reducing k with modulo first is the edge case interviewers look
+for.
+"""
+
+hints = [
+  "Rotating right by k means the last k elements move to the front.",
+  "nums[-k:] is the last k elements and nums[:-k] is everything before them.",
+  "Reduce k with k %= len(nums) first, and handle the empty list before dividing by its length.",
+]
+
+[[examples]]
+input = "rotate_right([1, 2, 3, 4, 5], 2)"
+output = "[4, 5, 1, 2, 3]"
+explanation = "Rotating right by 2 moves the last two elements, 4 and 5, to the front."
+
+[[examples]]
+input = "rotate_right([1, 2, 3], 4)"
+output = "[3, 1, 2]"
+explanation = "4 % 3 is 1, so this is the same as rotating right by 1: the last element 3 moves to the front."

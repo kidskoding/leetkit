@@ -1,0 +1,42 @@
+id = "conditional-expression-01"
+title = "FizzBuzz as a List"
+module = "pythonic"
+difficulty = "beginner"
+type = "syntax"
+concepts = ["conditional expression", "list comprehension"]
+
+description = """
+Implement fizzbuzz(n).
+
+Return a list of n strings, one for each number i from 1 to n inclusive:
+"FizzBuzz" if i is divisible by both 3 and 5, "Fizz" if divisible only by 3,
+"Buzz" if divisible only by 5, and otherwise str(i). Return [] when n is 0.
+
+Use a list comprehension whose output expression is a conditional expression
+(a if cond else b), chained for the four cases.
+"""
+
+objective = "Choose between values inside a comprehension with a conditional expression."
+
+interview = """
+FizzBuzz is the classic warm-up, and the same "pick a value per element" shape
+appears when clamping values, labelling cells or mapping signs. A conditional
+expression inside a comprehension expresses the choice without a loop full of
+if/elif branches and append calls.
+"""
+
+hints = [
+  "A conditional expression picks one of two values: x if condition else y.",
+  "Conditional expressions can be chained: a if c1 else b if c2 else c.",
+  "Check divisibility by 15 first, then 3, then 5, and fall back to str(i), all inside [... for i in range(1, n + 1)].",
+]
+
+[[examples]]
+input = "fizzbuzz(5)"
+output = "['1', '2', 'Fizz', '4', 'Buzz']"
+explanation = "3 is divisible by 3 and 5 is divisible by 5; the other numbers are not divisible by either, so they become their own strings."
+
+[[examples]]
+input = "fizzbuzz(0)"
+output = "[]"
+explanation = "There are no numbers from 1 to 0, so the list is empty."

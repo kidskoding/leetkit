@@ -1,0 +1,40 @@
+id = "dict-comprehension-01"
+title = "Map Words to Lengths"
+module = "pythonic"
+difficulty = "beginner"
+type = "syntax"
+concepts = ["dict comprehension", "dictionaries"]
+
+description = """
+Implement word_lengths(words).
+
+Return a dict mapping each word in words to its length (number of characters).
+If a word appears more than once it appears once in the result. Words are
+case-sensitive: "Go" and "go" are different keys. Return {} for an empty list.
+
+Use a dict comprehension instead of building the dict with a loop.
+"""
+
+objective = "Build a mapping in one expression with a dict comprehension."
+
+interview = """
+Lookup tables are everywhere in interview code: value to index, character to
+count, node to neighbours. A dict comprehension builds one in a single line,
+which keeps setup code short so you can spend your time on the real algorithm.
+"""
+
+hints = [
+  "Dicts have their own comprehension syntax, like lists do.",
+  "The shape is {key_expr: value_expr for item in iterable}.",
+  "Use the word as the key and len(word) as the value.",
+]
+
+[[examples]]
+input = "word_lengths([\"apple\", \"fig\"])"
+output = "{'apple': 5, 'fig': 3}"
+explanation = "'apple' has 5 characters and 'fig' has 3, so each word maps to its length."
+
+[[examples]]
+input = "word_lengths([])"
+output = "{}"
+explanation = "With no words there are no keys, so the result is an empty dict."

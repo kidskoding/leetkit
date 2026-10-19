@@ -1,0 +1,47 @@
+id = "nested-comprehension-01"
+title = "Build and Flatten a Grid"
+module = "pythonic"
+difficulty = "intermediate"
+type = "syntax"
+concepts = ["nested comprehension", "list comprehension", "matrices"]
+
+description = """
+Implement two functions.
+
+make_grid(rows, cols, fill) returns a list of rows lists, each containing cols
+copies of fill. Every row must be a separate list object, so changing
+grid[0][0] must not change grid[1][0]. make_grid(0, 3, 0) returns [], and
+make_grid(2, 0, 0) returns [[], []].
+
+flatten(matrix) returns a single list of all values in matrix, row by row,
+left to right. Rows may have different lengths, including empty rows. Return []
+for an empty matrix.
+
+Use a comprehension nested inside a comprehension for make_grid, and one
+comprehension with two for clauses for flatten.
+"""
+
+objective = "Construct and flatten 2D lists with nested comprehensions."
+
+interview = """
+Grid problems (islands, DP tables, game boards) start by allocating a matrix,
+and [[0] * cols] * rows is a classic bug because every row is the same list.
+Nested comprehensions create independent rows, and the two-clause form
+flattens a matrix in one line when you need to sort or count all its values.
+"""
+
+hints = [
+  "The outer comprehension produces rows; the inner one produces the values in a row.",
+  "make_grid: [[fill for _ in range(cols)] for _ in range(rows)]. Each inner list is built fresh.",
+  "flatten: write the for clauses in the same order as nested loops: [x for row in matrix for x in row].",
+]
+
+[[examples]]
+input = "make_grid(2, 3, 0)"
+output = "[[0, 0, 0], [0, 0, 0]]"
+explanation = "The grid has 2 rows, each a separate list of 3 zeros."
+
+[[examples]]
+input = "flatten([[1, 2], [], [3]])"
+output = "[1, 2, 3]"
+explanation = "Values are taken row by row, left to right. The empty middle row contributes nothing."
