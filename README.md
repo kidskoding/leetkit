@@ -8,7 +8,7 @@ As in Rustlings, you fix small exercises in your own editor while LeetKit watche
 and tracks your progress.
 
 ```text
- 07/55  pairwise-01 · Largest Temperature Swing
+ 07/91  pairwise-01 · Largest Temperature Swing
  Iteration and Unpacking · beginner · Interview Application
 
  Return the largest absolute difference between two consecutive readings...
@@ -30,7 +30,7 @@ and tracks your progress.
    ✓ test_flat_readings
    ...
 
- Progress ████████░░░░░░░░░░░░░░░░ 12/55
+ Progress ████░░░░░░░░░░░░░░░░░░░░ 12/91
  Current  ~/.local/share/leetkit/workspace/pairwise-01/starter.py
  n/N next/prev • e edit • t hint 0/3 • r run • h/← list • ? more • q quit
 ```
@@ -44,18 +44,18 @@ problem. It is not an algorithms course and not a LeetCode replacement.
 
 ## Curriculum
 
-55 exercises across seven modules, each with tests, progressive hints, worked examples, and an explanation
+91 exercises across seven modules, each with tests, progressive hints, worked examples, and an explanation
 that unlocks once you solve it.
 
 | Module | Covers |
 |---|---|
-| Iteration and Unpacking | `enumerate`, `zip`, `range`, `reversed`, tuple and star unpacking, `dict.items`, `zip(*matrix)` |
-| Dictionaries and Sets | `dict.get`, set operators, `setdefault`, membership, one-pass Two Sum |
-| Collections | `Counter`, `most_common`, `defaultdict`, `deque` for BFS and sliding windows |
-| Sorting and Searching | `sorted(key=...)`, `lambda`, tuple keys, `min`/`max` with `key`, `bisect` |
-| Pythonic Syntax | list/dict/set comprehensions, generator expressions, `any`/`all`, slicing, `str.join` |
-| Interview Utilities | `heapq`, `math.inf`, `math.gcd`, `divmod`, `itertools.accumulate`, `itertools.combinations` |
-| Applied Interview Patterns | two pointers, sliding window, prefix sums, BFS, DFS, binary search, heap selection |
+| Iteration and Unpacking | `enumerate`, `zip` (and `strict=True`), `range`, `reversed`, tuple, star, and nested unpacking, `dict.items`, grid traversal |
+| Dictionaries and Sets | `dict.get`, set operators, `setdefault`, `frozenset` keys, Two Sum, consecutive sequences, cycle detection |
+| Collections | `Counter` (windows, `&`, `most_common`), `defaultdict`, `deque` (BFS, monotonic window), `OrderedDict` LRU cache, `namedtuple` |
+| Sorting and Searching | `sorted(key=...)`, `lambda`, tuple keys, `functools.cmp_to_key`, `min`/`max` with `key`, `bisect`, `insort`, LIS |
+| Pythonic Syntax | comprehensions, generator expressions, `any`/`all`, slicing, `str` methods, f-strings, `:=`, `*args`/`**kwargs`, `map`/`filter` |
+| Interview Utilities | `heapq` (`merge`, `nlargest`), `math.inf`, `math.gcd`, `divmod`, `itertools` (`accumulate`, `combinations`, `product`, `permutations`, `groupby`), `functools.cache` |
+| Applied Interview Patterns | two pointers, sliding window, prefix sums, BFS, DFS, binary search, heaps, monotonic stack, topological sort, backtracking, DP, union-find |
 
 ## Install
 
