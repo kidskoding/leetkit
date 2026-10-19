@@ -1,0 +1,43 @@
+id = "cycle-detection-01"
+title = "Happy Number"
+module = "hashing"
+difficulty = "beginner"
+type = "application"
+concepts = ["set", "cycle detection", "digit sum"]
+
+description = """
+Implement is_happy(n).
+
+n is a positive integer. Repeatedly replace n with the sum of the squares of
+its digits. n is happy if this process reaches 1, and unhappy if it falls into
+a loop that never reaches 1. Return True for a happy number and False
+otherwise. 1 itself is happy.
+
+Detect the loop by keeping a set of every value you have already seen.
+"""
+
+objective = "Detect a cycle in a repeated process with a set of seen states."
+
+interview = """
+This is LeetCode's Happy Number. The sequence either hits 1 or revisits a
+value, and once it revisits one it will loop forever, so "have I seen this
+before?" is the stopping rule. The same seen-set idea detects cycles in linked
+lists, state machines and repeated simulations; Floyd's two pointers is the
+O(1)-space follow-up interviewers sometimes ask for.
+"""
+
+hints = [
+  "If a value ever comes back, the sequence repeats forever without reaching 1.",
+  "Keep a set; loop while n != 1 and n is not in it, adding n before computing the next value.",
+  "The next value is sum(int(d) ** 2 for d in str(n)). After the loop, return n == 1.",
+]
+
+[[examples]]
+input = "is_happy(19)"
+output = "True"
+explanation = "19 -> 1 + 81 = 82 -> 64 + 4 = 68 -> 36 + 64 = 100 -> 1, so 19 is happy."
+
+[[examples]]
+input = "is_happy(2)"
+output = "False"
+explanation = "2 -> 4 -> 16 -> 37 -> 58 -> 89 -> 145 -> 42 -> 20 -> 4, and 4 is already in the seen set, so it loops without reaching 1."

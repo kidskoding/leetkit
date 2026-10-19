@@ -1,0 +1,48 @@
+id = "frozenset-key-01"
+title = "Group Words by Letter Set"
+module = "hashing"
+difficulty = "intermediate"
+type = "syntax"
+concepts = ["frozenset", "dict keys", "hashability", "grouping"]
+
+description = """
+Implement group_by_letters(words).
+
+Two words belong together when they use exactly the same set of distinct
+letters; how often each letter repeats and the letter order do not matter, so
+"loop", "pool" and "lop" share a group. Return a list of groups, where each
+group is a list of words. Groups appear in the order their first word appears
+in words, and each group keeps its words in input order (repeated words are
+kept). Letters are case-sensitive. The empty string forms its own group.
+Return [] for an empty list.
+
+Use frozenset(word) as the dict key. A plain set can't be a key because it is
+unhashable.
+"""
+
+objective = "Use a frozenset as a hashable dict key for an unordered collection."
+
+interview = """
+Whenever the identity of a group is "these items, in any order, without
+repeats", a frozenset is the natural key: Count Pairs of Similar Strings,
+counting trades or friendships between two people regardless of direction, or
+memoising on a set of visited nodes. Reaching for set() as a key raises
+TypeError: unhashable type, and knowing frozenset is the fix is a quick signal
+of Python fluency.
+"""
+
+hints = [
+  "You need a dict whose key describes a word's letters while ignoring order and repeats.",
+  "set(word) ignores order and repeats but is unhashable; frozenset(word) is the immutable, hashable version.",
+  "groups.setdefault(frozenset(word), []).append(word) for each word, then return list(groups.values()).",
+]
+
+[[examples]]
+input = "group_by_letters([\"loop\", \"stop\", \"pool\", \"lop\", \"post\"])"
+output = "[['loop', 'pool', 'lop'], ['stop', 'post']]"
+explanation = "\"loop\", \"pool\" and \"lop\" all use exactly {l, o, p}. \"stop\" and \"post\" both use {s, t, o, p}, and that group comes second because \"stop\" appears after \"loop\"."
+
+[[examples]]
+input = "group_by_letters([\"aab\", \"ab\", \"abc\"])"
+output = "[['aab', 'ab'], ['abc']]"
+explanation = "Repeated letters do not matter, so \"aab\" and \"ab\" share {a, b}. The extra 'c' puts \"abc\" in its own group."

@@ -1,0 +1,45 @@
+id = "isomorphic-01"
+title = "Isomorphic Strings"
+module = "hashing"
+difficulty = "intermediate"
+type = "application"
+concepts = ["dict", "bijection", "zip"]
+
+description = """
+Implement is_isomorphic(s, t).
+
+Return True if the characters of s can be replaced to produce t, and False
+otherwise. Every occurrence of a character must be replaced by the same
+character, and no two different characters of s may map to the same character
+of t (a character may map to itself). Matching is case-sensitive. Strings of
+different lengths are never isomorphic; two empty strings are.
+
+Keep two dicts, one mapping s -> t and one mapping t -> s, and check both on
+every pair of characters.
+"""
+
+objective = "Enforce a one-to-one character mapping with a pair of dicts."
+
+interview = """
+This is LeetCode's Isomorphic Strings, and the same check powers Word Pattern
+and "find and replace pattern". The trap is building only the forward map:
+"badc" -> "baba" looks consistent from s to t, but 'b' and 'd' both land on
+'b'. Interviewers watch for whether you see that a bijection needs both
+directions.
+"""
+
+hints = [
+  "Walk the two strings in lockstep and remember what each character has been paired with.",
+  "One dict is not enough: also record which s-character already claimed each t-character.",
+  "For each a, b in zip(s, t): fail if s_to_t has a with a value other than b, or t_to_s has b with a value other than a; otherwise record both.",
+]
+
+[[examples]]
+input = "is_isomorphic(\"paper\", \"title\")"
+output = "True"
+explanation = "p -> t, a -> i, e -> l, r -> e is consistent everywhere, and no two letters of \"paper\" share a target."
+
+[[examples]]
+input = "is_isomorphic(\"badc\", \"baba\")"
+output = "False"
+explanation = "Each letter of \"badc\" maps consistently, but both 'b' and 'd' map to 'b'. Only the reverse dict catches this."
