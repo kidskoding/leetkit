@@ -2,18 +2,25 @@ package cli
 
 import (
 	"bytes"
+	"context"
+	"path/filepath"
 	"strings"
 	"testing"
 	"testing/fstest"
 
 	"github.com/anirudhkonidala/leetkit/exercises"
+	"github.com/anirudhkonidala/leetkit/internal/config"
 )
 
 func run(t *testing.T, env Env, args ...string) (code int, stdout, stderr string) {
 	t.Helper()
 	var out, errOut bytes.Buffer
 	env.Stdout, env.Stderr = &out, &errOut
-	code = Run(args, env)
+	if env.Paths == (config.Paths{}) {
+		dir := t.TempDir()
+		env.Paths = config.Paths{ConfigFile: filepath.Join(dir, "config.toml"), DataDir: filepath.Join(dir, "data")}
+	}
+	code = Run(context.Background(), args, env)
 	return code, out.String(), errOut.String()
 }
 

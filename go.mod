@@ -1,5 +1,5 @@
 module github.com/anirudhkonidala/leetkit
 
-go 1.26.8
+go 1.26.0
 
 require github.com/BurntSushi/toml v1.6.0

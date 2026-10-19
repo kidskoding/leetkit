@@ -4,7 +4,7 @@ Terminal app (Go + Charm v2) that trains Python syntax and standard-library flue
 Learners edit Python exercises in their own editor; LeetKit runs pytest and tracks progress.
 
 - **Spec (source of truth):** `SPEC.md`
-- **Plan, milestones, deviations:** `docs/PLAN.md` — update it when a decision changes.
+- **Plan, milestones, deviations:** `docs/PLAN.md` (local only, gitignored) — update it when a decision changes.
 
 ## Workflow rules
 
@@ -18,17 +18,24 @@ Learners edit Python exercises in their own editor; LeetKit runs pytest and trac
 
 ```bash
 go run .                       # launch the TUI
-go run . list|check <id>|progress|reset <id> --yes|doctor
+go run . list | check [-v] <id> | doctor
 go fmt ./... && go vet ./... && go test ./...   # required before every checkpoint
 go test -race ./...
 ```
 
-Exercise tests need Python 3 with pytest. Recommended setup (also printed by `leetkit doctor`):
+## Python environment
 
-```bash
-python3 -m venv ~/.local/share/leetkit/venv
-~/.local/share/leetkit/venv/bin/pip install pytest
-```
+LeetKit needs one thing: a Python 3.10+ interpreter with pytest. It never installs anything itself.
+
+- **Nix (maintainer):** `flake.nix`, `default.nix`, `.envrc`, `gomod2nix.toml` come from
+  `nix flake init -t ~/nixos#gomod2nix` and are excluded via `.git/info/exclude` — never commit them.
+  direnv loads the devShell (Go, Python + pytest, uv).
+- **uv (contributors, CI):** `uv sync` creates `./.venv` from `pyproject.toml` / `uv.lock`.
+- **End users:** `leetkit doctor` prints venv setup commands for `<data>/venv`.
+
+Interpreter lookup order: `$LEETKIT_PYTHON`, config `python`, `<data>/venv`, `python3`, `python`.
+An explicitly set interpreter that is missing is an error, never a silent fallback.
+Go tests that need pytest prefer `./.venv/bin/python`, then `PATH`, and skip if neither has pytest.
 
 ## Layout
 
