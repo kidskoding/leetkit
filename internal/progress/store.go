@@ -26,7 +26,9 @@ type Entry struct {
 func (e Entry) Completed() bool { return e.CompletedAt != nil }
 
 type file struct {
-	Version   int              `json:"version"`
+	Version int `json:"version"`
+	// Current is the exercise the dashboard resumes at.
+	Current   string           `json:"current,omitempty"`
 	Exercises map[string]Entry `json:"exercises"`
 }
 
@@ -39,6 +41,7 @@ type Store struct {
 	path    string
 	now     func() time.Time
 	mu      sync.Mutex
+	current string
 	entries map[string]Entry
 }
 
@@ -55,6 +58,16 @@ func (s *Store) Entry(id string) (Entry, bool) {
 	defer s.mu.Unlock()
 	e, ok := s.entries[id]
 	return e, ok
+}
+
+func (s *Store) Current() string {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.current
+}
+
+func (s *Store) SetCurrent(id string) error {
+	return s.update(func(map[string]Entry) { s.current = id })
 }
 
 func (s *Store) Completed(id string) bool {
@@ -105,7 +118,7 @@ func (s *Store) update(apply func(map[string]Entry)) error {
 		return err
 	}
 	apply(s.entries)
-	data, err := json.MarshalIndent(file{Version: schemaVersion, Exercises: s.entries}, "", "  ")
+	data, err := json.MarshalIndent(file{Version: schemaVersion, Current: s.current, Exercises: s.entries}, "", "  ")
 	if err != nil {
 		return fmt.Errorf("encode progress: %w", err)
 	}
@@ -120,7 +133,7 @@ func (s *Store) update(apply func(map[string]Entry)) error {
 func (s *Store) reload() error {
 	data, err := os.ReadFile(s.path)
 	if errors.Is(err, fs.ErrNotExist) {
-		s.entries = map[string]Entry{}
+		s.current, s.entries = "", map[string]Entry{}
 		return nil
 	}
 	if err != nil {
@@ -133,7 +146,7 @@ func (s *Store) reload() error {
 			return fmt.Errorf("progress file %s is corrupt and could not be moved aside: %w", s.path, err)
 		}
 		s.Recovered = backup
-		s.entries = map[string]Entry{}
+		s.current, s.entries = "", map[string]Entry{}
 		return nil
 	}
 	if f.Version > schemaVersion {
@@ -142,6 +155,6 @@ func (s *Store) reload() error {
 	if f.Exercises == nil {
 		f.Exercises = map[string]Entry{}
 	}
-	s.entries = f.Exercises
+	s.current, s.entries = f.Current, f.Exercises
 	return nil
 }

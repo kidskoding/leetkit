@@ -146,3 +146,20 @@ func TestConcurrentRecords(t *testing.T) {
 		t.Errorf("attempts = %d, want 20", e.Attempts)
 	}
 }
+
+func TestCurrentPersists(t *testing.T) {
+	path := tempPath(t)
+	s := openAt(t, path, t1)
+	if s.Current() != "" {
+		t.Fatalf("new store current = %q", s.Current())
+	}
+	if err := s.SetCurrent("zip-01"); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := s.Record("enumerate-01", true); err != nil {
+		t.Fatal(err)
+	}
+	if got := openAt(t, path, t1).Current(); got != "zip-01" {
+		t.Errorf("after reopen current = %q, want zip-01", got)
+	}
+}
