@@ -16,19 +16,11 @@ As in Rustlings, you fix small exercises in your own editor while LeetKit watche
 and tracks your progress.
 
 ```text
- 07/91  pairwise-01 · Largest Temperature Swing
- Iteration and Unpacking · beginner · Interview Application
-
- Return the largest absolute difference between two consecutive readings...
-
- Example 1
-   Input:       largest_swing([12, 15, 9, 10])
-   Output:      6
-   Explanation: The consecutive differences are |15-12| = 3, |9-15| = 6 and
-                |10-9| = 1. The largest is 6.
-
- ── Tests ──────────────────────────────────────────────────────────────
- ✗ 3 passed, 4 failed 240ms
+ Largest Temperature Swing                                               7 / 91
+ pairwise-01 · Iteration and Unpacking · beginner · Interview Application
+────────────────────────────────────────────────────────────────────────────────
+ ── Tests ─────────────────────────────────────────────────────────────────────
+ ✗ 3 passed, 4 failed 230ms
 
    ✗ test_mixed_changes
        assert 3 == 6
@@ -36,11 +28,14 @@ and tracks your progress.
 
    ✓ test_negative_readings
    ✓ test_flat_readings
-   ...
+   ✓ test_only_adjacent_pairs_count
+   ✗ test_fewer_than_two_readings
+       ValueError: max() iterable argument is empty
 
- Progress ████░░░░░░░░░░░░░░░░░░░░ 12/91
- Current  ~/.local/share/leetkit/workspace/pairwise-01/starter.py
- n/N next/prev • e edit • t hint 0/3 • r run • h/← list • ? more • q quit
+────────────────────────────────────────────────────────────────────────────────
+ ✗ 3 of 7 tests passing                           ██░░░░░░░░░░░░░░ 12/91 solved
+ ~/.local/share/leetkit/workspace/pairwise-01/starter.py
+ e edit • r run • t hint • n next • l list • ? help • q quit
 ```
 
 ## Why
@@ -103,24 +98,28 @@ leetkit          # open the dashboard on your current exercise
 1. Read the problem and examples.
 2. Press `e` to open the exercise in `$EDITOR`, or edit the file shown next to **Current** in another pane.
 3. Save. LeetKit reruns the tests automatically.
-4. When everything passes, press `x` for the explanation and `n` for the next exercise.
+4. The status bar shows the result at all times. When everything passes, press `x` for the explanation and
+   `n` for the next exercise. `l` opens the full list.
 
 ## Keys
 
-| Key | Exercise screen | List |
-|---|---|---|
-| `j`/`k`, `↓`/`↑` | scroll | move |
-| `l`, `→`, `Enter` | | open exercise |
-| `h`, `←`, `Esc` | open the list | back |
-| `n` / `N` | next / previous exercise | |
-| `e` | edit in `$EDITOR` | |
-| `r` | rerun tests | reset exercise (asks first) |
-| `t` | reveal the next hint | |
-| `x` | explanation (after solving) | |
-| `/` | | search |
-| `p` | progress by module | progress by module |
-| `?` | all keys | all keys |
-| `q` | quit | back |
+On the exercise screen:
+
+| Key | |
+|---|---|
+| `e` | edit in `$EDITOR` (tests rerun when you save or exit) |
+| `r` | rerun the tests |
+| `t` | reveal the next hint |
+| `n` / `N` | next / previous exercise |
+| `x` | explanation, once solved |
+| `l` | exercise list |
+| `p` | progress by module |
+| `j`/`k`, `↓`/`↑` | scroll |
+| `?` | all keys |
+| `q` | quit |
+
+In the list: `j`/`k` move, `enter` or `l` opens, `/` searches, `r` resets an exercise (asks first), and
+`esc`, `h`, or `q` go back.
 
 ## Commands
 

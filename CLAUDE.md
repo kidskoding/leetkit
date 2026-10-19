@@ -85,11 +85,9 @@ Lower packages never import `tui` or `cli`.
 - The dashboard follows Rustlings: it opens on the current exercise (watch screen) and the exercise list is a
   secondary screen. The list is a flat `bubbles/list` (module shown in the preview) rather than a collapsible
   module tree, which keeps Bubbles' built-in fuzzy search.
-- Keys use ranger/lf-style navigation: j/k move, l/→/enter open an exercise, h/←/esc go to the list. Hints are
-  on `t` (SPEC: `h`) and reset is `r` in the list. `n`/`N` cycle forward/backward through all exercises
-  (wrapping), solved or not; Rustlings only allows `n` after solving.
-- The curriculum covers all seven modules (91 exercises and growing) instead of SPEC's 15-exercise MVP, at the
-  maintainer's request. `go test ./exercises` verifies every solution passes and every starter fails.
+- Keys: `l` opens the exercise list (Rustlings); in the list `enter`/`l` open and `esc`/`h`/`q` go back.
+  `j`/`k` move or scroll. Hints are on `t` (SPEC: `h`) and reset is `r` in the list. `n`/`N` cycle
+  forward/backward through all exercises (wrapping), solved or not; Rustlings only allows `n` after solving.
 - Added beyond SPEC: tests rerun automatically when the working copy is saved (mtime polling, like Rustlings
   watch mode).
 - Root `main.go` instead of `cmd/leetkit`; single `internal/tui` instead of `internal/app` + `internal/ui`.
