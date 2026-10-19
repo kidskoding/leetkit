@@ -11,6 +11,7 @@ import (
 	"github.com/kidskoding/leetkit/exercises"
 	"github.com/kidskoding/leetkit/internal/config"
 	"github.com/kidskoding/leetkit/internal/exercise"
+	"github.com/kidskoding/leetkit/internal/progress"
 	"github.com/kidskoding/leetkit/internal/runner"
 )
 
@@ -199,5 +200,36 @@ func TestPackagedDefaultPython(t *testing.T) {
 	t.Setenv("LEETKIT_PYTHON", fake+"-override")
 	if _, err := a.findPython(a.cfg); err == nil {
 		t.Error("$LEETKIT_PYTHON should take precedence over the packaged default")
+	}
+}
+
+func TestCheckRecordsProgress(t *testing.T) {
+	usePytestPython(t)
+	env := tempEnv(t)
+	run(t, env, "check", "enumerate-01")
+	writeWork(t, env, "enumerate-01", solution(t))
+	run(t, env, "check", "enumerate-01")
+	store, err := progress.Open(env.Paths.ProgressFile())
+	if err != nil {
+		t.Fatal(err)
+	}
+	e, ok := store.Entry("enumerate-01")
+	if !ok || e.Attempts != 2 || !e.Completed() {
+		t.Errorf("entry = %+v, %v; want 2 attempts and completed", e, ok)
+	}
+}
+
+func TestCorruptProgressWarns(t *testing.T) {
+	usePytestPython(t)
+	env := tempEnv(t)
+	if err := os.MkdirAll(env.Paths.DataDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(env.Paths.ProgressFile(), []byte("{bad"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	_, _, errOut := run(t, env, "check", "enumerate-01")
+	if !strings.Contains(errOut, "progress file was corrupt") {
+		t.Errorf("stderr = %q", errOut)
 	}
 }

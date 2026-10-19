@@ -12,6 +12,7 @@ import (
 
 	"github.com/kidskoding/leetkit/internal/config"
 	"github.com/kidskoding/leetkit/internal/exercise"
+	"github.com/kidskoding/leetkit/internal/progress"
 	"github.com/kidskoding/leetkit/internal/runner"
 	"github.com/kidskoding/leetkit/internal/theme"
 )
@@ -136,6 +137,20 @@ func (a *app) config() (config.Config, error) {
 		return a.cfg, fmt.Errorf("%w\nFix or remove the config file.", a.cfgErr)
 	}
 	return a.cfg, nil
+}
+
+// openStore opens the progress file, warning on stderr if a corrupt file had
+// to be moved aside.
+func (a *app) openStore() (*progress.Store, error) {
+	store, err := progress.Open(a.Paths.ProgressFile())
+	if err != nil {
+		return nil, err
+	}
+	if store.Recovered != "" {
+		fmt.Fprintf(a.Stderr, "%s progress file was corrupt; moved it to %s and started fresh\n",
+			a.th.Warn.Render("warning:"), store.Recovered)
+	}
+	return store, nil
 }
 
 func (a *app) findPython(cfg config.Config) (runner.Candidate, error) {

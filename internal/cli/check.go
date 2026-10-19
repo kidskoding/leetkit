@@ -15,6 +15,7 @@ import (
 	"charm.land/lipgloss/v2"
 
 	"github.com/kidskoding/leetkit/internal/exercise"
+	"github.com/kidskoding/leetkit/internal/progress"
 	"github.com/kidskoding/leetkit/internal/report"
 	"github.com/kidskoding/leetkit/internal/runner"
 	"github.com/kidskoding/leetkit/internal/theme"
@@ -30,6 +31,7 @@ type checker struct {
 	runner runner.Runner
 	py     runner.Candidate
 	th     theme.Theme
+	store  *progress.Store
 }
 
 func (a *app) check(ctx context.Context, args []string) error {
@@ -59,7 +61,12 @@ func (a *app) check(ctx context.Context, args []string) error {
 	if err != nil {
 		return fmt.Errorf("%w\nRun `leetkit doctor` for setup steps.", err)
 	}
+	store, err := a.openStore()
+	if err != nil {
+		return err
+	}
 	c := checker{
+		store:  store,
 		cat:    cat,
 		ws:     workspace.Workspace{Dir: a.Paths.WorkspaceDir()},
 		runner: runner.Runner{Python: py.Path, Timeout: cfg.Timeout},
@@ -178,6 +185,11 @@ func (c checker) check(ctx context.Context, ex *exercise.Exercise, path string) 
 	res, err := c.runner.Run(ctx, runner.Job{Tests: tests, Code: code, CodePath: path})
 	if err != nil {
 		return nil, c.pytestError(err)
+	}
+	if res.Status != runner.StatusCanceled {
+		if _, err := c.store.Record(ex.ID, res.Status == runner.StatusPassed); err != nil {
+			return nil, err
+		}
 	}
 	return res, nil
 }

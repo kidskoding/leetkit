@@ -28,6 +28,8 @@ func (a *app) dashboard(ctx context.Context, args []string) error {
 	if err != nil {
 		return err
 	}
+	// The dashboard owns the terminal, so it shows the recovery notice itself
+	// rather than using openStore's stderr warning.
 	cfg := a.cfg
 	var notice string
 	switch {
