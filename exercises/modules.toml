@@ -1,36 +1,29 @@
-# Curriculum modules in display order. Each id is a directory under exercises/.
+# Curriculum modules. Each id matches a directory named NN_<id>; NN sets the order.
 
 [[modules]]
 id = "iteration"
 title = "Iteration and Unpacking"
-order = 1
 
 [[modules]]
 id = "hashing"
 title = "Dictionaries and Sets"
-order = 2
 
 [[modules]]
 id = "collections"
 title = "Collections"
-order = 3
 
 [[modules]]
 id = "sorting"
 title = "Sorting and Searching"
-order = 4
 
 [[modules]]
 id = "pythonic"
 title = "Pythonic Syntax"
-order = 5
 
 [[modules]]
 id = "utilities"
 title = "Interview Utilities"
-order = 6
 
 [[modules]]
 id = "patterns"
 title = "Applied Interview Patterns"
-order = 7

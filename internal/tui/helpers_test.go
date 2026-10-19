@@ -32,22 +32,20 @@ func fixtureCatalog(t *testing.T) *exercise.Catalog {
 [[modules]]
 id = "iteration"
 title = "Iteration and Unpacking"
-order = 1
 
 [[modules]]
 id = "hashing"
 title = "Dictionaries and Sets"
-order = 2
 `)}}
+	moduleDirs := map[string]string{"iteration": "01_iteration", "hashing": "02_hashing"}
 	add := func(module, id, title string, order int) {
-		dir := module + "/" + id + "/"
+		dir := fmt.Sprintf("%s/%02d_%s/", moduleDirs[module], order, id)
 		fsys[dir+exercise.MetadataFile] = &fstest.MapFile{Data: []byte(fmt.Sprintf(`
 id = %q
 title = %q
 module = %q
 difficulty = "beginner"
 type = "syntax"
-order = %d
 description = "Describe %s."
 objective = "Objective for %s."
 interview = "Relevant."
@@ -57,7 +55,7 @@ hints = ["First hint for %s."]
 input = "double(2)"
 output = "4"
 explanation = "Two doubled is four."
-`, id, title, module, order, id, id, id))}
+`, id, title, module, id, id, id))}
 		files := map[string]string{
 			exercise.StarterFile:     starterCode,
 			exercise.TestFile:        testCode,

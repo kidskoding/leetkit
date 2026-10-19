@@ -107,20 +107,30 @@ Lower packages never import `tui` or `cli`.
 
 ## Exercise authoring
 
-Each exercise lives in `exercises/<module>/<id>/`:
+Each exercise lives in `exercises/NN_<module>/NN_<id>/`. The `NN_` prefixes set the order of modules and of
+exercises within a module (Rustlings-style); there is no `order` field. `modules.toml` maps module ids to
+titles. Renumbering never affects learners: workspaces and progress are keyed by `id`.
 
 | File | Purpose |
 |---|---|
-| `exercise.toml` | `id`, `title`, `module`, `difficulty`, `type` (`syntax`/`application`), `order`, `concepts`, `description`, `objective`, `interview`, `hints`, `[[examples]]` |
-| `starter.py` | incomplete code with `TODO`; must fail its tests |
-| `test_exercise.py` | pytest tests importing from `starter` |
-| `solution.py` | reference solution; must pass the tests |
-| `explanation.md` | what the feature does and when to use it in interviews |
+| `exercise.toml` | `id` (directory name without `NN_`), `title`, `module`, `difficulty`, `type` (`syntax`/`application`), `concepts`, `description`, `objective`, `interview`, `hints`, `[[examples]]` with `input`, `output`, `explanation` |
+| `starter.py` | function signature, one `# TODO:` comment, `pass`; must import cleanly and fail its tests |
+| `test_exercise.py` | 4-8 pytest tests importing from `starter`; normal and edge cases |
+| `solution.py` | idiomatic reference solution; must pass the tests |
+| `explanation.md` | `#` title, what the feature does, `## Useful variations`, `## Interview relevance` |
 
-- The packaged `starter.py` is a template. Learners edit a copy in the workspace; never write to `exercises/`.
-- Tests check correctness first. Feature-usage checks (for example, "uses `enumerate`") use `ast`, stay
-  narrow, and explain the requirement in the assertion message. No source-string grepping.
-- `go test ./...` runs every reference solution (must pass) and every starter (must fail). Keep both true.
+- The packaged `starter.py` is a template. Learners edit a copy in the workspace, which LeetKit prefixes with
+  a comment header generated from `exercise.toml` (title, description, examples). Never write to
+  `exercises/`.
+- Examples are LeetCode-style: `input` is a call expression, `output` the repr of the result, `explanation`
+  one or two sentences on why. Prefer two examples, the second showing an edge case.
+- Tests check correctness first. Syntax drills may add one feature-usage check with `ast` (for example,
+  `ast.ListComp` or a call to `enumerate`) whose assertion message explains the requirement. No
+  source-string grepping.
+- `explanation.md` uses only headings, paragraphs, fenced code, `- ` bullets, and inline code; the dashboard
+  renders that subset.
+- `go test ./exercises` runs every reference solution (must pass) and every starter (must fail cleanly).
+  Run one exercise with `go test ./exercises -run 'TestCurriculum/<id>'`.
 
 ## Safety
 

@@ -11,27 +11,23 @@ const modulesTOML = `
 [[modules]]
 id = "iteration"
 title = "Iteration and Unpacking"
-order = 1
 
 [[modules]]
 id = "hashing"
 title = "Dictionaries and Sets"
-order = 2
 
 [[modules]]
 id = "patterns"
 title = "Applied Interview Patterns"
-order = 7
 `
 
-func exerciseTOML(id, module string, order int) string {
+func exerciseTOML(id, module string) string {
 	return fmt.Sprintf(`
 id = %q
 title = "Title %s"
 module = %q
 difficulty = "beginner"
 type = "syntax"
-order = %d
 concepts = ["enumerate"]
 description = "Do the thing."
 objective = "Learn the thing."
@@ -42,16 +38,25 @@ hints = ["Try it."]
 input = "x"
 output = "y"
 explanation = "Because."
-`, id, id, module, order)
+`, id, id, module)
+}
+
+var moduleDirs = map[string]string{"iteration": "01_iteration", "hashing": "02_hashing", "patterns": "07_patterns", "mystery": "09_mystery"}
+
+// exDir is the directory of exercise id, numbered n within its module.
+func exDir(module, id string, n int) string {
+	return fmt.Sprintf("%s/%02d_%s/", moduleDirs[module], n, id)
 }
 
 func addExercise(fsys fstest.MapFS, module, id string, order int) {
-	dir := module + "/" + id + "/"
-	fsys[dir+MetadataFile] = &fstest.MapFile{Data: []byte(exerciseTOML(id, module, order))}
+	dir := exDir(module, id, order)
+	fsys[dir+MetadataFile] = &fstest.MapFile{Data: []byte(exerciseTOML(id, module))}
 	for _, name := range []string{StarterFile, TestFile, SolutionFile, ExplanationFile} {
 		fsys[dir+name] = &fstest.MapFile{Data: []byte("# " + name)}
 	}
 }
+
+var zipDir = exDir("iteration", "zip-01", 2)
 
 func validFS() fstest.MapFS {
 	fsys := fstest.MapFS{ModulesFile: {Data: []byte(modulesTOML)}}
@@ -80,7 +85,7 @@ func TestLoadValid(t *testing.T) {
 	if !ok {
 		t.Fatal("Get(zip-01) not found")
 	}
-	if ex.TypeLabel() != "Syntax Drill" || len(ex.Examples) != 1 || ex.Dir != "iteration/zip-01" {
+	if ex.TypeLabel() != "Syntax Drill" || len(ex.Examples) != 1 || ex.Dir != "01_iteration/02_zip-01" {
 		t.Errorf("unexpected exercise: %+v", ex)
 	}
 	data, err := cat.ReadFile(ex, StarterFile)
@@ -105,7 +110,7 @@ func TestLoadErrors(t *testing.T) {
 		},
 		{
 			name:   "invalid toml",
-			modify: func(f fstest.MapFS) { f["iteration/zip-01/"+MetadataFile].Data = []byte("id = ") },
+			modify: func(f fstest.MapFS) { f[zipDir+MetadataFile].Data = []byte("id = ") },
 			want:   "parse exercise.toml",
 		},
 		{
@@ -118,17 +123,40 @@ func TestLoadErrors(t *testing.T) {
 		{
 			name:   "unlisted module directory",
 			modify: func(f fstest.MapFS) { addExercise(f, "mystery", "x-01", 1) },
-			want:   "mystery: directory is not listed",
+			want:   `09_mystery: module "mystery" is not listed`,
+		},
+		{
+			name:   "unnumbered exercise directory",
+			modify: func(f fstest.MapFS) { f["01_iteration/zip-02/"+MetadataFile] = &fstest.MapFile{Data: []byte("")} },
+			want:   "exercise directories must be named NN_<id>",
+		},
+		{
+			name:   "unnumbered module directory",
+			modify: func(f fstest.MapFS) { f["iteration/README.md"] = &fstest.MapFile{} },
+			want:   "module directories must be named NN_<id>",
+		},
+		{
+			name:   "duplicate exercise number",
+			modify: func(f fstest.MapFS) { addExercise(f, "iteration", "range-01", 2) },
+			want:   "number 02 is also used by",
+		},
+		{
+			name: "order key is rejected",
+			modify: func(f fstest.MapFS) {
+				m := f[zipDir+MetadataFile]
+				m.Data = append([]byte("order = 2\n"), m.Data...)
+			},
+			want: "unknown keys: order",
 		},
 		{
 			name:   "missing file",
-			modify: func(f fstest.MapFS) { delete(f, "iteration/zip-01/"+SolutionFile) },
+			modify: func(f fstest.MapFS) { delete(f, zipDir+SolutionFile) },
 			want:   "missing file solution.py",
 		},
 		{
 			name: "missing field and bad enums",
 			modify: func(f fstest.MapFS) {
-				f["iteration/zip-01/"+MetadataFile].Data = []byte(`
+				f[zipDir+MetadataFile].Data = []byte(`
 id = "zip-01"
 module = "iteration"
 difficulty = "easy"
@@ -141,7 +169,7 @@ hints = ["h"]
 		{
 			name: "unknown key",
 			modify: func(f fstest.MapFS) {
-				m := f["iteration/zip-01/"+MetadataFile]
+				m := f[zipDir+MetadataFile]
 				m.Data = append([]byte("hint = \"typo\"\n"), m.Data...)
 			},
 			want: "unknown keys: hint",
@@ -149,14 +177,14 @@ hints = ["h"]
 		{
 			name: "id does not match directory",
 			modify: func(f fstest.MapFS) {
-				f["iteration/zip-01/"+MetadataFile].Data = []byte(exerciseTOML("zip-02", "iteration", 1))
+				f[zipDir+MetadataFile].Data = []byte(exerciseTOML("zip-02", "iteration"))
 			},
 			want: `must match directory name "zip-01"`,
 		},
 		{
 			name: "module does not match directory",
 			modify: func(f fstest.MapFS) {
-				f["iteration/zip-01/"+MetadataFile].Data = []byte(exerciseTOML("zip-01", "hashing", 1))
+				f[zipDir+MetadataFile].Data = []byte(exerciseTOML("zip-01", "hashing"))
 			},
 			want: `must match parent directory "iteration"`,
 		},
@@ -178,8 +206,8 @@ hints = ["h"]
 
 func TestLoadReportsAllErrors(t *testing.T) {
 	fsys := validFS()
-	delete(fsys, "iteration/zip-01/"+SolutionFile)
-	delete(fsys, "hashing/sets-01/"+TestFile)
+	delete(fsys, zipDir+SolutionFile)
+	delete(fsys, exDir("hashing", "sets-01", 1)+TestFile)
 	_, err := Load(fsys)
 	if err == nil || !strings.Contains(err.Error(), "solution.py") || !strings.Contains(err.Error(), "test_exercise.py") {
 		t.Errorf("want both problems reported, got %v", err)

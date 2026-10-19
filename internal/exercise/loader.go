@@ -7,6 +7,7 @@ import (
 	"io/fs"
 	"path"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/BurntSushi/toml"
@@ -33,12 +34,12 @@ func (c *Catalog) ReadFile(ex *Exercise, name string) ([]byte, error) {
 }
 
 // Load reports every validation problem at once so authors can fix them together.
+// Module and exercise directories are named NN_<id>; the number sets the order.
 func Load(fsys fs.FS) (*Catalog, error) {
 	modules, err := loadModules(fsys)
 	if err != nil {
 		return nil, err
 	}
-
 	moduleByID := make(map[string]*Module, len(modules))
 	for _, m := range modules {
 		moduleByID[m.ID] = m
@@ -51,52 +52,96 @@ func Load(fsys fs.FS) (*Catalog, error) {
 
 	var errs []error
 	cat := &Catalog{FS: fsys, byID: map[string]*Exercise{}}
+	var found []*Module
+	moduleNumbers := map[int]string{}
 	for _, entry := range entries {
 		if !entry.IsDir() {
 			continue
 		}
-		mod, ok := moduleByID[entry.Name()]
+		num, id, ok := splitPrefix(entry.Name())
 		if !ok {
-			errs = append(errs, fmt.Errorf("%s: directory is not listed in %s", entry.Name(), ModulesFile))
+			errs = append(errs, fmt.Errorf("%s: module directories must be named NN_<id>", entry.Name()))
 			continue
 		}
-		exDirs, err := fs.ReadDir(fsys, mod.ID)
-		if err != nil {
-			errs = append(errs, fmt.Errorf("%s: %w", mod.ID, err))
+		mod, ok := moduleByID[id]
+		if !ok {
+			errs = append(errs, fmt.Errorf("%s: module %q is not listed in %s", entry.Name(), id, ModulesFile))
 			continue
 		}
-		for _, d := range exDirs {
-			if !d.IsDir() {
-				continue
-			}
-			ex, err := loadExercise(fsys, path.Join(mod.ID, d.Name()), mod.ID)
-			if err != nil {
-				errs = append(errs, err)
-				continue
-			}
-			if prev, dup := cat.byID[ex.ID]; dup {
-				errs = append(errs, fmt.Errorf("%s: duplicate exercise id %q (also in %s)", ex.Dir, ex.ID, prev.Dir))
-				continue
-			}
-			cat.byID[ex.ID] = ex
-			mod.Exercises = append(mod.Exercises, ex)
+		if prev, dup := moduleNumbers[num]; dup {
+			errs = append(errs, fmt.Errorf("%s: number %02d is also used by %s", entry.Name(), num, prev))
+			continue
 		}
+		moduleNumbers[num] = entry.Name()
+		mod.Order = num
+		found = append(found, mod)
+		errs = append(errs, loadModuleExercises(fsys, cat, mod, entry.Name())...)
 	}
 	if err := errors.Join(errs...); err != nil {
 		return nil, err
 	}
 
-	for _, m := range modules {
+	slices.SortFunc(found, func(a, b *Module) int { return cmp.Compare(a.Order, b.Order) })
+	for _, m := range found {
 		if len(m.Exercises) == 0 {
 			continue
 		}
-		slices.SortStableFunc(m.Exercises, func(a, b *Exercise) int {
-			return cmp.Or(cmp.Compare(a.Order, b.Order), strings.Compare(a.ID, b.ID))
-		})
+		slices.SortFunc(m.Exercises, func(a, b *Exercise) int { return cmp.Compare(a.Order, b.Order) })
 		cat.Modules = append(cat.Modules, m)
 		cat.order = append(cat.order, m.Exercises...)
 	}
 	return cat, nil
+}
+
+func loadModuleExercises(fsys fs.FS, cat *Catalog, mod *Module, dir string) []error {
+	entries, err := fs.ReadDir(fsys, dir)
+	if err != nil {
+		return []error{fmt.Errorf("%s: %w", dir, err)}
+	}
+	var errs []error
+	numbers := map[int]string{}
+	for _, d := range entries {
+		if !d.IsDir() {
+			continue
+		}
+		exDir := path.Join(dir, d.Name())
+		num, id, ok := splitPrefix(d.Name())
+		if !ok {
+			errs = append(errs, fmt.Errorf("%s: exercise directories must be named NN_<id>", exDir))
+			continue
+		}
+		if prev, dup := numbers[num]; dup {
+			errs = append(errs, fmt.Errorf("%s: number %02d is also used by %s", exDir, num, prev))
+			continue
+		}
+		numbers[num] = d.Name()
+		ex, err := loadExercise(fsys, exDir, id, mod.ID)
+		if err != nil {
+			errs = append(errs, err)
+			continue
+		}
+		if prev, dup := cat.byID[ex.ID]; dup {
+			errs = append(errs, fmt.Errorf("%s: duplicate exercise id %q (also in %s)", ex.Dir, ex.ID, prev.Dir))
+			continue
+		}
+		ex.Order = num
+		cat.byID[ex.ID] = ex
+		mod.Exercises = append(mod.Exercises, ex)
+	}
+	return errs
+}
+
+// splitPrefix parses directory names of the form "NN_name" with NN >= 01.
+func splitPrefix(name string) (num int, rest string, ok bool) {
+	digits, rest, found := strings.Cut(name, "_")
+	if !found || len(digits) != 2 || rest == "" {
+		return 0, "", false
+	}
+	num, err := strconv.Atoi(digits)
+	if err != nil || num < 1 {
+		return 0, "", false
+	}
+	return num, rest, true
 }
 
 func loadModules(fsys fs.FS) ([]*Module, error) {
@@ -132,11 +177,10 @@ func loadModules(fsys fs.FS) ([]*Module, error) {
 	if err := errors.Join(errs...); err != nil {
 		return nil, err
 	}
-	slices.SortStableFunc(doc.Modules, func(a, b *Module) int { return cmp.Compare(a.Order, b.Order) })
 	return doc.Modules, nil
 }
 
-func loadExercise(fsys fs.FS, dir, module string) (*Exercise, error) {
+func loadExercise(fsys fs.FS, dir, id, module string) (*Exercise, error) {
 	data, err := fs.ReadFile(fsys, path.Join(dir, MetadataFile))
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", dir, err)
@@ -149,7 +193,7 @@ func loadExercise(fsys fs.FS, dir, module string) (*Exercise, error) {
 	if err := checkUndecoded(md); err != nil {
 		return nil, fmt.Errorf("%s: %w", dir, err)
 	}
-	if err := validate(fsys, ex, path.Base(dir), module); err != nil {
+	if err := validate(fsys, ex, id, module); err != nil {
 		return nil, fmt.Errorf("%s: %w", dir, err)
 	}
 	return ex, nil

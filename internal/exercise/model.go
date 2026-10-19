@@ -38,12 +38,13 @@ type Example struct {
 }
 
 type Exercise struct {
-	ID          string    `toml:"id"`
-	Title       string    `toml:"title"`
-	Module      string    `toml:"module"`
-	Difficulty  string    `toml:"difficulty"`
-	Type        string    `toml:"type"`
-	Order       int       `toml:"order"`
+	ID         string `toml:"id"`
+	Title      string `toml:"title"`
+	Module     string `toml:"module"`
+	Difficulty string `toml:"difficulty"`
+	Type       string `toml:"type"`
+	// Order comes from the directory's NN_ prefix.
+	Order       int       `toml:"-"`
 	Concepts    []string  `toml:"concepts"`
 	Description string    `toml:"description"`
 	Objective   string    `toml:"objective"`
@@ -59,8 +60,9 @@ func (e *Exercise) TypeLabel() string { return validTypes[e.Type] }
 func (e *Exercise) File(name string) string { return path.Join(e.Dir, name) }
 
 type Module struct {
-	ID        string      `toml:"id"`
-	Title     string      `toml:"title"`
-	Order     int         `toml:"order"`
+	ID    string `toml:"id"`
+	Title string `toml:"title"`
+	// Order comes from the directory's NN_ prefix.
+	Order     int         `toml:"-"`
 	Exercises []*Exercise `toml:"-"`
 }

@@ -3,7 +3,6 @@ title = "Find an Index"
 module = "iteration"
 difficulty = "beginner"
 type = "syntax"
-order = 1
 concepts = ["enumerate", "iteration"]
 
 description = """

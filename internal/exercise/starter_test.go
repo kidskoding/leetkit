@@ -37,7 +37,7 @@ func TestStarterHasProblemHeader(t *testing.T) {
 
 func TestExamplesRequired(t *testing.T) {
 	fsys := validFS()
-	f := fsys["iteration/zip-01/"+MetadataFile]
+	f := fsys[zipDir+MetadataFile]
 	f.Data = []byte(strings.Replace(string(f.Data), `explanation = "Because."`, "", 1))
 	if _, err := Load(fsys); err == nil || !strings.Contains(err.Error(), "needs input, output, and explanation") {
 		t.Errorf("err = %v", err)

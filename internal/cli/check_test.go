@@ -69,7 +69,7 @@ func writeWork(t *testing.T, env Env, id string, code []byte) {
 
 func solution(t *testing.T) []byte {
 	t.Helper()
-	data, err := exercises.FS.ReadFile("iteration/enumerate-01/solution.py")
+	data, err := exercises.FS.ReadFile("01_iteration/01_enumerate-01/solution.py")
 	if err != nil {
 		t.Fatal(err)
 	}
