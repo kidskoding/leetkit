@@ -29,9 +29,10 @@ type checker struct {
 	ws     workspace.Workspace
 	runner runner.Runner
 	py     runner.Candidate
+	th     theme.Theme
 }
 
-func runCheck(ctx context.Context, env Env, args []string) error {
+func (a *app) check(ctx context.Context, args []string) error {
 	fset := flag.NewFlagSet("check", flag.ContinueOnError)
 	verbose := fset.Bool("v", false, "show full pytest output")
 	if err := parseFlags(fset, args); err != nil {
@@ -40,7 +41,7 @@ func runCheck(ctx context.Context, env Env, args []string) error {
 	if fset.NArg() > 1 {
 		return usagef("expected at most one exercise id")
 	}
-	cat, err := loadCatalog(env)
+	cat, err := a.catalog()
 	if err != nil {
 		return err
 	}
@@ -50,24 +51,25 @@ func runCheck(ctx context.Context, env Env, args []string) error {
 			return err
 		}
 	}
-	cfg, err := loadConfig(env)
+	cfg, err := a.config()
 	if err != nil {
 		return err
 	}
-	py, err := findPython(env, cfg)
+	py, err := a.findPython(cfg)
 	if err != nil {
 		return fmt.Errorf("%w\nRun `leetkit doctor` for setup steps.", err)
 	}
 	c := checker{
 		cat:    cat,
-		ws:     workspace.Workspace{Dir: env.Paths.WorkspaceDir()},
+		ws:     workspace.Workspace{Dir: a.Paths.WorkspaceDir()},
 		runner: runner.Runner{Python: py.Path, Timeout: cfg.Timeout},
 		py:     py,
+		th:     a.th,
 	}
 	if ex != nil {
-		return c.one(ctx, env.Stdout, ex, *verbose)
+		return c.one(ctx, a.Stdout, ex, *verbose)
 	}
-	return c.all(ctx, env.Stdout)
+	return c.all(ctx, a.Stdout)
 }
 
 func (c checker) one(ctx context.Context, w io.Writer, ex *exercise.Exercise, verbose bool) error {
@@ -83,9 +85,9 @@ func (c checker) one(ctx context.Context, w io.Writer, ex *exercise.Exercise, ve
 	if err != nil {
 		return err
 	}
-	fmt.Fprintf(w, "%s %s %s\n", theme.ID.Bold(true).Render(ex.ID), theme.Faint.Render("·"), theme.Text.Render(ex.Title))
-	printResult(w, res, verbose)
-	fmt.Fprintf(w, "\n%s %s\n", theme.Faint.Render("Your code:"), theme.ID.Render(path))
+	fmt.Fprintf(w, "%s %s %s\n", c.th.ID.Bold(true).Render(ex.ID), c.th.Faint.Render("·"), c.th.Text.Render(ex.Title))
+	printResult(w, c.th, res, verbose)
+	fmt.Fprintf(w, "\n%s %s\n", c.th.Faint.Render("Your code:"), c.th.ID.Render(path))
 	if res.Status != runner.StatusPassed {
 		return errSilent
 	}
@@ -133,11 +135,11 @@ func (c checker) all(ctx context.Context, w io.Writer) error {
 		if mi > 0 {
 			fmt.Fprintln(w)
 		}
-		fmt.Fprintln(w, theme.Heading.Render(m.Title))
+		fmt.Fprintln(w, c.th.Heading.Render(m.Title))
 		for _, ex := range m.Exercises {
 			o := outcomes[i]
 			i++
-			mark, status := describe(o)
+			mark, status := describe(c.th, o)
 			switch {
 			case !o.started:
 				notStarted++
@@ -147,18 +149,18 @@ func (c checker) all(ctx context.Context, w io.Writer) error {
 				failing++
 			}
 			fmt.Fprintf(w, "  %s %s  %s  %s\n", mark,
-				theme.ID.Render(pad(ex.ID, idWidth)), theme.Text.Render(pad(ex.Title, titleWidth)), status)
+				c.th.ID.Render(pad(ex.ID, idWidth)), c.th.Text.Render(pad(ex.Title, titleWidth)), status)
 		}
 	}
 
 	summary := []string{
-		theme.Pass.Render(fmt.Sprintf("%d/%d passing", passing, len(exs))),
-		theme.Bad.Render(fmt.Sprintf("%d failing", failing)),
-		theme.Faint.Render(fmt.Sprintf("%d not started", notStarted)),
+		c.th.Pass.Render(fmt.Sprintf("%d/%d passing", passing, len(exs))),
+		c.th.Bad.Render(fmt.Sprintf("%d failing", failing)),
+		c.th.Faint.Render(fmt.Sprintf("%d not started", notStarted)),
 	}
-	fmt.Fprintf(w, "\n%s\n", strings.Join(summary, theme.Faint.Render(" · ")))
+	fmt.Fprintf(w, "\n%s\n", strings.Join(summary, c.th.Faint.Render(" · ")))
 	if failing > 0 {
-		fmt.Fprintln(w, theme.Faint.Render("Run `leetkit check <id>` for details."))
+		fmt.Fprintln(w, c.th.Faint.Render("Run `leetkit check <id>` for details."))
 		return errSilent
 	}
 	return nil
@@ -187,24 +189,24 @@ func (c checker) pytestError(err error) error {
 	return err
 }
 
-func describe(o checkOutcome) (mark, status string) {
+func describe(th theme.Theme, o checkOutcome) (mark, status string) {
 	switch {
 	case !o.started:
-		return theme.Faint.Render("○"), theme.Faint.Render("not started")
+		return th.Faint.Render("○"), th.Faint.Render("not started")
 	case o.err != nil:
-		return theme.Fail.Render("✗"), theme.Bad.Render(firstLine(o.err.Error()))
+		return th.Fail.Render("✗"), th.Bad.Render(firstLine(o.err.Error()))
 	}
 	r := o.res
 	passed := r.Count(runner.OutcomePassed)
 	switch r.Status {
 	case runner.StatusPassed:
-		return theme.Pass.Render("✓"), theme.Good.Render(fmt.Sprintf("%d/%d passed", passed, len(r.Cases)))
+		return th.Pass.Render("✓"), th.Good.Render(fmt.Sprintf("%d/%d passed", passed, len(r.Cases)))
 	case runner.StatusFailed:
-		return theme.Fail.Render("✗"), theme.Bad.Render(fmt.Sprintf("%d/%d passed", passed, len(r.Cases)))
+		return th.Fail.Render("✗"), th.Bad.Render(fmt.Sprintf("%d/%d passed", passed, len(r.Cases)))
 	case runner.StatusError:
-		return theme.Fail.Render("✗"), theme.Bad.Render("could not run (syntax or import error)")
+		return th.Fail.Render("✗"), th.Bad.Render("could not run (syntax or import error)")
 	default:
-		return theme.Warn.Render("!"), theme.Warn.Render(r.Status.String())
+		return th.Warn.Render("!"), th.Warn.Render(r.Status.String())
 	}
 }
 
@@ -216,29 +218,29 @@ func findExercise(cat *exercise.Catalog, id string) (*exercise.Exercise, error) 
 	return ex, nil
 }
 
-func printResult(w io.Writer, res *runner.Result, verbose bool) {
+func printResult(w io.Writer, th theme.Theme, res *runner.Result, verbose bool) {
 	passed, failed := res.Count(runner.OutcomePassed), res.Count(runner.OutcomeFailed)
-	elapsed := theme.Faint.Render(res.Duration.Round(10 * time.Millisecond).String())
+	elapsed := th.Faint.Render(res.Duration.Round(10 * time.Millisecond).String())
 	switch res.Status {
 	case runner.StatusPassed:
-		fmt.Fprintf(w, "%s %s\n", theme.Pass.Render(fmt.Sprintf("✓ All %d tests passed", passed)), elapsed)
+		fmt.Fprintf(w, "%s %s\n", th.Pass.Render(fmt.Sprintf("✓ All %d tests passed", passed)), elapsed)
 	case runner.StatusFailed:
-		fmt.Fprintf(w, "%s %s, %s %s\n", theme.Fail.Render("✗"),
-			theme.Good.Render(fmt.Sprintf("%d passed", passed)),
-			theme.Bad.Render(fmt.Sprintf("%d failed", failed)), elapsed)
+		fmt.Fprintf(w, "%s %s, %s %s\n", th.Fail.Render("✗"),
+			th.Good.Render(fmt.Sprintf("%d passed", passed)),
+			th.Bad.Render(fmt.Sprintf("%d failed", failed)), elapsed)
 	case runner.StatusError:
-		fmt.Fprintln(w, theme.Fail.Render("✗ "+res.Problem))
+		fmt.Fprintln(w, th.Fail.Render("✗ "+res.Problem))
 	default:
-		fmt.Fprintln(w, theme.Warn.Render("! "+res.Problem))
+		fmt.Fprintln(w, th.Warn.Render("! "+res.Problem))
 	}
 	for _, c := range res.Cases {
 		if c.Outcome != runner.OutcomeFailed && c.Outcome != runner.OutcomeError {
 			continue
 		}
-		fmt.Fprintf(w, "\n  %s\n%s\n", theme.Bad.Render("✗ "+c.Name), indent(c.Message, "    "))
+		fmt.Fprintf(w, "\n  %s\n%s\n", th.Bad.Render("✗ "+c.Name), indent(c.Message, "    "))
 	}
 	if verbose && res.Output != "" {
-		fmt.Fprintf(w, "\n%s\n%s", theme.Faint.Render("─── pytest output ───"), res.Output)
+		fmt.Fprintf(w, "\n%s\n%s", th.Faint.Render("─── pytest output ───"), res.Output)
 	}
 }
 

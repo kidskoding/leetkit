@@ -49,7 +49,8 @@ internal/runner      Python discovery, pytest subprocess, JUnit XML -> Result
 internal/editor      $VISUAL/$EDITOR resolution -> *exec.Cmd
 internal/progress    JSON progress store
 internal/cli         subcommands (stdlib flag)
-internal/tui         Bubble Tea model, views, theme, keys
+internal/theme       named palettes (role-based) and the styles built from them
+internal/tui         Bubble Tea model, views, keys
 ```
 
 Dependency direction: `tui`/`cli` -> `runner`, `workspace`, `progress`, `exercise`, `editor`, `config`.
@@ -64,11 +65,21 @@ Lower packages never import `tui` or `cli`.
   interface that also matches key releases.
 - Bubbles components use setters: `vp.SetWidth(w)`, `vp.SetHeight(h)`, `help.SetWidth`, `textinput.SetWidth`.
   `viewport.New()` takes options, not `(w, h)`. `list.New(items, delegate, w, h)`.
-- Styles that need light/dark use `lipgloss.LightDark(isDark)`; `AdaptiveColor` no longer exists. Tokyo Night
-  is a fixed dark theme; Bubble Tea downsamples colors for limited terminals.
+- `AdaptiveColor` no longer exists; use `lipgloss.LightDark(isDark)` if a style must vary by background.
+- Never hardcode colors in views. Take a `theme.Theme` and use its styles. The default `terminal` theme uses
+  ANSI palette indices so it matches the user's terminal scheme; hex themes are opt-in via `theme` in config.
+- CLI output goes through `colorprofile.NewWriter` (set up in `main.go`), which downsamples and strips color
+  for pipes and `NO_COLOR`. Tests use the same writer, so assertions see plain text.
 - Editor: `tea.ExecProcess(cmd, func(err error) tea.Msg { ... })`. Slow work (pytest) runs in a `tea.Cmd`
   that returns a typed message. Never block `Update`.
 - Key handling must respect focus: when the search input is focused, letters go to the input, not shortcuts.
+
+## Deviations from SPEC.md
+
+- Default theme is `terminal` (ANSI colors follow the user's terminal) instead of Tokyo Night; `tokyonight`,
+  `gruvbox`, `gruvbox-light` are selectable with `theme = "..."` in config.toml.
+- `leetkit check` without an id checks every started exercise.
+- Root `main.go` instead of `cmd/leetkit`; single `internal/tui` instead of `internal/app` + `internal/ui`.
 
 ## Go conventions
 

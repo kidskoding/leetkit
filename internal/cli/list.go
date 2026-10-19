@@ -6,11 +6,9 @@ import (
 	"fmt"
 
 	"charm.land/lipgloss/v2"
-
-	"github.com/anirudhkonidala/leetkit/internal/theme"
 )
 
-func runList(_ context.Context, env Env, args []string) error {
+func (a *app) list(_ context.Context, args []string) error {
 	fset := flag.NewFlagSet("list", flag.ContinueOnError)
 	if err := parseFlags(fset, args); err != nil {
 		return err
@@ -18,12 +16,12 @@ func runList(_ context.Context, env Env, args []string) error {
 	if fset.NArg() > 0 {
 		return usagef("unexpected argument %q", fset.Arg(0))
 	}
-	cat, err := loadCatalog(env)
+	cat, err := a.catalog()
 	if err != nil {
 		return err
 	}
 	if len(cat.All()) == 0 {
-		fmt.Fprintln(env.Stdout, "No exercises found.")
+		fmt.Fprintln(a.Stdout, "No exercises found.")
 		return nil
 	}
 	idWidth, titleWidth, levelWidth := 0, 0, 0
@@ -34,15 +32,15 @@ func runList(_ context.Context, env Env, args []string) error {
 	}
 	for i, m := range cat.Modules {
 		if i > 0 {
-			fmt.Fprintln(env.Stdout)
+			fmt.Fprintln(a.Stdout)
 		}
-		fmt.Fprintln(env.Stdout, theme.Heading.Render(m.Title))
+		fmt.Fprintln(a.Stdout, a.th.Heading.Render(m.Title))
 		for _, ex := range m.Exercises {
-			fmt.Fprintf(env.Stdout, "  %s  %s  %s  %s\n",
-				theme.ID.Render(pad(ex.ID, idWidth)),
-				theme.Text.Render(pad(ex.Title, titleWidth)),
-				theme.Faint.Render(pad(ex.Difficulty, levelWidth)),
-				theme.Faint.Render(ex.TypeLabel()))
+			fmt.Fprintf(a.Stdout, "  %s  %s  %s  %s\n",
+				a.th.ID.Render(pad(ex.ID, idWidth)),
+				a.th.Text.Render(pad(ex.Title, titleWidth)),
+				a.th.Faint.Render(pad(ex.Difficulty, levelWidth)),
+				a.th.Faint.Render(ex.TypeLabel()))
 		}
 	}
 	return nil

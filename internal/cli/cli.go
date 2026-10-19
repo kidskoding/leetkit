@@ -46,10 +46,31 @@ func usagef(format string, a ...any) error {
 	return usageError{fmt.Errorf(format, a...)}
 }
 
-var commands = map[string]func(ctx context.Context, env Env, args []string) error{
-	"list":   runList,
-	"check":  runCheck,
-	"doctor": runDoctor,
+var commands = map[string]func(a *app, ctx context.Context, args []string) error{
+	"list":   (*app).list,
+	"check":  (*app).check,
+	"doctor": (*app).doctor,
+}
+
+// app is the per-invocation state shared by commands.
+type app struct {
+	Env
+	cfg config.Config
+	// cfgErr is kept rather than returned so commands that do not need
+	// settings still work, and doctor can report it.
+	cfgErr error
+	th     theme.Theme
+}
+
+func newApp(env Env) *app {
+	a := &app{Env: env}
+	a.cfg, a.cfgErr = config.Load(env.Paths.ConfigFile)
+	th, err := theme.Load(a.cfg.Theme)
+	if a.cfgErr != nil || err != nil {
+		th, _ = theme.Load(theme.Default)
+	}
+	a.th = th
+	return a
 }
 
 // Run executes the command named in args and returns the process exit code.
@@ -63,16 +84,17 @@ func Run(ctx context.Context, args []string, env Env) int {
 		fmt.Fprint(env.Stdout, usage)
 		return exitOK
 	}
+	a := newApp(env)
 	cmd, ok := commands[args[0]]
 	if !ok {
-		fmt.Fprintf(env.Stderr, "%s unknown command %q\n\n%s", theme.Fail.Render("leetkit:"), args[0], usage)
+		fmt.Fprintf(env.Stderr, "%s unknown command %q\n\n%s", a.th.Fail.Render("leetkit:"), args[0], usage)
 		return exitUsage
 	}
-	if err := cmd(ctx, env, args[1:]); err != nil {
+	if err := cmd(a, ctx, args[1:]); err != nil {
 		if errors.Is(err, errSilent) {
 			return exitError
 		}
-		fmt.Fprintf(env.Stderr, "%s %v\n", theme.Fail.Render("leetkit "+args[0]+":"), err)
+		fmt.Fprintf(env.Stderr, "%s %v\n", a.th.Fail.Render("leetkit "+args[0]+":"), err)
 		if errors.As(err, new(usageError)) {
 			fmt.Fprintf(env.Stderr, "\n%s", usage)
 			return exitUsage
@@ -90,26 +112,25 @@ func parseFlags(fset *flag.FlagSet, args []string) error {
 	return nil
 }
 
-func loadCatalog(env Env) (*exercise.Catalog, error) {
-	cat, err := exercise.Load(env.Exercises)
+func (a *app) catalog() (*exercise.Catalog, error) {
+	cat, err := exercise.Load(a.Exercises)
 	if err != nil {
 		return nil, fmt.Errorf("load exercises: %w", err)
 	}
 	return cat, nil
 }
 
-func loadConfig(env Env) (config.Config, error) {
-	cfg, err := config.Load(env.Paths.ConfigFile)
-	if err != nil {
-		return cfg, fmt.Errorf("%w\nFix or remove the config file.", err)
+func (a *app) config() (config.Config, error) {
+	if a.cfgErr != nil {
+		return a.cfg, fmt.Errorf("%w\nFix or remove the config file.", a.cfgErr)
 	}
-	return cfg, nil
+	return a.cfg, nil
 }
 
-func findPython(env Env, cfg config.Config) (runner.Candidate, error) {
+func (a *app) findPython(cfg config.Config) (runner.Candidate, error) {
 	return runner.FindPython(
 		runner.Candidate{Path: os.Getenv("LEETKIT_PYTHON"), Source: "$LEETKIT_PYTHON", Explicit: true},
 		runner.Candidate{Path: cfg.Python, Source: "config", Explicit: true},
-		runner.Candidate{Path: env.Paths.VenvPython(), Source: "LeetKit venv"},
+		runner.Candidate{Path: a.Paths.VenvPython(), Source: "LeetKit venv"},
 	)
 }

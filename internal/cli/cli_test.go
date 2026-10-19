@@ -3,6 +3,7 @@ package cli
 import (
 	"bytes"
 	"context"
+	"os"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -84,5 +85,46 @@ func TestUnknownFlag(t *testing.T) {
 	code, _, errOut := run(t, bundled(), "list", "-x")
 	if code != exitUsage || !strings.Contains(errOut, "flag provided but not defined: -x") {
 		t.Errorf("exit %d, stderr %q", code, errOut)
+	}
+}
+
+func TestThemeFromConfig(t *testing.T) {
+	tests := []struct {
+		config, want string
+		wantErr      bool
+	}{
+		{"", "terminal", false},
+		{`theme = "gruvbox"`, "gruvbox", false},
+		{`theme = "nope"`, "terminal", true},
+	}
+	for _, tt := range tests {
+		dir := t.TempDir()
+		paths := config.Paths{ConfigFile: filepath.Join(dir, "config.toml"), DataDir: dir}
+		if tt.config != "" {
+			if err := os.WriteFile(paths.ConfigFile, []byte(tt.config), 0o644); err != nil {
+				t.Fatal(err)
+			}
+		}
+		a := newApp(Env{Paths: paths})
+		if a.th.Name != tt.want || (a.cfgErr != nil) != tt.wantErr {
+			t.Errorf("config %q: theme %q, cfgErr %v; want %q, error %v", tt.config, a.th.Name, a.cfgErr, tt.want, tt.wantErr)
+		}
+	}
+}
+
+func TestForcedColorUsesThemePalette(t *testing.T) {
+	var out bytes.Buffer
+	env := Env{
+		Exercises: exercises.FS,
+		Paths:     config.Paths{ConfigFile: filepath.Join(t.TempDir(), "config.toml")},
+		Stdout:    colorprofile.NewWriter(&out, []string{"CLICOLOR_FORCE=1", "COLORTERM=truecolor"}),
+		Stderr:    &bytes.Buffer{},
+	}
+	if code := Run(context.Background(), []string{"list"}, env); code != exitOK {
+		t.Fatalf("exit %d", code)
+	}
+	// The terminal theme emits ANSI palette indices, never fixed RGB values.
+	if !strings.Contains(out.String(), "\x1b[34m") || strings.Contains(out.String(), "38;2;") {
+		t.Errorf("want ANSI palette colors only, got %q", out.String())
 	}
 }
