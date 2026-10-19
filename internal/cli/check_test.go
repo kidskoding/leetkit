@@ -176,3 +176,21 @@ func TestCheckAllDoesNotCreateWorkingCopies(t *testing.T) {
 		t.Errorf("check created %s", env.Paths.WorkspaceDir())
 	}
 }
+
+func TestPackagedDefaultPython(t *testing.T) {
+	t.Setenv("LEETKIT_PYTHON", "")
+	fake := filepath.Join(t.TempDir(), "python3")
+	if err := os.WriteFile(fake, []byte("#!/bin/sh\n"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	a := newApp(Env{Paths: tempEnv(t).Paths, DefaultPython: fake})
+	py, err := a.findPython(a.cfg)
+	if err != nil || py.Path != fake || py.Source != "package default" {
+		t.Errorf("got %+v, %v", py, err)
+	}
+
+	t.Setenv("LEETKIT_PYTHON", fake+"-override")
+	if _, err := a.findPython(a.cfg); err == nil {
+		t.Error("$LEETKIT_PYTHON should take precedence over the packaged default")
+	}
+}

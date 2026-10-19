@@ -24,6 +24,9 @@ type Env struct {
 	// Interactive reports whether stdin and stdout are a terminal, which the
 	// dashboard requires.
 	Interactive bool
+	// DefaultPython is a packaged interpreter tried after user settings and
+	// the LeetKit venv, before PATH.
+	DefaultPython string
 }
 
 const (
@@ -140,5 +143,6 @@ func (a *app) findPython(cfg config.Config) (runner.Candidate, error) {
 		runner.Candidate{Path: os.Getenv("LEETKIT_PYTHON"), Source: "$LEETKIT_PYTHON", Explicit: true},
 		runner.Candidate{Path: cfg.Python, Source: "config", Explicit: true},
 		runner.Candidate{Path: a.Paths.VenvPython(), Source: "LeetKit venv"},
+		runner.Candidate{Path: a.DefaultPython, Source: "package default"},
 	)
 }

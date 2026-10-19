@@ -15,6 +15,10 @@ import (
 	"github.com/anirudhkonidala/leetkit/internal/config"
 )
 
+// defaultPython lets packagers bundle an interpreter with pytest, for example
+// -ldflags "-X main.defaultPython=/nix/store/...-python3/bin/python3".
+var defaultPython string
+
 func main() {
 	paths, err := config.DefaultPaths()
 	if err != nil {
@@ -30,7 +34,8 @@ func main() {
 		Stdout: colorprofile.NewWriter(os.Stdout, os.Environ()),
 		Stderr: colorprofile.NewWriter(os.Stderr, os.Environ()),
 
-		Interactive: term.IsTerminal(os.Stdin.Fd()) && term.IsTerminal(os.Stdout.Fd()),
+		Interactive:   term.IsTerminal(os.Stdin.Fd()) && term.IsTerminal(os.Stdout.Fd()),
+		DefaultPython: defaultPython,
 	})
 	stop()
 	os.Exit(code)
