@@ -1,11 +1,11 @@
 # LeetKit
 
-**Master Python's toolkit for coding interviews.**
+**Master Python's toolkit for coding interviews.** Inspired by [Rustlings](https://github.com/rust-lang/rustlings).
 
 LeetKit is a terminal trainer for the Python features that make interview solutions short and correct:
 `enumerate`, `zip`, `Counter`, `defaultdict`, `deque`, `heapq`, `bisect`, comprehensions, slicing, and more.
-Like [Rustlings](https://github.com/rust-lang/rustlings), you fix small exercises in your own editor while
-LeetKit watches the file, runs the tests, and tracks your progress.
+As in Rustlings, you fix small exercises in your own editor while LeetKit watches the file, runs the tests,
+and tracks your progress.
 
 ```text
  07/55  pairwise-01 · Largest Temperature Swing
@@ -186,6 +186,14 @@ Details in [CONTRIBUTING.md](CONTRIBUTING.md).
 - More exercises, especially interview applications that combine several tools
 - Optional reference solution after repeated failed attempts
 - Third-party exercise packs
+
+## Acknowledgements
+
+LeetKit is inspired by [Rustlings](https://github.com/rust-lang/rustlings): the watch-mode workflow, the
+numbered exercise layout, and the idea of learning a language through small failing exercises all come from
+it. [Pylings](https://github.com/CompEng0001/Pylings) brought the same approach to Python. LeetKit is built
+with [Bubble Tea](https://github.com/charmbracelet/bubbletea), [Bubbles](https://github.com/charmbracelet/bubbles),
+and [Lip Gloss](https://github.com/charmbracelet/lipgloss).
 
 ## License
 
