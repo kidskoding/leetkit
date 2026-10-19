@@ -162,7 +162,17 @@ go test ./exercises                                 # all of them
 
 This verifies the metadata, that `solution.py` passes, and that `starter.py` fails with ordinary test
 failures rather than a syntax or import error. When you add exercises, update the exercise count in the README
-badge and curriculum section; `go test ./exercises` fails until they match. Then try it as a learner:
+badge and curriculum section; `go test ./exercises` fails until they match. To see whether the tests would catch common bugs, mutate the reference solution:
+
+```bash
+.venv/bin/python scripts/mutation_check.py exercises/01_iteration/02_zip-01
+```
+
+It flips comparisons, operators, and constants one at a time and lists every change the tests still pass.
+Each survivor is either a missing test (add one) or an equivalent change that cannot affect the result
+(such as a comparator returning 2 instead of 1); leave those.
+
+Then try it as a learner:
 
 ```bash
 go run . run zip-01
