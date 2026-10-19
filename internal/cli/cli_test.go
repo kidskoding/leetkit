@@ -148,3 +148,14 @@ func TestRunNeedsTerminalAndValidID(t *testing.T) {
 		}
 	}
 }
+
+func TestVersion(t *testing.T) {
+	env := bundled()
+	env.Version = "1.2.3"
+	for _, arg := range []string{"version", "--version"} {
+		code, out, _ := run(t, env, arg)
+		if code != exitOK || out != "leetkit 1.2.3\n" {
+			t.Errorf("%s: exit %d, output %q", arg, code, out)
+		}
+	}
+}

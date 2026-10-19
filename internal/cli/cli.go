@@ -29,6 +29,7 @@ type Env struct {
 	// DefaultPython is a packaged interpreter tried after user settings and
 	// the LeetKit venv, before PATH.
 	DefaultPython string
+	Version       string
 }
 
 const (
@@ -49,6 +50,7 @@ Usage:
   leetkit reset [-y] <id> restore the starter code and clear progress
   leetkit doctor          check Python, pytest, and editor setup
   leetkit completion <sh>  print a bash, zsh, or fish completion script
+  leetkit version         print the version
   leetkit help            show this help
 `
 
@@ -99,6 +101,9 @@ func Run(ctx context.Context, args []string, env Env) int {
 	switch name {
 	case "help", "-h", "--help":
 		fmt.Fprint(env.Stdout, usage)
+		return exitOK
+	case "version", "--version":
+		fmt.Fprintln(env.Stdout, "leetkit "+env.Version)
 		return exitOK
 	}
 	a := newApp(env)

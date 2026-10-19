@@ -8,7 +8,7 @@
   # Bundled so `nix run` works without any Python setup; user settings still win.
   python = python315.withPackages (ps: [ps.pytest]);
 in
-  buildGoApplication {
+  buildGoApplication rec {
     pname = "leetkit";
     version = "0.1.0";
 
@@ -20,6 +20,7 @@ in
       "-s"
       "-w"
       "-X main.defaultPython=${python}/bin/python3"
+      "-X main.version=${version}"
     ];
 
     nativeCheckInputs = [python];

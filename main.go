@@ -15,6 +15,9 @@ import (
 	"github.com/kidskoding/leetkit/internal/config"
 )
 
+// version is set at release time with -X main.version=...
+var version = "dev"
+
 // defaultPython lets packagers bundle an interpreter with pytest, for example
 // -ldflags "-X main.defaultPython=/nix/store/...-python3/bin/python3".
 var defaultPython string
@@ -37,6 +40,7 @@ func main() {
 
 		Interactive:   term.IsTerminal(os.Stdin.Fd()) && term.IsTerminal(os.Stdout.Fd()),
 		DefaultPython: defaultPython,
+		Version:       version,
 	})
 	stop()
 	os.Exit(code)

@@ -4,7 +4,7 @@
 _leetkit() {
     local cur=${COMP_WORDS[COMP_CWORD]}
     if [[ $COMP_CWORD -eq 1 ]]; then
-        COMPREPLY=($(compgen -W "list run check progress reset doctor completion help" -- "$cur"))
+        COMPREPLY=($(compgen -W "list run check progress reset doctor completion version help" -- "$cur"))
         return
     fi
     case ${COMP_WORDS[1]} in

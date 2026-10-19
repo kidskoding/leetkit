@@ -13,6 +13,7 @@ _leetkit() {
         'reset:restore starter code'
         'doctor:check Python, pytest, and editor setup'
         'completion:print a shell completion script'
+        'version:print the version'
         'help:show help'
     )
     if (( CURRENT == 2 )); then
